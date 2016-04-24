@@ -1,0 +1,8 @@
+screen_io_mod.o: const_mod.o control_mod.o 
+main.o: const_mod.o control_mod.o data_mod.o screen_io_mod.o file_io_mod.o boundary_mod.o face_values_mod.o inv_fluxes_mod.o time_disc_mod.o 
+control_mod.o: const_mod.o 
+time_disc_mod.o: const_mod.o 
+data_mod.o: const_mod.o 
+face_values_mod.o: const_mod.o 
+inv_fluxes_mod.o: control_mod.o 
+file_io_mod.o: const_mod.o cgns.o screen_io_mod.o data_mod.o 

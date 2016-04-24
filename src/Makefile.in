@@ -1,0 +1,42 @@
+FC=gfortran
+#FC=ifort
+
+CGNSlibs = /usr/lib/libcgns.so -lhdf5
+LIBS = $(CGNSlibs) -lm
+
+CFLAGS = -std=f2008
+CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
+#CFLAGS += -DDEBUG #Unnecessary comments are oppressed
+CFLAGS += -O3
+CFLAGS += -g -fbacktrace -ffpe-trap=invalid,zero,overflow -fcheck=all -fbounds-check
+EXECUTABLE = ../bin/AMBS
+SOURCE_DIR = ../src
+
+include $(SOURCE_DIR)/inc_Makefile_src
+          
+OBJECTS=$(_SOURCES:.F90=.o)
+
+VPATH := $(SOURCE_DIR)
+
+compile: $(EXECUTABLE)
+	@true
+
+$(EXECUTABLE): $(OBJECTS)
+	$(FC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+%.o: %.F90
+	$(FC) -c $(CFLAGS) $< -o $@
+	
+include $(SOURCE_DIR)/inc_Makefile_dep
+	
+.PHONY: clean compile
+
+clean:
+	@rm -vf $(EXECUTABLE) *.o *.mod $(SOURCE_DIR)/*~
+	@rm -vrf ../*~
+
+debug: CFLAGS += -DDEBUG 
+debug: compile
+
+dep:
+	cd ../src; ../tools/bin/make_dependencies . 

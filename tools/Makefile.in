@@ -1,0 +1,45 @@
+FC=gfortran
+CFLAGS=-g -fbacktrace
+CGNSlibs = /usr/lib/libcgns.so -lhdf5
+LIBS = $(CGNSlibs) -lm
+
+
+EXECUTABLE_DIR = ../bin
+SOURCE_DIR = ../src
+
+_SCRIPT=pre_config make_dependencies
+
+_EXE= extract_1D
+
+EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
+SCRIPT = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_SCRIPT))
+
+all: $(SCRIPT) $(EXE)
+	@echo "Makefile TOOLS"
+
+$(EXECUTABLE_DIR)/make_dependencies:
+	@ln -s $(SOURCE_DIR)/make_dependencies.py $@
+
+
+$(EXECUTABLE_DIR)/pre_config:
+	@ln -s $(SOURCE_DIR)/pre_config.py $@
+
+
+$(EXECUTABLE_DIR)/extract_1D:$(SOURCE_DIR)/extract_1D.F90 file_io_mod.o const_mod.o cgns.o data_mod.o screen_io_mod.o control_mod.o
+	$(FC) $(CFLAGS) $^ $(LIBS) -o $@
+
+
+%.o:../../src/%.F90
+	$(FC) $(CFLAGS) $< -c
+const_mod.o:../../src/const_mod.F90
+	$(FC) $(CFLAGS) $< -c
+data_mod.o:../../src/data_mod.F90
+	$(FC) $(CFLAGS) $< -c
+file_io_mod.o:../../src/file_io_mod.F90 screen_io_mod.o
+	$(FC) $(CFLAGS) $< -c
+screen_io_mod.o:../../src/screen_io_mod.F90
+	$(FC) $(CFLAGS) $< -c
+control_mod.o:../../src/control_mod.F90
+	$(FC) $(CFLAGS) $< -c
+
+include ../../src/inc_Makefile_dep
