@@ -5,8 +5,8 @@ use cgnslib
 USE cgns_types, ONLY: CGSIZE_T
 implicit none
 
-integer :: imax = 101
-integer :: jmax = 2
+integer :: imax = 100
+integer :: jmax = 100
 integer :: kmax = 2
 INTEGER, PARAMETER :: ioout = 10
 integer, parameter :: Version = 1000
@@ -73,7 +73,7 @@ do i = 1,imax-1
       vec(i,j,:,1  ) = 1.0D0
       vec(i,j,:,2:3) = 0.0D0
       vec(i,j,:,4  ) = 1.0D0 / 0.4D0
-      if (i > imax / 2) then
+      if (j > jmax - i) then
         vec(i,j,:,1) = 0.125D0
         vec(i,j,:,4) = 0.1D0 / 0.4D0
       end if

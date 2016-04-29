@@ -145,6 +145,7 @@ Dirichlet	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: Dirichlet=/;"	v	modu
 EMConductivity	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: EMConductivity=/;"	v	module:cgnslib
 EMElectricField	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: EMElectricField=/;"	v	module:cgnslib
 EMMagneticField	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: EMMagneticField=/;"	v	module:cgnslib
+EPSI	const_mod.F90	/^   real(REAL_KIND),parameter :: EPSI /;"	v	module:const_mod
 ERROR	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: ERROR=/;"	v	module:cgnslib
 EddyViscosity	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: EddyViscosity=/;"	v	module:cgnslib
 EdgeCenter	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: EdgeCenter=/;"	v	module:cgnslib
@@ -167,6 +168,7 @@ GoverningEquationsTypeName	cgns.F90	/^  CHARACTER(LEN=32), DIMENSION(0:7), PARAM
 Gram	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: Gram=/;"	v	module:cgnslib
 GridConnectivityTypeName	cgns.F90	/^  CHARACTER(LEN=32), DIMENSION(0:4), PARAMETER :: GridConnectivityTypeName=/;"	v	module:cgnslib
 GridLocationName	cgns.F90	/^  CHARACTER(LEN=32), DIMENSION(0:8), PARAMETER :: GridLocationName=/;"	v	module:cgnslib
+HALF	const_mod.F90	/^   real(REAL_KIND),parameter :: HALF /;"	v	module:const_mod
 HEXA_20	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: HEXA_20=/;"	v	module:cgnslib
 HEXA_27	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: HEXA_27=/;"	v	module:cgnslib
 HEXA_32	cgns.F90	/^  INTEGER(KIND=CGSIZE_T), PARAMETER :: HEXA_32=/;"	v	module:cgnslib
@@ -309,6 +311,7 @@ cellFaceAreasK	data_mod.F90	/^   real(REAL_KIND), allocatable :: cellFaceAreasK 
 cellFaceVecsI	data_mod.F90	/^   real(REAL_KIND), allocatable :: cellFaceVecsI /;"	k	type:block_type
 cellFaceVecsJ	data_mod.F90	/^   real(REAL_KIND), allocatable :: cellFaceVecsJ /;"	k	type:block_type
 cellFaceVecsK	data_mod.F90	/^   real(REAL_KIND), allocatable :: cellFaceVecsK /;"	k	type:block_type
+cfl	control_mod.F90	/^real(REAL_KIND) :: cfl$/;"	v	module:control_mod
 cgio	cgns.F90	/^MODULE cgio$/;"	m
 cgns_types	cgns.F90	/^MODULE cgns_types$/;"	m
 cgnslib	cgns.F90	/^MODULE cgnslib$/;"	m
@@ -317,12 +320,13 @@ const_mod	const_mod.F90	/^module const_mod$/;"	m
 control_mod	control_mod.F90	/^module control_mod$/;"	m
 coords	data_mod.F90	/^   real(REAL_KIND), allocatable :: coords /;"	k	type:block_type
 cross	data_mod.F90	/^      subroutine cross(/;"	s
-current_iteration	control_mod.F90	/^integer(INT_KIND) :: current_iteration$/;"	v	module:control_mod
+current_iteration	control_mod.F90	/^integer(INT_KIND) :: current_iteration /;"	v	module:control_mod
 data_mod	data_mod.F90	/^module data_mod$/;"	m
 datin_sol	file_io_mod.F90	/^   subroutine datin_sol(/;"	s
 datout_sol	file_io_mod.F90	/^   subroutine datout_sol(/;"	s
 dimen	data_mod.F90	/^integer(INT_KIND)               :: dimen$/;"	v	module:data_mod
 end_main_loop	control_mod.F90	/^logical :: end_main_loop$/;"	v	module:control_mod
+equation	control_mod.F90	/^integer(INT_KIND) :: equation$/;"	v	module:control_mod
 error_wr	screen_io_mod.F90	/^   subroutine error_wr(/;"	s	module:screen_io_mod
 faceVarsLeftI	data_mod.F90	/^   real(REAL_KIND), allocatable :: faceVarsLeftI /;"	k	type:block_type
 faceVarsLeftJ	data_mod.F90	/^   real(REAL_KIND), allocatable :: faceVarsLeftJ /;"	k	type:block_type
@@ -344,7 +348,8 @@ inviscid_roe_n	inv_fluxes_mod.F90	/^    subroutine inviscid_roe_n(/;"	s	module:i
 inviscid_roe_n	roe.F90	/^ subroutine inviscid_roe_n(/;"	s
 io_len_VarName	file_io_mod.F90	/^   integer, parameter               :: io_len_VarName /;"	v	module:file_io_mod
 main_loop_control	control_mod.F90	/^   subroutine main_loop_control$/;"	s	module:control_mod
-max_iteration	control_mod.F90	/^integer(INT_KIND) :: max_iteration /;"	v	module:control_mod
+max_iteration	control_mod.F90	/^integer(INT_KIND) :: max_iteration$/;"	v	module:control_mod
+minmod	face_values_mod.F90	/^   subroutine minmod /;"	s	module:face_values_mod
 nBlock	data_mod.F90	/^integer(INT_KIND)               :: nBlock$/;"	v	module:data_mod
 nBoundaryCells	control_mod.F90	/^integer(INT_KIND) :: nBoundaryCells /;"	v	module:control_mod
 nCell	data_mod.F90	/^integer(INT_KIND)               :: nCell$/;"	v	module:data_mod
@@ -354,18 +359,29 @@ nFaces	data_mod.F90	/^integer(INT_KIND)               :: nFaces$/;"	v	module:dat
 nPkts	data_mod.F90	/^   integer(INT_KIND) :: nPkts(/;"	k	type:block_type
 nVar	data_mod.F90	/^integer(INT_KIND)               :: nVar$/;"	v	module:data_mod
 pressures	data_mod.F90	/^   real(REAL_KIND), allocatable :: pressures /;"	k	type:block_type
+res_avg	control_mod.F90	/^real(REAL_KIND) :: res_avg$/;"	v	module:control_mod
+res_max	control_mod.F90	/^real(REAL_KIND) :: res_max$/;"	v	module:control_mod
 residual_on_screen	control_mod.F90	/^logical :: residual_on_screen$/;"	v	module:control_mod
+residual_out	control_mod.F90	/^integer(INT_KIND) :: residual_out$/;"	v	module:control_mod
 residuals	data_mod.F90	/^   real(REAL_KIND), allocatable :: residuals /;"	k	type:block_type
+riemann_solver	control_mod.F90	/^integer(INT_KIND) :: riemann_solver$/;"	v	module:control_mod
 screen_io_mod	screen_io_mod.F90	/^module screen_io_mod$/;"	m
 screen_residual	screen_io_mod.F90	/^   subroutine screen_residual(/;"	s	module:screen_io_mod
 screen_wr	screen_io_mod.F90	/^   subroutine screen_wr(/;"	s	module:screen_io_mod
+set_boundary	boundary_mod.F90	/^   subroutine set_boundary(/;"	s	module:boundary_mod
+solution_out	control_mod.F90	/^integer(INT_KIND) :: solution_out /;"	v	module:control_mod
+solution_time	control_mod.F90	/^real(REAL_KIND) :: solution_time /;"	v	module:control_mod
 solution_to_file	control_mod.F90	/^logical :: solution_to_file$/;"	v	module:control_mod
+space_order	control_mod.F90	/^integer(INT_KIND) :: space_order$/;"	v	module:control_mod
 swpDistVecsI	data_mod.F90	/^   real(REAL_KIND), allocatable :: swpDistVecsI /;"	k	type:block_type
 swpDistVecsJ	data_mod.F90	/^   real(REAL_KIND), allocatable :: swpDistVecsJ /;"	k	type:block_type
 swpDistVecsK	data_mod.F90	/^   real(REAL_KIND), allocatable :: swpDistVecsK /;"	k	type:block_type
 temperatures	data_mod.F90	/^   real(REAL_KIND), allocatable :: temperatures /;"	k	type:block_type
 time_disc_mod	time_disc_mod.F90	/^module time_disc_mod$/;"	m
-timesteps	data_mod.F90	/^   real(REAL_KIND), allocatable :: timesteps /;"	k	type:block_type
+time_order	control_mod.F90	/^integer(INT_KIND) :: time_order$/;"	v	module:control_mod
+timestep	control_mod.F90	/^real(REAL_KIND) :: timestep$/;"	v	module:control_mod
+timestep_method	control_mod.F90	/^integer(INT_KIND) :: timestep_method$/;"	v	module:control_mod
+turbulence	control_mod.F90	/^integer(INT_KIND) :: turbulence$/;"	v	module:control_mod
 update_residual	time_disc_mod.F90	/^   subroutine update_residual(/;"	s	module:time_disc_mod
 update_sol	time_disc_mod.F90	/^   subroutine update_sol(/;"	s	module:time_disc_mod
 vars	data_mod.F90	/^   real(REAL_KIND), allocatable :: vars /;"	k	type:block_type

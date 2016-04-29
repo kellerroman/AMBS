@@ -5,17 +5,18 @@ use cgnslib
 USE cgns_types, ONLY: CGSIZE_T
 implicit none
 
-integer :: imax = 101
-integer :: jmax = 2
+integer :: imax = 100
+integer :: jmax = 100
 integer :: kmax = 2
 INTEGER, PARAMETER :: ioout = 10
 integer, parameter :: Version = 1000
 integer, parameter :: Dimen = 3
 integer, parameter :: nBlock = 1
-integer, parameter :: nVar   = 4
+integer, parameter :: nVar   = 5
 
 real(kind=8), parameter :: a2d = 180.0D0 / 3.1415927D0
 real(kind=8), parameter :: length = 1.0D0
+real(kind=8), parameter :: gamma = 1.4D0
 real(kind=8) :: winkel = 0.0D0
 
 integer, parameter :: bc(4) = (/-2,-2,-4,-4/)
@@ -27,6 +28,7 @@ real(kind=8),allocatable :: xyz (:,:,:,:)
 real(kind=8),allocatable :: vec (:,:,:,:)
 real(kind=8) :: mat(2,2)
 real(kind=8) :: temp(dimen)
+real(kind=8) :: tu,tv,trho,tp
 
 
 integer :: i,j,k
@@ -70,13 +72,33 @@ end do
 do i = 1,imax-1
    do j = 1,jmax-1
      
-      vec(i,j,:,1  ) = 1.0D0
-      vec(i,j,:,2:3) = 0.0D0
-      vec(i,j,:,4  ) = 1.0D0 / 0.4D0
-      if (i > imax / 2) then
-        vec(i,j,:,1) = 0.125D0
-        vec(i,j,:,4) = 0.1D0 / 0.4D0
+      if (i < imax/2 .and. j < jmax/2) then
+         tu   = 0.8939d0
+         tv   = 0.8939d0
+         trho = 1.1d0
+         tp   = 1.1d0
+      else if (i < imax/2 .and. j >= jmax/2) then
+         tu   = 0.8939d0
+         tv   = 0.d0
+         trho = 0.5065d0
+         tp   = 0.35d0
+      else if (i >= imax/2 .and. j < jmax/2) then
+         tu   = 0.d0
+         tv   = 0.8939d0
+         trho = 0.5065d0
+         tp   = 0.35d0
+      else if (i >= imax/2 .and. j >= jmax/2) then
+         tu   = 0.d0
+         tv   = 0.d0
+         trho = 1.1d0
+         tp   = 1.1d0
       end if
+      vec(i,j,:,1) = trho
+      vec(i,j,:,2) = tu
+      vec(i,j,:,3) = tv
+      vec(i,j,:,5) = tp/(gamma-1.0D0)+ &
+                     0.5d0 * (tu*tu+tv*tv)*trho
+      vec(i,j,:,4) = 0.0D0
    end do
 
 end do
@@ -118,9 +140,9 @@ call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble         
          ,"Geschw_V",vec(:,:,:,3),cgns_var,ierror)
 
 call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble         &
-         ,"Geschw_W",vec(:,:,:,3),cgns_var,ierror)
+         ,"Geschw_W",vec(:,:,:,4),cgns_var,ierror)
 call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble         &
-         ,"Energie",vec(:,:,:,4),cgns_var,ierror)
+         ,"Energie",vec(:,:,:,5),cgns_var,ierror)
 
 
 call cg_close_f(cgns_file,ierror)

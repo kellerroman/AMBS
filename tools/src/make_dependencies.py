@@ -141,7 +141,7 @@ for i,f in enumerate(files):
          if l not in routine_links[i]:
              routine_links[i].append(l)
       if "use " in l:
-         l = l.split("use ")[1].strip().split(" ")[0].split("(")[0]
+         l = l.split("use ")[1].strip().split(" ")[0].split("(")[0].split(",")[0]
          #print l,"Called in",files[i]
          if l not in routine_links[i]:
              routine_links[i].append(l)

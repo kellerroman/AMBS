@@ -37,7 +37,7 @@ current_iteration = 0
 main_loop: do while (.not. end_main_loop)
    call main_loop_control()
    block_loop: do b = 1, nBlock
-   call set_boundary(blocks(b))
+   call set_boundary(blocks(b),nBoundaryCells)
    call face_values ( blocks(b) % vars     &
                     , blocks(b) % faceVarsLeftI & 
                     , blocks(b) % faceVarsRightI & 

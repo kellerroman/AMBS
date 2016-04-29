@@ -3,7 +3,7 @@ use const_mod
 use data_mod
 !use control
 use cgnslib
-USE cgns_types, ONLY: CGSIZE_T
+use cgns_types, ONLY: CGSIZE_T
 use file_io_mod
 implicit none
 integer, parameter :: fo = 12345

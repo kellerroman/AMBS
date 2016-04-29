@@ -16,6 +16,9 @@
 # Fortran module files
 *.mod
 
+# vim files
+*.swp
+
 # Compiled Static libraries
 *.lai
 *.la

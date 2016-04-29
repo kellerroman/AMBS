@@ -1,8 +1,11 @@
 module data_mod
 use const_mod
 implicit none
+type :: boundary_type
+   integer :: bc_type
+end type boundary_type
 type :: block_type
-
+   type(boundary_type) :: boundary(6)
    integer(INT_KIND) :: nPkts(3)
 
    integer(INT_KIND) :: nCells(3)

@@ -52,10 +52,10 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells
          do j = 1, ubound(cellvars,2) - nBoundaryCells
             do i = 1, ubound(cellvars,1) - nBoundaryCells + 1
-              faceVarsLeftI (i,j,k,:) = (cellvars(i  ,j,k,:) - cellvars(i-1,j,k,:))  &
-                                      / (cellvars(i-1,j,k,:) - cellvars(i-2,j,k,:) + epsi)
-              faceVarsRightI(i,j,k,:) = (cellvars(i  ,j,k,:) - cellvars(i-1,j,k,:) )  &
-                                      / (cellvars(i+1,j,k,:) - cellvars(i  ,j,k,:) + epsi)
+              faceVarsLeftI (i,j,k,:) = ( cellvars(i  ,j,k,:) - cellvars(i-1,j,k,:) )  &
+                                      / ( cellvars(i-1,j,k,:) - cellvars(i-2,j,k,:) + EPSI)
+              faceVarsRightI(i,j,k,:) = ( cellvars(i  ,j,k,:) - cellvars(i-1,j,k,:) )  &
+                                      / ( cellvars(i+1,j,k,:) - cellvars(i  ,j,k,:) + EPSI)
             end do
          end do
       end do
@@ -70,20 +70,20 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells
          do j = 1, ubound(cellvars,2) - nBoundaryCells
             do i = 1, ubound(cellvars,1) - nBoundaryCells + 1
-              faceVarsLeftI (i,j,k,:) =  cellvars(i-1,j,k,:) - faceVarsLeftI (i,j,k,:) * HALF  &
-                                      * (cellvars(i-1,j,k,:) - cellvars(i-2,j,k,:) )
-              faceVarsRightI(i,j,k,:) =  cellvars(i  ,j,k,:) - faceVarsRightI(i,j,k,:) * HALF  &
-                                      * (cellvars(i+1,j,k,:) - cellvars(i  ,j,k,:) )
+              faceVarsLeftI (i,j,k,:) =   cellvars(i-1,j,k,:) - faceVarsLeftI (i,j,k,:) * HALF  &
+                                      * ( cellvars(i-1,j,k,:) - cellvars(i-2,j,k,:) )
+              faceVarsRightI(i,j,k,:) =   cellvars(i  ,j,k,:) - faceVarsRightI(i,j,k,:) * HALF  &
+                                      * ( cellvars(i+1,j,k,:) - cellvars(i  ,j,k,:) )
             end do
          end do
       end do
       do k = 1, ubound(cellvars,3) - nBoundaryCells
          do j = 1, ubound(cellvars,2) - nBoundaryCells + 1
             do i = 1, ubound(cellvars,1) - nBoundaryCells 
-              faceVarsLeftJ (i,j,k,:) = (cellvars(i,j  ,k,:) - cellvars(i,j-1,k,:))  &
-                                      / (cellvars(i,j-1,k,:) - cellvars(i,j-2,k,:) + epsi)
-              faceVarsRightJ(i,j,k,:) = (cellvars(i,j  ,k,:) - cellvars(i,j-1,k,:) )  &
-                                      / (cellvars(i,j-1,k,:) - cellvars(i,j  ,k,:) + epsi)
+              faceVarsLeftJ (i,j,k,:) = ( cellvars(i,j  ,k,:) - cellvars(i,j-1,k,:) )  &
+                                      / ( cellvars(i,j-1,k,:) - cellvars(i,j-2,k,:) + EPSI)
+              faceVarsRightJ(i,j,k,:) = ( cellvars(i,j  ,k,:) - cellvars(i,j-1,k,:) )  &
+                                      / ( cellvars(i,j-1,k,:) - cellvars(i,j  ,k,:) + EPSI)
             end do
          end do
       end do
@@ -98,20 +98,20 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells
          do j = 1, ubound(cellvars,2) - nBoundaryCells + 1
             do i = 1, ubound(cellvars,1) - nBoundaryCells
-              faceVarsLeftJ (i,j,k,:) =  cellvars(i,j-1,k,:) - faceVarsLeftJ (i,j,k,:) * HALF  &
-                                      * (cellvars(i,j-1,k,:) - cellvars(i,j-2,k,:) )
-              faceVarsRightJ(i,j,k,:) =  cellvars(i,j  ,k,:) - faceVarsRightJ(i,j,k,:) * HALF  &
-                                      * (cellvars(i,j+1,k,:) - cellvars(i  ,j,k,:) )
+              faceVarsLeftJ (i,j,k,:) =   cellvars(i,j-1,k,:) - faceVarsLeftJ (i,j,k,:) * HALF  &
+                                      * ( cellvars(i,j-1,k,:) - cellvars(i,j-2,k,:) )
+              faceVarsRightJ(i,j,k,:) =   cellvars(i,j  ,k,:) - faceVarsRightJ(i,j,k,:) * HALF  &
+                                      * ( cellvars(i,j+1,k,:) - cellvars(i,j  ,k,:) )
             end do
          end do
       end do
       do k = 1, ubound(cellvars,3) - nBoundaryCells + 1
          do j = 1, ubound(cellvars,2) - nBoundaryCells
             do i = 1, ubound(cellvars,1) - nBoundaryCells 
-              faceVarsLeftK (i,j,k,:) = (cellvars(i,j,k  ,:) - cellvars(i,j,k-1,:))  &
-                                      / (cellvars(i,j,k-1,:) - cellvars(i,j,k-2,:) + epsi)
-              faceVarsRightK(i,j,k,:) = (cellvars(i,j,k  ,:) - cellvars(i,j,k-1,:) )  &
-                                      / (cellvars(i,j,k+1,:) - cellvars(i,j,k  ,:) + epsi)
+              faceVarsLeftK (i,j,k,:) = ( cellvars(i,j,k  ,:) - cellvars(i,j,k-1,:) )  &
+                                      / ( cellvars(i,j,k-1,:) - cellvars(i,j,k-2,:) + EPSI)
+              faceVarsRightK(i,j,k,:) = ( cellvars(i,j,k  ,:) - cellvars(i,j,k-1,:) )  &
+                                      / ( cellvars(i,j,k+1,:) - cellvars(i,j,k  ,:) + EPSI)
             end do
          end do
       end do
@@ -126,10 +126,10 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells + 1 
          do j = 1, ubound(cellvars,2) - nBoundaryCells
             do i = 1, ubound(cellvars,1) - nBoundaryCells
-              faceVarsLeftK (i,j,k,:) =  cellvars(i,j,k-1,:) - faceVarsLeftK (i,j,k,:) * HALF  &
-                                      * (cellvars(i,j,k-1,:) - cellvars(i,j,k-2,:) )
-              faceVarsRightK(i,j,k,:) =  cellvars(i,j,k  ,:) - faceVarsRightK(i,j,k,:) * HALF  &
-                                      * (cellvars(i,j,k+1,:) - cellvars(i,j,k  ,:) )
+              faceVarsLeftK (i,j,k,:) =   cellvars(i,j,k-1,:) - faceVarsLeftK (i,j,k,:) * HALF  &
+                                      * ( cellvars(i,j,k-1,:) - cellvars(i,j,k-2,:) )
+              faceVarsRightK(i,j,k,:) =   cellvars(i,j,k  ,:) - faceVarsRightK(i,j,k,:) * HALF  &
+                                      * ( cellvars(i,j,k+1,:) - cellvars(i,j,k  ,:) )
             end do
          end do
       end do

@@ -5,9 +5,9 @@ use cgnslib
 USE cgns_types, ONLY: CGSIZE_T
 implicit none
 
-integer :: imax = 101
-integer :: jmax = 2
-integer :: kmax = 2
+integer :: imax = 100
+integer :: jmax = 100
+integer :: kmax = 100
 INTEGER, PARAMETER :: ioout = 10
 integer, parameter :: Version = 1000
 integer, parameter :: Dimen = 3
@@ -67,18 +67,18 @@ do k = 1,kmax
       end do
    end do
 end do
-do i = 1,imax-1
+do k = 1, kmax-1
    do j = 1,jmax-1
-     
-      vec(i,j,:,1  ) = 1.0D0
-      vec(i,j,:,2:3) = 0.0D0
-      vec(i,j,:,4  ) = 1.0D0 / 0.4D0
-      if (i > imax / 2) then
-        vec(i,j,:,1) = 0.125D0
-        vec(i,j,:,4) = 0.1D0 / 0.4D0
-      end if
+      do i = 1,imax-1
+         vec(i,j,k,1  ) = 1.0D0
+         vec(i,j,k,2:3) = 0.0D0
+         vec(i,j,k,4  ) = 1.0D0 / 0.4D0
+         if (i+j+k > 1.5*jmax) then
+            vec(i,j,k,1) = 0.125D0
+            vec(i,j,k,4) = 0.1D0 / 0.4D0
+         end if
+      end do
    end do
-
 end do
 
 call cg_open_f("data_in.cgns",CG_MODE_WRITE,cgns_file,ierror)

@@ -1,4 +1,5 @@
 module inv_fluxes_mod
+   use const_mod
    use control_mod
    use data_mod, only: block_type
 implicit none
@@ -6,6 +7,7 @@ contains
    subroutine calc_fluxes( block )
    implicit none
    type(block_type), intent(inout) :: block
+   if (riemann_solver == 1) then
    call inviscid_roe_n( block % faceVarsLeftI     &
                       , block % faceVarsRightI    &
                       , block % CellFaceVecsI     &
@@ -18,6 +20,20 @@ contains
                       , block % faceVarsRightK    &
                       , block % CellFaceVecsK     &
                       , block % fluxesK           )
+   else
+   call lax_friedrich_n( block % faceVarsLeftI     &
+                      , block % faceVarsRightI    &
+                      , block % CellFaceVecsI     &
+                      , block % fluxesI           )
+   call lax_friedrich_n( block % faceVarsLeftJ     &
+                      , block % faceVarsRightJ    &
+                      , block % CellFaceVecsJ     &
+                      , block % fluxesJ           )
+   call lax_friedrich_n( block % faceVarsLeftK     &
+                      , block % faceVarsRightK    &
+                      , block % CellFaceVecsK     &
+                      , block % fluxesK           )
+   end if
    end subroutine calc_fluxes
 
    !********************************************************************************
@@ -93,37 +109,28 @@ contains
     subroutine inviscid_roe_n(primL, primR, njk,  num_flux)
    
     implicit none
-    integer , parameter :: p2 = selected_real_kind(15) ! Double precision
    
    !Input
-    real(p2), intent( in) :: primL     (:,:,:,:) ! Input: primitive variables
-    real(p2), intent( in) :: primR     (:,:,:,:) ! Input: primitive variables
-    real(p2), intent( in) :: njk       (:,:,:,:) ! Input: face normal vector
+    real(REAL_KIND), intent( in) :: primL     (:,:,:,:) ! Input: primitive variables
+    real(REAL_KIND), intent( in) :: primR     (:,:,:,:) ! Input: primitive variables
+    real(REAL_KIND), intent( in) :: njk       (:,:,:,:) ! Input: face normal vector
    
    !Output
-    real(p2), intent(out) :: num_flux  (:,:,:,:)        ! Output: numerical flux
-   
-   !Some constants
-    real(p2) ::  zero = 0.0_p2
-    real(p2) ::   one = 1.0_p2
-    real(p2) ::   two = 2.0_p2
-    real(p2) ::  half = 0.5_p2
-    real(p2) :: fifth = 0.2_p2
+    real(REAL_KIND), intent(out) :: num_flux  (:,:,:,:)        ! Output: numerical flux
    
    !Local variables
     integer :: i,j,k
-    real(p2) :: nx, ny, nz                   ! Normal vector
-    real(p2) :: uL, uR, vL, vR, wL, wR       ! Velocity components.
-    real(p2) :: rhoL, rhoR, pL, pR           ! Primitive variables.
-    real(p2) :: qnL, qnR                     ! Normal velocities
-    real(p2) :: aL, aR, HL, HR               ! Speed of sound, Total enthalpy
-    real(p2) :: RT,rho,u,v,w,H,a,qn          ! Roe-averages
-    real(p2) :: drho,dqn,dp,LdU(4)           ! Wave strengths
-    real(p2) :: du, dv, dw                   ! Velocity differences
-    real(p2) :: ws(4), R(5,4)                ! Wave speeds and right-eigenvectors
-    real(p2) :: dws(4)                       ! Width of a parabolic fit for entropy fix
-    real(p2) :: fL(5), fR(5), diss(5)        ! Fluxes ad dissipation term
-    real(p2) :: gamma = 1.4_p2               ! Ratio of specific heats
+    real(REAL_KIND) :: nx, ny, nz                   ! Normal vector
+    real(REAL_KIND) :: uL, uR, vL, vR, wL, wR       ! Velocity components.
+    real(REAL_KIND) :: rhoL, rhoR, pL, pR           ! Primitive variables.
+    real(REAL_KIND) :: qnL, qnR                     ! Normal velocities
+    real(REAL_KIND) :: aL, aR, HL, HR               ! Speed of sound, Total enthalpy
+    real(REAL_KIND) :: RT,rho,u,v,w,H,a,qn          ! Roe-averages
+    real(REAL_KIND) :: drho,dqn,dp,LdU(4)           ! Wave strengths
+    real(REAL_KIND) :: du, dv, dw                   ! Velocity differences
+    real(REAL_KIND) :: ws(4), R(5,4)                ! Wave speeds and right-eigenvectors
+    real(REAL_KIND) :: dws(4)                       ! Width of a parabolic fit for entropy fix
+    real(REAL_KIND) :: fL(5), fR(5), diss(5)        ! Fluxes ad dissipation term
    
    ! Face normal vector (unit vector)
     do k = 1, ubound(num_flux,3)
@@ -268,5 +275,70 @@ contains
    
     end subroutine inviscid_roe_n
    !--------------------------------------------------------------------------------
+   subroutine lax_friedrich_n(primL, primR, njk,  num_flux)
+  
+   implicit none
+  
+  !Input
+   real(REAL_KIND), intent( in) :: primL     (:,:,:,:) ! Input: primitive variables
+   real(REAL_KIND), intent( in) :: primR     (:,:,:,:) ! Input: primitive variables
+   real(REAL_KIND), intent( in) :: njk       (:,:,:,:) ! Input: face normal vector
+  
+  !Output
+   real(REAL_KIND), intent(out) :: num_flux  (:,:,:,:)        ! Output: numerical flux
+  
+  
+  !Local variables
+   integer :: i,j,k
+   real(REAL_KIND) :: nx, ny, nz                   ! Normal vector
+   real(REAL_KIND) :: uL, uR, vL, vR, wL, wR       ! Velocity components.
+   real(REAL_KIND) :: rhoL, rhoR, pL, pR           ! Primitive variables.
+   real(REAL_KIND) :: qnL, qnR                     ! Normal velocities
+   real(REAL_KIND) :: aL, aR, HL, HR               ! Speed of sound, Total enthalpy
+   real(REAL_KIND) :: fL(5), fR(5)                 ! Fluxes ad dissipation term
+  
+  ! Face normal vector (unit vector)
+   do k = 1, ubound(num_flux,3)
+      do j = 1, ubound(num_flux,2)
+         do i = 1, ubound(num_flux,1)
+            nx    = njk(1,i,j,k)
+            ny    = njk(2,i,j,k)
+            nz    = njk(3,i,j,k)
+            !  Left state
+            rhoL = primL(i,j,k,1)
+            uL    = primL(i,j,k,2)
+            vL    = primL(i,j,k,3)
+            wL    = primL(i,j,k,4)
+            qnL   = uL*nx + vL*ny + wL*nz
+            pL    = (gamma-one)*( primL(i,j,k,5) - half*rhoL*(uL*uL+vL*vL+wL*wL) )
+            aL    = sqrt(gamma*pL/rhoL)
+            HL    = ( primL(i,j,k,5) + pL ) / rhoL
+            !  Right state
+            rhoR  = primR(i,j,k,1)
+            uR    = primR(i,j,k,2)
+            vR    = primR(i,j,k,3)
+            wR    = primR(i,j,k,4)
+            qnR   = uR*nx + vR*ny + wR*nz
+            pR    = (gamma-one)*( primR(i,j,k,5) - half*rhoR*(uR*uR+vR*vR+wR*wR) )
+            aR    = sqrt(gamma*pR/rhoR)
+            HR    = ( primR(i,j,k,5) + pR ) / rhoR
+            fL(1) = rhoL*qnL
+            fL(2) = rhoL*qnL * uL + pL*nx
+            fL(3) = rhoL*qnL * vL + pL*ny
+            fL(4) = rhoL*qnL * wL + pL*nz
+            fL(5) = rhoL*qnL * HL
+          
+            fR(1) = rhoR*qnR
+            fR(2) = rhoR*qnR * uR + pR*nx
+            fR(3) = rhoR*qnR * vR + pR*ny
+            fR(4) = rhoR*qnR * wR + pR*nz
+            fR(5) = rhoR*qnR * HR
+            num_flux(i,j,k,:)  = HALF * (fL + fR) &
+                               + QUARTER * (aL + aR) &
+                               * (primL(i,j,k,:) + primR(i,j,k,:))
+         end do
+      end do
+   end do
+   end subroutine lax_friedrich_n
 end module inv_fluxes_mod
 

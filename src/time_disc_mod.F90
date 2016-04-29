@@ -1,4 +1,3 @@
-module time_disc_mod
    use const_mod
    use data_mod, only: block_type
 implicit none

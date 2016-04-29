@@ -89,5 +89,4 @@ contains
                                            , res_avg &
                                            , solution_time
    end  subroutine screen_residual
-
 end module screen_io_mod

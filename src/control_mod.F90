@@ -5,14 +5,23 @@ implicit none
 logical :: end_main_loop
 logical :: residual_on_screen
 logical :: solution_to_file
-integer(INT_KIND) :: max_iteration = 10000
+integer(INT_KIND) :: max_iteration
 integer(INT_KIND) :: current_iteration = 0
 integer(INT_KIND) :: nBoundaryCells = 2
-integer(INT_KIND) :: space_order = 1
+integer(INT_KIND) :: solution_out 
+integer(INT_KIND) :: residual_out
+integer(INT_KIND) :: equation
+integer(INT_KIND) :: turbulence
+integer(INT_KIND) :: space_order
+integer(INT_KIND) :: riemann_solver
+integer(INT_KIND) :: timestep_method
+integer(INT_KIND) :: time_order
+
 real(REAL_KIND) :: res_max
 real(REAL_KIND) :: res_avg
 real(REAL_KIND) :: solution_time = 0.0E+0_REAL_KIND
-real(REAL_KIND) :: timestep      = 1.0E-5_REAL_KIND
+real(REAL_KIND) :: cfl
+real(REAL_KIND) :: timestep
 
 contains
    subroutine main_loop_control

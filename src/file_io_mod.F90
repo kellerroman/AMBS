@@ -37,6 +37,8 @@ implicit none
    character(len=100)              :: filename_control   = FOLDER_INPUT //"config.bin"
    character(len=100)              :: filename_data_in   = FOLDER_INPUT //"data_in.cgns"
    character(len=100)              :: filename_data_out  = FOLDER_OUTPUT//"data_out.cgns"
+   
+   integer                           , parameter :: CONFIG_FILE_VERSION = 1 
    logical :: override_sol = .false.
    logical :: write_sol_header = .true.
 contains
@@ -54,16 +56,51 @@ contains
 ! CHANGELOG:
 ! 04.03.2016,RK: Start of Coding
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   use control_mod, only: max_iteration   &
+                        , solution_out    &
+                        , residual_out    &
+                        , equation        &
+                        , turbulence      &
+                        , space_order     &
+                        , riemann_solver  &
+                        , timestep_method &
+                        , time_order      &
+                        , cfl             &
+                        , timestep
    implicit none 
+      character(len=*), parameter :: SOLVERS(2) = ["Roe          ","Lax-Friedrich"]
       integer                         :: file_unit
+      integer                         :: cfv_version
       logical :: fexists
       inquire(file=trim(filename_control),exist=fexists)
       if (.not. fexists) then
          call error_wr("Config Datei: '"//trim(filename_control)//"' nicht gefunden!",__FILE__,__LINE__)
       end if
-      open(newunit = file_unit, file=trim(filename_control))
-
+      open(newunit = file_unit, file=trim(filename_control),form="unformatted",access="stream")
+      read(file_unit) cfv_version
+      if (cfv_version /= CONFIG_FILE_VERSION) then
+         call error_wr("Config Datei Version stimmt nicht",__FILE__,__LINE__)
+      end if
+      read(file_unit) max_iteration   
+      read(file_unit) solution_out    
+      read(file_unit) residual_out    
+      read(file_unit) equation        
+      read(file_unit) turbulence      
+      read(file_unit) space_order     
+      read(file_unit) riemann_solver  
+      read(file_unit) timestep_method 
+      read(file_unit) time_order      
+      read(file_unit) cfl             
+      read(file_unit) timestep
       close(file_unit,status='delete')
+      
+      write(*,'(A30,2X,I0)') "Number of Iterations",max_iteration
+      write(*,'(A30,2X,I0)') "Solution Output every",solution_out
+      write(*,'(A30,2X,I0)') "Residual Output every",residual_out
+      write(*,'(A30,2X,I0)') "Spatial Order",space_order
+      write(*,'(A30,2X,ES10.4)') "Timestep",Timestep    
+      write(*,'(A30,2X,A)') "Riemann Solver",trim(SOLVERS(riemann_solver))
+
    end subroutine datin_control
    
    subroutine datin_sol()
@@ -349,12 +386,12 @@ contains
                cgns_varname = VarName_SpW
                data_out = blocks(b) % vars(1:blocks(b) % nCells(1)  &
                                           ,1:blocks(b) % nCells(2)  &
-                                          ,1:blocks(b) % nCells(3),3)
+                                          ,1:blocks(b) % nCells(3),4)
             case(5)!VarName_Ene)
                cgns_varname = VarName_Ene
                data_out = blocks(b) % vars(1:blocks(b) % nCells(1)  &
                                           ,1:blocks(b) % nCells(2)  &
-                                          ,1:blocks(b) % nCells(3),4)
+                                          ,1:blocks(b) % nCells(3),5)
 !            case(VarName_Pre)
 !               data_out = blocks(b) % P(1:block(b) % nCell(1)  &
 !                                      ,1:block(b) % nCell(2)  &
