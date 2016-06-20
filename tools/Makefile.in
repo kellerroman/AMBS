@@ -1,22 +1,25 @@
 FC=gfortran
-CFLAGS=-g -fbacktrace
-CGNSlibs = /usr/lib/libcgns.so -lhdf5
+
+CGNSlibs = -lcgns -lhdf5
 LIBS = $(CGNSlibs) -lm
 
 INCLUDE = -I/usr/include/
+
+CFLAGS = -std=f2008
+CFLAGS +=-g -fbacktrace
 
 EXECUTABLE_DIR = ../bin
 SOURCE_DIR = ../src
 
 _SCRIPT=pre_config make_dependencies
 
-_EXE= extract_1D sol2vtk
+_EXE= extract_1D
+#sol2vtk
 
 EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
 SCRIPT = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_SCRIPT))
 
 all: $(SCRIPT) $(EXE)
-	@echo "Makefile TOOLS"
 
 $(EXECUTABLE_DIR)/make_dependencies:
 	@ln -s $(SOURCE_DIR)/make_dependencies.py $@

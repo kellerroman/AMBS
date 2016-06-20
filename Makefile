@@ -2,7 +2,7 @@ OBJECTS_DIR= obj
 REALMAKEFILE=../src/Makefile.in
 TOOLMAKEFILE=../tools/Makefile.in
 
-all: solver tools
+all: tools solver
 
 solver: FORCE
 	@(cd $(OBJECTS_DIR) && $(MAKE) -f $(REALMAKEFILE) --no-print-directory)
@@ -24,3 +24,4 @@ test:
 
 dep:
 	@(cd src && ../tools/bin/make_dependencies .)
+.PHONY: tools clean test FORCE dep all

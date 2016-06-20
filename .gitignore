@@ -29,5 +29,9 @@
 *.exe
 *.out
 *.app
+
+# Folders
 /GT_version/
 /doc/code_sources/
+/bin/
+/tools/bin/
