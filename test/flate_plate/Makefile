@@ -59,7 +59,7 @@ screen_io_mod.o:../../src/screen_io_mod.F90
 control_mod.o:../../src/control_mod.F90
 	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
+	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv flate_plate_extract
 	@rm -vrf *~
 
 ##### CLEAN PROJECT
