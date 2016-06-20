@@ -13,6 +13,7 @@ tools: #FORCE
 clean: FORCE
 	@(cd $(OBJECTS_DIR) && $(MAKE) -f $(REALMAKEFILE) clean --no-print-directory)
 	@rm -rf obj bin *~
+	@$(MAKE) -C tools clean --no-print-directory
 	@$(MAKE) -C test clean --no-print-directory
 	
 FORCE:
