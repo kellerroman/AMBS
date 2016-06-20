@@ -1,0 +1,13 @@
+testcases:
+   laminar Flate Plate
+   DIT (MILES, Smago)
+   Backward Facing Step
+
+Capabilities:
+   boundary conditions (from CGNS)
+   viscous fluxes
+   higher temporal order
+   multi-block
+   shared memory parallelism
+   MPI
+

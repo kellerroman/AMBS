@@ -46,7 +46,7 @@ contains
       end if
 
       if ( current_iteration <= 50 .or. &
-         & mod(current_iteration,100) == 0) then
+         & mod(current_iteration,residual_out) == 0) then
          residual_on_screen = .true.
       end if
 !         residual_on_screen = .true.

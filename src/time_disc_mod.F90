@@ -1,3 +1,4 @@
+module time_disc_mod   
    use const_mod
    use data_mod, only: block_type
 implicit none
@@ -14,20 +15,38 @@ contains
          do i = 1, ubound(block % residuals,1)
             block % residuals(i,j,k,:) = &
                +  block % CellFaceAreasI (i  ,j  ,k  ) &
-               *  block % fluxesI        (i  ,j  ,k  ,:) & 
+               *  ( block % fluxesI      (i  ,j  ,k  ,:) & 
+                  + block % visFluxesI   (i  ,j  ,k  ,:))&  
                -  block % CellFaceAreasI (i+1,j  ,k  ) &
-               *  block % fluxesI        (i+1,j  ,k  ,:) & 
+               *  ( block % fluxesI      (i+1,j  ,k  ,:) & 
+                  + block % visFluxesI   (i+1,j  ,k  ,:))& 
                +  block % CellFaceAreasJ (i  ,j  ,k  ) &
-               *  block % fluxesJ        (i  ,j  ,k  ,:) & 
+               *  ( block % fluxesJ      (i  ,j  ,k  ,:) & 
+                  + block % visFluxesJ   (i  ,j  ,k  ,:))& 
                -  block % CellFaceAreasJ (i  ,j+1,k  ) &
-               *  block % fluxesJ        (i  ,j+1,k  ,:) & 
+               *  ( block % fluxesJ      (i  ,j+1,k  ,:) & 
+                  + block % visFluxesJ   (i  ,j+1,k  ,:))& 
                +  block % CellFaceAreasK (i  ,j  ,k  ) &
-               *  block % fluxesK        (i  ,j  ,k  ,:) & 
+               *  ( block % fluxesK      (i  ,j  ,k  ,:) & 
+                  + block % visFluxesK   (i  ,j  ,k  ,:))& 
                -  block % CellFaceAreasK (i  ,j  ,k+1) &
-               *  block % fluxesK        (i  ,j  ,k+1,:)
+               *  ( block % fluxesK      (i  ,j  ,k+1,:)&
+                  + block % visFluxesK   (i  ,j  ,k+1,:))
             res = abs(block % residuals(i,j,k,1))
             res_avg = res_avg + res
             res_max = max(res_max,res)
+!            if ( i == 50 .and. j == 1) then
+!            write(*,*) i,j,k   
+!            write(*,*) "RHO",block % vars (i:i+1,j,k,1)
+!            write(*,*) "SPU",block % vars (i:i+1,j,k,2)
+!            write(*,*) "i  ",block % fluxesI        (i  ,j  ,k  ,1:3) 
+!            write(*,*) "i+1",block % fluxesI        (i+1,j  ,k  ,1:3) 
+!            write(*,*) "i+2",block % fluxesI        (i+2,j  ,k  ,1:3) 
+!            write(*,*) "j  ",block % fluxesJ        (i  ,j  ,k  ,1:3)  
+!            write(*,*) "j+1",block % fluxesJ        (i  ,j+1,k  ,1:3)  
+!            write(*,*) "Res",block % residuals(i,j,k,1:3)
+!            !stop
+!         end if
          end do
       end do
    end do
@@ -47,10 +66,25 @@ contains
                                        + block % residuals (i,j,k,:) &
                                        * block % volumes(i,j,k) & 
                                        * timestep
-            rho = block % cons_vars(i,j,k,1)
-            block % vars(i,j,k,1) = rho
-            block % vars(i,j,k,2:4) = block % cons_vars(i,j,k,2:4) / rho
-            block % vars(i,j,k,5) = block % cons_vars(i,j,k,5)
+            rho = block % cons_vars(i,j,k,VEC_RHO)
+            block % vars(i,j,k,VEC_RHO) = rho
+            block % vars(i,j,k,VEC_SPU:VEC_SPW) = block % cons_vars(i,j,k,VEC_SPU:VEC_SPW) / rho
+            block % vars(i,j,k,VEC_ENE) = block % cons_vars(i,j,k,VEC_ENE)
+            block % pressures(i,j,k) = (GAMMA - 1.0E0_REAL_KIND)         &
+                                     * (                                 &
+                                         block % vars(i,j,k,VEC_ENE)     &
+                                       - 0.5E0_REAL_KIND                 &
+                                       * rho                             &
+                                       * ( block % vars (i,j,k,VEC_SPU)  &
+                                         * block % vars (i,j,k,VEC_SPU)  & 
+                                         + block % vars (i,j,k,VEC_SPV)  &
+                                         * block % vars (i,j,k,VEC_SPV)  &
+                                         + block % vars (i,j,k,VEC_SPW)  &
+                                         * block % vars (i,j,k,VEC_SPW)  &
+                                         )                               &
+                                       )
+            block % temperatures (i,j,k) = block % pressures (i,j,k) & 
+                  / ( RGas * block % vars (i,j,k,1))
          end do
       end do
    end do

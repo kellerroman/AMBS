@@ -1,1 +1,1 @@
-plot "data_1d.csv" u 1:2 , "" u 1:6,"" u 1:10, "" u 1:14,  "" u 1:18, "" u 1:22, "" u 1:26, "" u 1:30, "" u 1:34, "" u 1:38, "str.dx" u 1:2
+plot "data_1d.csv" u 1:2 , "str.dx" u 1:2

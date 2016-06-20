@@ -3,13 +3,14 @@ CFLAGS=-g -fbacktrace
 CGNSlibs = /usr/lib/libcgns.so -lhdf5
 LIBS = $(CGNSlibs) -lm
 
+INCLUDE = -I/usr/include/
 
 EXECUTABLE_DIR = ../bin
 SOURCE_DIR = ../src
 
 _SCRIPT=pre_config make_dependencies
 
-_EXE= extract_1D
+_EXE= extract_1D sol2vtk
 
 EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
 SCRIPT = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_SCRIPT))
@@ -26,20 +27,23 @@ $(EXECUTABLE_DIR)/pre_config:
 
 
 $(EXECUTABLE_DIR)/extract_1D:$(SOURCE_DIR)/extract_1D.F90 file_io_mod.o const_mod.o cgns.o data_mod.o screen_io_mod.o control_mod.o
-	$(FC) $(CFLAGS) $^ $(LIBS) -o $@
+	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
+
+$(EXECUTABLE_DIR)/sol2vtk:$(SOURCE_DIR)/sol2vtk.F90 file_io_mod.o const_mod.o cgns.o data_mod.o screen_io_mod.o control_mod.o
+	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
 
 %.o:../../src/%.F90
-	$(FC) $(CFLAGS) $< -c
+	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 const_mod.o:../../src/const_mod.F90
-	$(FC) $(CFLAGS) $< -c
+	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 data_mod.o:../../src/data_mod.F90
-	$(FC) $(CFLAGS) $< -c
+	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 file_io_mod.o:../../src/file_io_mod.F90 screen_io_mod.o
-	$(FC) $(CFLAGS) $< -c
+	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 screen_io_mod.o:../../src/screen_io_mod.F90
-	$(FC) $(CFLAGS) $< -c
+	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 control_mod.o:../../src/control_mod.F90
-	$(FC) $(CFLAGS) $< -c
+	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 
 include ../../src/inc_Makefile_dep

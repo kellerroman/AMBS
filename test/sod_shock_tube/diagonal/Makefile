@@ -4,9 +4,13 @@ HOMEDIR=../../../
 
 CGNSlibs = /usr/lib/libcgns.so -lhdf5
 LIBS = $(CGNSlibs) -lm
+
+INCLUDE = -I/usr/include/
+CFLAGS = -std=f2008
+CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
+#CFLAGS += -DDEBUG #Unnecessary comments are oppressed
 CFLAGS += -O3
-CFLAGS += -fbounds-check -fcheck-array-temporaries -Wall
-#CFLAGS += -DDEBUG
+
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
 EXTRACT_1D=$(HOMEDIR)tools/bin/extract_1D
 PROGRAM=$(HOMEDIR)bin/AMBS
@@ -38,7 +42,7 @@ data_in.cgns: gridgen
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
 gridgen: gridgen.F90 cgnslib.o
-	$(FC) $(CFLAGS) $^ -o $@ $(LIBS)
+	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
 cgnslib.o: $(HOMEDIR)src/cgns.F90
 	$(FC) -c $(CFLAGS) $< -o $@ 

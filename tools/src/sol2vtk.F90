@@ -19,27 +19,14 @@ integer(kind=CGSIZE_T),allocatable :: isize(:,:),istart(:)
 character(len=32)  :: solname,cgns_git_basename
 character(len=*), parameter :: file_data_in = "data_out.cgns"
 character(len=32),allocatable  :: varname_in(:)
-character(len=*), parameter :: file_out = "data_1d.csv"
+character(len=*), parameter :: file_out = "data.vtk"
 real(REAL_KIND), allocatable :: temp_coord(:,:,:)
 integer :: var_dir = 1
 !< Welche Richtung soll variert werden
 
-write(*,*) "========== EXTRACT 1D SOLUTION =============="
+write(*,*) "========== SOLUTION 2 VTK  =================="
 nCell = 0
 i = 1
-DO
-   CALL get_command_argument(i, arg)
-   IF (LEN_TRIM(arg) == 0) EXIT
-   write(*,*) arg
-   if (trim(arg) == "x") then
-       var_dir = 1
-   else if (trim(arg) == "y") then
-       var_dir = 2
-   else if (trim(arg) == "xy") then
-       var_dir = 3
-   end if
-   i = i+1
-END DO
 
 inquire(file=trim(file_data_in),exist=fexists)
 
@@ -69,10 +56,6 @@ istart = 1
 
 call cg_nzones_f(cgns_file,cgns_base,nBlock,ierror)
 if (ierror /= CG_OK) call cg_error_exit_f()
-if (nBlock > 1) then
-   write(*,*) "Extract 1D nur möglich mit einem Block:",nBlock
-   stop 1
-end if
 allocate(blocks(nBlock))
 write(*,*) "Number of Blocks:", nBlock
 Write(*,'(A4,3(1X,A4))') "#Bl","NI","NJ","NK"
@@ -147,58 +130,77 @@ do b = 1,nBlock
 end do
 call cg_close_f(cgns_file,ierror)
 if (ierror /= CG_OK) call cg_error_exit_f()
-b = 1
-open(unit = fo , file = trim(file_out))
-if (var_dir == 1) then
-   i_start = 1
-   i_end   = blocks(b) % nCells(1)
-   j_start = max(1,blocks(b) % nCells(2) / 2)
-   j_end   = max(1,blocks(b) % nCells(2) / 2)
-   k = 1
-else if (var_dir == 2) then
-   i_start = max(1,blocks(b) % nCells(1) / 2)
-   i_end   = max(1,blocks(b) % nCells(1) / 2)
-   j_start = 1
-   j_end   = blocks(b) % nCells(2)
-   k = 1
-else if (var_dir == 3) then
-   i_start = 1
-   i_end   = blocks(b) % nCells(1)
-   j_start = max(1,blocks(b) % nCells(2) / 2)
-   j_end   = max(1,blocks(b) % nCells(2) / 2)
-   k = 1
-end if 
-write(fo,'(A20)',advance="no") "COORD"
-do var = 1,nVar_in
-   write(fo,'(",",A20)',advance="no") trim(VarName_in(var))
-end do
-write(fo,*)
-do i = i_start, i_end
-   if (var_dir == 3) then
-      j_start = i
-      j_end   = i
-   end if
-   do j = j_start, j_end
-      if (var_dir == 1) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) * 0.5d0
-      else if (var_dir == 2) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0
-      else if (var_dir == 3) then
-         write(fo ,'(F20.13)',advance = "no") sqrt((blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i,j+1,k,1)) * &
-                                                   (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i,j+1,k,1)) * 0.125D0&
-                                                 + (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * &
-                                                   (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.125D0)
-      end if
 
-      do var = 1,nVar_in*nSol
-         write(fo,'(",",F20.13)',advance = "no") blocks(b) % vars(i,j,k,var)
-      end do
-      write(fo,*)
-   end do
-end do
-write (fo,*) 
-close(fo)
-write(*,*) "========== EXTRACT 1D SOLUTION done ========="
+write(*,*) "========== SOLUTION 2 VTK  =================="
+contains
+    function vtk_blk_data(block,filename) result(err)
+    !---------------------------------------------------------------------------------------------------------------------------
+    ! Function for writing block data.
+    !---------------------------------------------------------------------------------------------------------------------------
+
+    !---------------------------------------------------------------------------------------------------------------------------
+    implicit none
+    type(block_type), intent(IN):: block    ! Block-level data.
+    character(*),      intent(IN)::    filename ! File name of the output block file.
+    integer(I_P)::                     err      ! Error trapping flag: 0 no errors, >0 error occurs.
+    integer(I_P)::         ni1,ni2,nj1,nj2,nk1,nk2                         ! Bounds of dimensions of node-centered data.
+    integer(I_P)::         ci1,ci2,cj1,cj2,ck1,ck2                         ! Bounds of dimensions of cell-centered data.
+    integer(I_P)::         nnode,ncell                                     ! Number of nodes and cells.
+    integer(I_P)::         i,j,k,s                                         ! Counters.
+    !---------------------------------------------------------------------------------------------------------------------------
+
+    !---------------------------------------------------------------------------------------------------------------------------
+    if (pp_format%node) then
+      ! tri-linear interpolation of cell-centered values at nodes
+      call interpolate_primitive(block=block,P=P)
+    endif
+    ! initialize the block dimensions
+    call compute_dimensions(block=block,                                     &
+                            ni1=ni1,ni2=ni2,nj1=nj1,nj2=nj2,nk1=nk1,nk2=nk2, &
+                            ci1=ci1,ci2=ci2,cj1=cj1,cj2=cj2,ck1=ck1,ck2=ck2)
+    nnode = (ni2-ni1+1)*(nj2-nj1+1)*(nk2-nk1+1)
+    ncell = (ci2-ci1+1)*(cj2-cj1+1)*(ck2-ck1+1)
+    ! storing species densities into an array for avoiding problems with nonzero rank pointer
+    ! initializing VTK file
+    err = VTK_INI_XML(output_format = 'binary',         &
+                      filename      = trim(filename),   &
+                      mesh_topology = 'StructuredGrid', &
+                      nx1 = ni1, nx2 = ni2,             &
+                      ny1 = nj1, ny2 = nj2,             &
+                      nz1 = nk1, nz2 = nk2)
+    ! saving auxiliary data (time and time step)
+    err = VTK_FLD_XML(fld_action='open')
+    err = VTK_FLD_XML(fld=block%global%t,fname='TIME')
+    err = VTK_FLD_XML(fld=block%global%n,fname='CYCLE')
+    err = VTK_FLD_XML(fld_action='close')
+    ! saving the geometry
+    err = VTK_GEO_XML(nx1 = ni1, nx2 = ni2,                    &
+                      ny1 = nj1, ny2 = nj2,                    &
+                      nz1 = nk1, nz2 = nk2,                    &
+                      NN = nnode,                              &
+                      X=block%node(ni1:ni2,nj1:nj2,nk1:nk2)%x, &
+                      Y=block%node(ni1:ni2,nj1:nj2,nk1:nk2)%y, &
+                      Z=block%node(ni1:ni2,nj1:nj2,nk1:nk2)%z)
+    if (.not.meshonly) then
+      ! saving dependent variables
+      err = VTK_DAT_XML(var_location = 'cell', var_block_action = 'open')
+      do s=1,global%Ns
+        err=VTK_VAR_XML(NC_NN=ncell,varname='r('//trim(str(.true.,s))//')',var=r(s,ci1:ci2,cj1:cj2,ck1:ck2))
+      enddo
+      err=VTK_VAR_XML(NC_NN=ncell,varname='r',var=block%C(ci1:ci2,cj1:cj2,ck1:ck2)%P%d  )
+      err=VTK_VAR_XML(NC_NN=ncell,varname='u',var=block%C(ci1:ci2,cj1:cj2,ck1:ck2)%P%v%x)
+      err=VTK_VAR_XML(NC_NN=ncell,varname='v',var=block%C(ci1:ci2,cj1:cj2,ck1:ck2)%P%v%y)
+      err=VTK_VAR_XML(NC_NN=ncell,varname='w',var=block%C(ci1:ci2,cj1:cj2,ck1:ck2)%P%v%z)
+      err=VTK_VAR_XML(NC_NN=ncell,varname='p',var=block%C(ci1:ci2,cj1:cj2,ck1:ck2)%P%p  )
+      err=VTK_VAR_XML(NC_NN=ncell,varname='g',var=block%C(ci1:ci2,cj1:cj2,ck1:ck2)%P%g  )
+      err=VTK_DAT_XML(var_location ='cell',var_block_action = 'close')
+    endif
+    ! closing VTK file
+    err = VTK_GEO_XML()
+    err = VTK_END_XML()
+    return
+    !---------------------------------------------------------------------------------------------------------------------------
+    endfunction vtk_blk_data
 end program extract_1D
 
 

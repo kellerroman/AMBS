@@ -1,4 +1,4 @@
-program extract_1D
+program flate_plate_extract
 use const_mod
 use data_mod
 !use control
@@ -14,32 +14,19 @@ integer :: j_start,j_end
 logical :: fexists
 integer(kind=CGSIZE_T) :: cgns_file,ierror,cgns_base,PhysDim,cgns_zone,zonetype
 integer(kind=CGSIZE_T) :: nSol,nVar_in,datatype,data_location,var,sol
-character(len = 100) :: arg
 integer(kind=CGSIZE_T),allocatable :: isize(:,:),istart(:)
 character(len=32)  :: solname,cgns_git_basename
 character(len=*), parameter :: file_data_in = "data_out.cgns"
 character(len=32),allocatable  :: varname_in(:)
 character(len=*), parameter :: file_out = "data_1d.csv"
 real(REAL_KIND), allocatable :: temp_coord(:,:,:)
-integer :: var_dir = 1
+real(REAL_KIND), allocatable :: grenzschicht_dicke(:)
+real(REAL_KIND) :: avg_vel,y1,y2,v1,v2
 !< Welche Richtung soll variert werden
 
 write(*,*) "========== EXTRACT 1D SOLUTION =============="
 nCell = 0
 i = 1
-DO
-   CALL get_command_argument(i, arg)
-   IF (LEN_TRIM(arg) == 0) EXIT
-   write(*,*) arg
-   if (trim(arg) == "x") then
-       var_dir = 1
-   else if (trim(arg) == "y") then
-       var_dir = 2
-   else if (trim(arg) == "xy") then
-       var_dir = 3
-   end if
-   i = i+1
-END DO
 
 inquire(file=trim(file_data_in),exist=fexists)
 
@@ -147,49 +134,54 @@ do b = 1,nBlock
 end do
 call cg_close_f(cgns_file,ierror)
 if (ierror /= CG_OK) call cg_error_exit_f()
+
 b = 1
+i = 1
+k = 1
+avg_vel = 0.0E0_REAL_KIND
+do j = 1, blocks(b) % nCells(2)
+   avg_vel = avg_vel + blocks(b) % vars(i,j,k,2)
+end do
+avg_vel = avg_vel / blocks(b) % nCells(2) 
+write(*,*) avg_vel
+allocate( grenzschicht_dicke(blocks(b) % nCells(1)))
+do i = 1, blocks(b) % nCells(1)
+!   avg_vel = 0.0E0_REAL_KIND
+!   do j = 1, blocks(b) % nCells(2)
+!      avg_vel = avg_vel + blocks(b) % vars(i,j,k,2)
+!   end do
+!   avg_vel = avg_vel / blocks(b) % nCells(2) 
+   do j = 1, blocks(b) % nCells(2)
+      if  ( blocks(b) % vars(i,j,k,2) >= 0.99E0_REAL_KIND * avg_vel) then
+         if (j > 1) then
+            y1 = 0.5E0_REAL_KIND * ( blocks(b) % coords(i,j,k,2) + blocks(b) % coords(i,j-1,k,2))
+            y2 = 0.5E0_REAL_KIND * ( blocks(b) % coords(i,j,k,2) + blocks(b) % coords(i,j+1,k,2))
+            v1 = blocks(b) % vars(i,j-1,k,2)
+            v2 = blocks(b) % vars(i,j  ,k,2)
+            grenzschicht_dicke(i) = y1 + (y2-y1) / (v2-v1) * (avg_vel-v1)
+         else
+            grenzschicht_dicke(i) = 0.0E0_REAL_KIND 
+            !* ( blocks(b) % coords(i,j,k,2) + blocks(b) % coords(k,j+1,k,2))
+         end if
+         exit
+      end if
+   end do
+   write(*,*) i,j, grenzschicht_dicke(i), blocks(b) % vars(i,j-1:j+1,k,2),avg_vel
+end do
+
 open(unit = fo , file = trim(file_out))
-if (var_dir == 1) then
    i_start = 1
    i_end   = blocks(b) % nCells(1)
-   j_start = max(1,blocks(b) % nCells(2) / 2)
-   j_end   = max(1,blocks(b) % nCells(2) / 2)
-   k = 1
-else if (var_dir == 2) then
-   i_start = max(1,blocks(b) % nCells(1) / 2)
-   i_end   = max(1,blocks(b) % nCells(1) / 2)
-   j_start = 1
-   j_end   = blocks(b) % nCells(2)
-   k = 1
-else if (var_dir == 3) then
-   i_start = 1
-   i_end   = blocks(b) % nCells(1)
-   j_start = max(1,blocks(b) % nCells(2) / 2)
-   j_end   = max(1,blocks(b) % nCells(2) / 2)
-   k = 1
-end if 
+   j_start = 1 !max(1,blocks(b) % nCells(2) / 2)
+   j_end   = 1 !max(1,blocks(b) % nCells(2) / 2)
 write(fo,'(A20)',advance="no") "COORD"
 do var = 1,nVar_in
    write(fo,'(",",A20)',advance="no") trim(VarName_in(var))
 end do
 write(fo,*)
 do i = i_start, i_end
-   if (var_dir == 3) then
-      j_start = i
-      j_end   = i
-   end if
    do j = j_start, j_end
-      if (var_dir == 1) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) * 0.5d0
-      else if (var_dir == 2) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0
-      else if (var_dir == 3) then
-         write(fo ,'(F20.13)',advance = "no") sqrt((blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i,j+1,k,1)) * &
-                                                   (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i,j+1,k,1)) * 0.125D0&
-                                                 + (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * &
-                                                   (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.125D0)
-      end if
-
+      write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) * 0.5d0
       do var = 1,nVar_in*nSol
          write(fo,'(",",F20.13)',advance = "no") blocks(b) % vars(i,j,k,var)
       end do
@@ -198,7 +190,25 @@ do i = i_start, i_end
 end do
 write (fo,*) 
 close(fo)
+open(unit = fo , file = "grenzschicht_dicke.csv")
+j = 1
+k = 1
+do i = 1, blocks(b) % nCells(1) 
+   write(fo,*) (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) * 0.5d0, grenzschicht_dicke(i) 
+end do
+deallocate ( grenzschicht_dicke)
+close(fo)
+
+
+
+
+open(unit = fo , file = "profile.csv")
+j = 1
+i = 1
+k = 1
+do j = blocks(b) % nCells(2),1,-1 
+write(fo,*) (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0,blocks(b) % vars(:,j,k,2) 
+end do
+close(fo)
 write(*,*) "========== EXTRACT 1D SOLUTION done ========="
-end program extract_1D
-
-
+end program flate_plate_extract

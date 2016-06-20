@@ -15,8 +15,7 @@ module file_io_mod
 !     datin_control : Read control file
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    use const_mod
-   use cgnslib
-   use cgns_types, only: CGSIZE_T
+   use cgns
    use screen_io_mod
 implicit none
    integer, parameter               :: io_len_VarName = 20
@@ -365,7 +364,7 @@ contains
       call cg_sol_write_f(cgns_file,cgns_base,cgns_zone,solname,CellCenter,cgns_sol,ierror)
 
       if (ierror /= CG_OK) call cg_error_exit_f()
-      do var = 1, 5!sol_out_nVar
+      do var = 1, 6!sol_out_nVar
          select case(var)!VarName(var))
             case(1)!VarName_Rho)
                cgns_varname = VarName_Rho
@@ -400,14 +399,22 @@ contains
 !               data_out = blocks(b) % T(1:block(b) % nCell(1)  &
 !                                      ,1:block(b) % nCell(2)  &
 !                                      ,1:block(b) % nCell(3))
-!            case(VarName_Mach)
-!               data_out = blocks(b) % Q(1:block(b) % nCell(1)  &
-!                                      ,1:block(b) % nCell(2)  &
-!                                      ,1:block(b) % nCell(3),2) &
-!                        / sqrt( gamma * RGas                      & 
-!                              * block(b) % T(1:block(b) % nCell(1)  &
-!                                            ,1:block(b) % nCell(2)  &
-!                                            ,1:block(b) % nCell(3)))
+            case(6)
+               cgns_varname = "Mach Number"
+               data_out = sqrt( &
+                          blocks(b) % vars(1:blocks(b) % nCells(1)  &
+                                          ,1:blocks(b) % nCells(2)  &
+                                          ,1:blocks(b) % nCells(3),2) ** 2 &
+                        + blocks(b) % vars(1:blocks(b) % nCells(1)  &
+                                          ,1:blocks(b) % nCells(2)  &
+                                          ,1:blocks(b) % nCells(3),3) ** 2 &
+                        + blocks(b) % vars(1:blocks(b) % nCells(1)  &
+                                          ,1:blocks(b) % nCells(2)  &
+                                          ,1:blocks(b) % nCells(3),4) ** 2)&
+                        / sqrt( gamma * RGas                      & 
+                              * blocks(b) % temperatures(1:blocks(b) % nCells(1)  &
+                                            ,1:blocks(b) % nCells(2)  &
+                                            ,1:blocks(b) % nCells(3)))
             end select
             
             call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble       &

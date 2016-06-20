@@ -1,8 +1,7 @@
 program gridgen
 
-use cgnslib
+use cgns
 
-USE cgns_types, ONLY: CGSIZE_T
 implicit none
 
 integer :: imax = 100

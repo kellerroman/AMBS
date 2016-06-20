@@ -1,8 +1,8 @@
 FC=gfortran
 
-HOMEDIR=../../../
+HOMEDIR=../../
 
-CGNSlibs = /usr/lib/libcgns.so -lhdf5
+CGNSlibs = -lcgns -lhdf5
 LIBS = $(CGNSlibs) -lm
 
 INCLUDE = -I/usr/include/
@@ -12,6 +12,8 @@ CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 CFLAGS += -O3
 
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
+#SOL2VTK=$(HOMEDIR)tools/bin/sol2vtk
+SOL2VTK=/usr/bin/cgnstools/cgns_to_vtk data_out.cgns
 PROGRAM=$(HOMEDIR)bin/AMBS
 
 .PHONY: all cmp run clean cp grid_inf show
@@ -24,19 +26,19 @@ cmp:
 
 	
 
-run: data_in.cgns 
-	@echo 'Running Grid-Adaper on simple Chamber'
-	@$(PRE_CONFIG)
-	@$(PROGRAM) 
+run: data_in.cgns config.bin
+	@$(PROGRAM) #-debug
+	@$(SOL2VTK)
 show:
 	@gnuplot -p plot.gnuplot
 
 data_in.cgns: gridgen
 	@./$<
-	
+
+config.bin: config.cfg	
+	@$(PRE_CONFIG)
 gridgen: gridgen.F90
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
-
 
 clean:
 	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv

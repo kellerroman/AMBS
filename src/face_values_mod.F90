@@ -83,7 +83,7 @@ contains
               faceVarsLeftJ (i,j,k,:) = ( cellvars(i,j  ,k,:) - cellvars(i,j-1,k,:) )  &
                                       / ( cellvars(i,j-1,k,:) - cellvars(i,j-2,k,:) + EPSI)
               faceVarsRightJ(i,j,k,:) = ( cellvars(i,j  ,k,:) - cellvars(i,j-1,k,:) )  &
-                                      / ( cellvars(i,j-1,k,:) - cellvars(i,j  ,k,:) + EPSI)
+                                      / ( cellvars(i,j+1,k,:) - cellvars(i,j  ,k,:) + EPSI)
             end do
          end do
       end do

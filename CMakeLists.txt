@@ -1,0 +1,5 @@
+cmake_minimum_required (VERSION 3.4)
+project (AMBS)
+enable_language (Fortran)
+file(GLOB SOURCES "src/*.F90")
+add_executable (AMBS ${SOURCES})

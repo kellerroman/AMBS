@@ -8,31 +8,31 @@ contains
    implicit none
    type(block_type), intent(inout) :: block
    if (riemann_solver == 1) then
-   call inviscid_roe_n( block % faceVarsLeftI     &
-                      , block % faceVarsRightI    &
-                      , block % CellFaceVecsI     &
-                      , block % fluxesI           )
-   call inviscid_roe_n( block % faceVarsLeftJ     &
-                      , block % faceVarsRightJ    &
-                      , block % CellFaceVecsJ     &
-                      , block % fluxesJ           )
-   call inviscid_roe_n( block % faceVarsLeftK     &
-                      , block % faceVarsRightK    &
-                      , block % CellFaceVecsK     &
-                      , block % fluxesK           )
+      call inviscid_roe_n( block % faceVarsLeftI     &
+                         , block % faceVarsRightI    &
+                         , block % CellFaceVecsI     &
+                         , block % fluxesI           )
+      call inviscid_roe_n( block % faceVarsLeftJ     &
+                         , block % faceVarsRightJ    &
+                         , block % CellFaceVecsJ     &
+                         , block % fluxesJ           )
+      call inviscid_roe_n( block % faceVarsLeftK     &
+                         , block % faceVarsRightK    &
+                         , block % CellFaceVecsK     &
+                         , block % fluxesK           )
    else
-   call lax_friedrich_n( block % faceVarsLeftI     &
-                      , block % faceVarsRightI    &
-                      , block % CellFaceVecsI     &
-                      , block % fluxesI           )
-   call lax_friedrich_n( block % faceVarsLeftJ     &
-                      , block % faceVarsRightJ    &
-                      , block % CellFaceVecsJ     &
-                      , block % fluxesJ           )
-   call lax_friedrich_n( block % faceVarsLeftK     &
-                      , block % faceVarsRightK    &
-                      , block % CellFaceVecsK     &
-                      , block % fluxesK           )
+      call lax_friedrich_n( block % faceVarsLeftI     &
+                         , block % faceVarsRightI    &
+                         , block % CellFaceVecsI     &
+                         , block % fluxesI           )
+      call lax_friedrich_n( block % faceVarsLeftJ     &
+                         , block % faceVarsRightJ    &
+                         , block % CellFaceVecsJ     &
+                         , block % fluxesJ           )
+      call lax_friedrich_n( block % faceVarsLeftK     &
+                         , block % faceVarsRightK    &
+                         , block % CellFaceVecsK     &
+                         , block % fluxesK           )
    end if
    end subroutine calc_fluxes
 
@@ -136,9 +136,9 @@ contains
     do k = 1, ubound(num_flux,3)
     do j = 1, ubound(num_flux,2)
     do i = 1, ubound(num_flux,1)
-     nx = njk(1,i,j,k)
-     ny = njk(2,i,j,k)
-     nz = njk(3,i,j,k)
+     nx = abs(njk(1,i,j,k))
+     ny = abs(njk(2,i,j,k))
+     nz = abs(njk(3,i,j,k))
    
    !Primitive and other variables.
    
@@ -149,8 +149,8 @@ contains
          wL = primL(i,j,k,4)
         qnL = uL*nx + vL*ny + wL*nz
 !         pL = primL(i,j,k,5)
-         pL = (gamma-one)*( primL(i,j,k,5) - half*rhoL*(uL*uL+vL*vL+wL*wL) )
-         aL = sqrt(gamma*pL/rhoL)
+         pL = (GAMMA-one)*( primL(i,j,k,5) - half*rhoL*(uL*uL+vL*vL+wL*wL) )
+         aL = sqrt(GAMMA*pL/rhoL)
 !         HL = aL*aL/(gamma-one) + half*(uL*uL+vL*vL+wL*wL)
          HL = ( primL(i,j,k,5) + pL ) / rhoL
    !  Right state
@@ -160,8 +160,8 @@ contains
          wR = primR(i,j,k,4)
         qnR = uR*nx + vR*ny + wR*nz
 !         pR = primR(i,j,k,5)
-         pR = (gamma-one)*( primR(i,j,k,5) - half*rhoR*(uR*uR+vR*vR+wR*wR) )
-         aR = sqrt(gamma*pR/rhoR)
+         pR = (GAMMA-one)*( primR(i,j,k,5) - half*rhoR*(uR*uR+vR*vR+wR*wR) )
+         aR = sqrt(GAMMA*pR/rhoR)
 !         HR = aR*aR/(gamma-one) + half*(uR*uR+vR*vR+wR*wR)
          HR = ( primR(i,j,k,5) + pR ) / rhoR
    
@@ -176,7 +176,7 @@ contains
         v = (vL + RT*vR)/(one + RT)                        !Roe-averaged y-velocity
         w = (wL + RT*wR)/(one + RT)                        !Roe-averaged z-velocity
         H = (HL + RT*HR)/(one + RT)                        !Roe-averaged total enthalpy
-        a = sqrt( (gamma-one)*(H-half*(u*u + v*v + w*w)) ) !Roe-averaged speed of sound
+        a = sqrt( (GAMMA-one)*(H-half*(u*u + v*v + w*w)) ) !Roe-averaged speed of sound
        qn = u*nx + v*ny + w*nz                             !Roe-averaged face-normal velocity
    
    !Wave Strengths
@@ -341,4 +341,3 @@ contains
    end do
    end subroutine lax_friedrich_n
 end module inv_fluxes_mod
-

@@ -1,84 +1,57 @@
 program gridgen
-
 use cgns
 
 implicit none
 
-integer :: imax = 100
-integer :: jmax = 100
-integer :: kmax = 100
-INTEGER, PARAMETER :: ioout = 10
+real(kind=8),parameter :: RGas = 287.102D0
+
+integer, parameter :: imax = 71
+integer, parameter :: jmax = 48
+integer, parameter :: kmax = 2
 integer, parameter :: Version = 1000
+INTEGER, PARAMETER :: ioout = 10
+
 integer, parameter :: Dimen = 3
 integer, parameter :: nBlock = 1
 integer, parameter :: nVar   = 4
 
-real(kind=8), parameter :: a2d = 180.0D0 / 3.1415927D0
-real(kind=8), parameter :: length = 1.0D0
-real(kind=8) :: winkel = 0.0D0
+integer, parameter :: bc(4) = (/-2,-3,-1,-4/)
 
-integer, parameter :: bc(4) = (/-2,-2,-4,-4/)
+real(kind=8) :: xyz (imax,jmax,kmax,Dimen)
+real(kind=8),allocatable :: vec (:,:,:,:)
+real(kind=8) :: p,gamma,rho,u,v,gm1,T
+
+integer :: i,j
 
 integer(kind = CGSIZE_T) :: ierror,cgns_file,cgns_base,cgns_zone,cgns_coord,cgns_var,cgns_sol
-character(len = 100) :: arg
-
-real(kind=8),allocatable :: xyz (:,:,:,:)
-real(kind=8),allocatable :: vec (:,:,:,:)
-real(kind=8) :: mat(2,2)
-real(kind=8) :: temp(dimen)
-
-
-integer :: i,j,k
 
 integer(kind=CGSIZE_T) :: isize (dimen,3)
 
-write(*,'(A)') "SIMPLE GRID GEN"
-i = 1
-DO
-   CALL get_command_argument(i, arg)
-   IF (LEN_TRIM(arg) == 0) EXIT
-   if( i == 1) read(arg,*) imax
-   if( i == 2) read(arg,*) winkel
-   i = i+1
-END DO
-write(*,'(A,X,I0,X,F5.2)') "AXIAL GRID RESOLUTION:",imax,winkel
-winkel = winkel / a2d
+write(*,*) "AIRFOIL converter"
 
-mat(1,1) = + cos(winkel)
-mat(2,1) = - sin(winkel)
-mat(1,2) = + sin(winkel)
-mat(2,2) = + cos(winkel)
-
-
-allocate(xyz (imax,jmax,kmax,Dimen))
+open(unit=2,file="fort.1.fine")
+do i = 1,imax
+    do j = 1, jmax
+        read(2,1000) xyz(i,j,1,1:2)
+        xyz(i,j,1,3) = 0.0D0
+        xyz(i,j,2,:) = xyz(i,j,1,:)
+        xyz(i,j,2,3) = xyz(i,j,1,3) + 2.0D-2
+    end do
+    read(2,2000)
+end do
+close(2)
 allocate(vec (imax-1,jmax-1,kmax-1,nVar ))
-do k = 1,kmax
-   do j = 1,jmax
-      do i = 1,imax
-         xyz(i,j,k,1) = length/dble(imax-1) * dble(i-1)
-   
-         xyz(i,j,k,2) = length/dble(imax-1) * dble(j-1)
-         xyz(i,j,k,3) = length/dble(imax-1) * dble(k-1)
-         temp = xyz(i,j,k,:)
-         xyz(i,j,k,1) = mat(1,1) * temp(1) + mat(2,1) * temp(2)
-         xyz(i,j,k,2) = mat(1,2) * temp(1) + mat(2,2) * temp(2)
-   
-      end do
-   end do
-end do
-do k = 1, kmax-1
-   do j = 1,jmax-1
-      do i = 1,imax-1
-         vec(i,j,k,1  ) = 1.0D0
-         vec(i,j,k,2:3) = 0.0D0
-         vec(i,j,k,4  ) = 1.0D0 / 0.4D0
-         if (i+j+k > 1.5*jmax) then
-            vec(i,j,k,1) = 0.125D0
-            vec(i,j,k,4) = 0.1D0 / 0.4D0
-         end if
-      end do
-   end do
-end do
+Gamma  = 1.4D0
+gm1 = gamma - 1.0D0
+rho = 0.01d0
+u = 694.44d0
+v = 0.0D0
+T = 300.0D0
+p = rho * T * RGas
+vec(:,:,:,1) = rho
+vec(:,:,:,2) = u 
+vec(:,:,:,3) = v
+vec(:,:,:,4) = p / gm1 + 0.5D0*rho*(u*u+v*v)
 
 call cg_open_f("data_in.cgns",CG_MODE_WRITE,cgns_file,ierror)
 if (ierror /= CG_OK) call cg_error_exit_f()
@@ -118,6 +91,7 @@ call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble         
 
 call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble         &
          ,"Geschw_W",vec(:,:,:,3),cgns_var,ierror)
+
 call cg_field_write_f(cgns_file,cgns_base,cgns_zone,cgns_sol,RealDouble         &
          ,"Energie",vec(:,:,:,4),cgns_var,ierror)
 
@@ -127,15 +101,18 @@ call cg_close_f(cgns_file,ierror)
 if (ierror /= CG_OK) call cg_error_exit_f()
 
 
+
 open (ioout,file="bc.bin",form="unformatted",access="stream",status="replace")
+
 write (ioout) Version,Dimen,nBlock
+
 i = 3*4
 write(ioout) i
+
 write (ioout)  bc
 close (ioout)
+write(*,*) "done"
 
-
-
-write(*,'(A)') "done"
-
+1000 format(1x,e11.4,5x,e11.4)
+2000 format (1x)
 end program

@@ -1,8 +1,7 @@
 program gridgen
 
-use cgnslib
+use cgns
 
-USE cgns_types, ONLY: CGSIZE_T
 implicit none
 
 integer :: imax = 101
@@ -42,7 +41,7 @@ DO
    if( i == 2) read(arg,*) winkel
    i = i+1
 END DO
-write(*,'(A,X,I0,X,F5.2)') "AXIAL GRID RESOLUTION:",imax,winkel
+write(*,'(A,1X,I0,1X,F5.2)') "AXIAL GRID RESOLUTION:",imax,winkel
 winkel = winkel / a2d
 
 mat(1,1) = + cos(winkel)
