@@ -5,7 +5,7 @@ testcases:
 
 Capabilities:
    boundary conditions (from CGNS)
-   viscous fluxes
++  viscous fluxes
    higher temporal order
    multi-block
    shared memory parallelism

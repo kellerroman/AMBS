@@ -1,0 +1,248 @@
+<!-- A User's Guide to CGNS - Example Computer Codes -->
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link href="CGNS%20-%20Example%20Computer%20Codes_files/user.css" rel="stylesheet" type="text/css">
+<title> A User's Guide to CGNS - Example Computer Codes</title>
+</head>
+
+<body alink="#FF0000" bgcolor="#FFFFFF" link="#0000EE" text="#000000" vlink="#551A8B">
+
+<a href="#endnav"><img src="CGNS%20-%20Example%20Computer%20Codes_files/blank.gif" alt="Skip navigation links" border="0"></a>
+<small>
+<center>
+(<a href="http://cgns.github.io/CGNS_docs_current/index.html"><b>CGNS&nbsp;Documentation&nbsp;Home&nbsp;Page</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/charter/index.html"><b>Steering&nbsp;Committee&nbsp;Charter</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/overview/index.html"><b>Overview&nbsp;and&nbsp;Entry-Level&nbsp;Document</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/index.html"><span class="nav"><b>A&nbsp;User's&nbsp;Guide&nbsp;to&nbsp;CGNS</b></span></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/midlevel/index.html"><b>Mid-Level&nbsp;Library</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/sids/index.html"><b>Standard&nbsp;Interface&nbsp;Data&nbsp;Structures</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/filemap/index.html"><b>SIDS&nbsp;File&nbsp;Mapping&nbsp;Manual</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/cgio/index.html"><b>CGIO&nbsp;User's&nbsp;Guide</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/pcgns/index.html"><b>Parallel&nbsp;CGNS&nbsp;User's&nbsp;Guide</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/adf/index.html"><b>ADF&nbsp;Implementation</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/hdf5/index.html"><b>HDF5&nbsp;Implementation</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/python/index.html"><b>Python&nbsp;Implementation</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/cgnstools/index.html"><b>CGNS&nbsp;Tools&nbsp;and&nbsp;Utilities</b></a>)
+<br><br>
+(<a href="http://cgns.github.io/CGNS_docs_current/user/intro.html"><b>Introduction</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/started.html"><b>Getting&nbsp;Started</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/additional.html"><b>Additional&nbsp;Information</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/trouble.html"><b>Troubleshooting</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/faq.html"><b>Frequently&nbsp;Asked&nbsp;Questions</b></a>)
+(<span class="nav"><b>Example&nbsp;Computer&nbsp;Codes</b></span>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/sids.html"><b>Overview&nbsp;of&nbsp;the&nbsp;SIDS</b></a>)
+(<a href="http://cgns.github.io/CGNS_docs_current/user/plot3d.html"><b>Guideline&nbsp;for&nbsp;PLOT3D&nbsp;Variables</b></a>)
+</center>
+</small>
+<a name="endnav"></a>
+
+<h2>Example Computer Codes</h2>
+
+The following computer codes are complete, workable versions of the codes
+mentioned in the text of this User's Guide (plus some that are
+not mentioned).  They can be obtained from the
+<a href="http://www.cgns.org/">CGNS site</a>
+<img src="CGNS%20-%20Example%20Computer%20Codes_files/external.png" alt="external link">.
+They read and write very simple example CGNS files, in order to help
+the user understand the CGNS concepts as well as the usage of the API calls.
+Instructions for compiling them on LINUX systems is contained in comment
+lines in each program. 
+The following codes are written in both FORTRAN and C.
+
+Note that these programs are very unsophisticated, purposefully
+for ease of readability.  Real working codes would be written more
+generally, with more checks, and would <em>not</em> be as hardwired for
+particular cases. The codes are listed here by corresponding section.
+
+<h3>Structured Grid</h3>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:singlegrid">Single-Zone Structured Grid</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_grid_str.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes grid
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>write_grid_str.c</tt></td><td>
+   </td><td>writes grid (C-program example)
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_grid_str.f</tt></td><td>
+   </td><td>reads grid
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:flowsoln">Single-Zone Structured Grid and Flow Solution</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_flowvert_str.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes vertex-based flow solution
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_flowvert_str.f</tt></td><td>
+   </td><td>reads vertex-based flow solution
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>write_flowcent_str.f</tt></td><td>
+   </td><td>writes cell centered flow solution
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_flowcent_str.f</tt></td><td>
+   </td><td> reads cell centered flow solution
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>write_flowcentrind_str.f</tt></td><td>
+   </td><td>writes cell centered flow solution with rind cells
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_flowcentrind_str.f</tt></td><td>
+   </td><td>reads cell centered flow solution with rind cells
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:bcstruct">Single-Zone Structured Grid with Boundary Conditions</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_bc_str.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes <tt>PointRange</tt> boundary condition patches
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_bc_str.f</tt></td><td>
+   </td><td>reads <tt>PointRange</tt> boundary condition patches
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>write_bcpnts_str.f</tt></td><td>
+   </td><td>writes <tt>PointList</tt> boundary condition patches
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_bcpnts_str.f</tt></td><td>
+   </td><td>reads <tt>PointList</tt> boundary condition patches
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:str1to1">Multi-Zone Structured Grid with 1-to-1 Connectivity</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_grid2zn_str.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes 2-zone grid
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_grid2zn_str.f</tt></td><td>
+   </td><td>reads 2-zone grid
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>write_con2zn_str.f</tt></td><td>
+   </td><td>writes 1-to-1 connectivity for 2-zone example
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_con2zn_str.f</tt></td><td>
+   </td><td>reads 1-to-1 connectivity for 2-zone example
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>write_con2zn_genrl_str.f</tt></td><td>
+   </td><td>writes general 1-to-1 connectivity for 2-zone example
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_con2zn_genrl_str.f</tt></td><td>
+   </td><td>reads general 1-to-1 connectivity for 2-zone example
+</td></tr></tbody></table>
+
+<h3>Unstructured Grid</h3>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:unstrgrid">Single-Zone Unstructured Grid</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_grid_unst.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes grid
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_grid_unst.f</tt></td><td>
+   </td><td>reads grid
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:unstrflow">Single-Zone Unstructured Grid and Flow Solution</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_flowvert_unst.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes vertex-based flow solution
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_flowvert_unst.f</tt></td><td>
+   </td><td>reads vertex-based flow solution
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/started.html#sec:bcunstr">Single-Zone Unstructured Grid with Boundary Conditions</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_bcpnts_unst.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes <tt>PointList</tt> boundary condition patches (<tt>FaceCenter</tt>)
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_bcpnts_unst.f</tt></td><td>
+   </td><td>reads <tt>PointList</tt> boundary condition patches (<tt>FaceCenter</tt>)
+</td></tr></tbody></table>
+
+<h3>General</h3>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/additional.html#sec:converge">Convergence History</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_convergence.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes convergence history
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_convergence.f</tt></td><td>
+   </td><td>reads convergence history
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/additional.html#sec:descript">Descriptor Nodes</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_descriptor.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes descriptor node under <tt>CGNSBase_t</tt>
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_descriptor.f</tt></td><td>
+   </td><td>reads descriptor node under <tt>CGNSBase_t</tt>
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/additional.html#sec:dimens">Dimensional Data</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_dimensional.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes dimensional data to an existing grid + flow solution
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_dimensional.f</tt></td><td>
+   </td><td>reads dimensional data from an existing grid + flow solution
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/additional.html#sec:nondimens">Nondimensional Data</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_nondimensional.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes nondimensional data to an existing CGNS file
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_nondimensional.f</tt></td><td>
+   </td><td>reads nondimensional data from an existing CGNS file
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/additional.html#sec:floweqns">Flow Equation Sets</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_floweqn_str.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes flow equation information for structured example
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_floweqn_str.f</tt></td><td>
+   </td><td>reads flow equation information for structured example
+</td></tr></tbody></table>
+
+<h4><a href="http://cgns.github.io/CGNS_docs_current/user/additional.html#sec:timedep">Time-Dependent Data</a></h4>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="baseline"><td><tt>&nbsp;&nbsp;&nbsp;</tt>
+   </td><td><tt>write_timevert_str.f</tt></td><td><tt>&nbsp;&nbsp;</tt>
+   </td><td>writes time-dependent flow soln (as Vertex) for structured example
+</td></tr><tr valign="baseline"><td>
+   </td><td><tt>read_timevert_str.f</tt></td><td>
+   </td><td>reads time-dependent flow soln (as Vertex) for structured example
+</td></tr></tbody></table>
+
+<p>
+</p><hr size="4" width="75%">
+<div class="footer">
+<!--#include virtual="../include/footer_small.html" -->
+Last updated 20 May 2015
+
+
+
+</div></body></html>
