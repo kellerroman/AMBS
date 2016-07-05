@@ -23,7 +23,7 @@ real(kind=8) :: p,gamma,rho,u,v,gm1,T
 
 integer :: i,j
 
-integer(kind = CGSIZE_T) :: ierror,cgns_file,cgns_base,cgns_zone,cgns_coord,cgns_var,cgns_sol
+integer :: ierror,cgns_file,cgns_base,cgns_zone,cgns_coord,cgns_var,cgns_sol
 
 integer(kind=CGSIZE_T) :: isize (dimen,3)
 

@@ -119,9 +119,9 @@ contains
    implicit none
       integer :: ib, d
       logical :: fexists
-      integer(kind=CGSIZE_T) :: cgns_file,ierror,cgns_base,cgns_physDim,cgns_zone,zonetype
-      integer(kind=CGSIZE_T) :: cgns_nSol,nVar_in,datatype,data_location,var,cgns_dimen
-      integer(kind=CGSIZE_T) :: cgns_nBlock
+      integer :: cgns_file,ierror,cgns_base,cgns_physDim,cgns_zone,zonetype
+      integer :: cgns_nSol,nVar_in,datatype,data_location,var,cgns_dimen
+      integer :: cgns_nBlock
       
       integer(kind=CGSIZE_T),allocatable :: isize(:,:),istart(:)
       character(len=32)  :: cgns_solname,varname_in
@@ -270,8 +270,8 @@ contains
    implicit none
       integer :: b, d, var
       character(len=32)  :: solname
-      integer(kind=CGSIZE_T) :: cgns_file,cgns_coord,cgns_sol,cgns_var,ierror
-      integer(kind=CGSIZE_T) :: cgns_base,cgns_zone
+      integer :: cgns_file,cgns_coord,cgns_sol,cgns_var,ierror
+      integer :: cgns_base,cgns_zone
 !      integer(kind=CGSIZE_T) :: nVar_in
       
       integer(kind=CGSIZE_T),allocatable :: isize(:,:)

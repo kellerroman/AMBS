@@ -12,8 +12,8 @@ integer :: i_start,i_end
 integer :: j_start,j_end
 
 logical :: fexists
-integer(kind=CGSIZE_T) :: cgns_file,ierror,cgns_base,PhysDim,cgns_zone,zonetype
-integer(kind=CGSIZE_T) :: nSol,nVar_in,datatype,data_location,var,sol
+integer :: cgns_file,ierror,cgns_base,PhysDim,cgns_zone,zonetype
+integer :: nSol,nVar_in,datatype,data_location,var,sol
 character(len = 100) :: arg
 integer(kind=CGSIZE_T),allocatable :: isize(:,:),istart(:)
 character(len=32)  :: solname,cgns_git_basename
