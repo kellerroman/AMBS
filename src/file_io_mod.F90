@@ -121,8 +121,8 @@ contains
       logical :: fexists
       integer :: cgns_file,ierror,cgns_base,cgns_physDim,cgns_zone,zonetype
       integer :: cgns_nSol,nVar_in,datatype,data_location,var,cgns_dimen
-      integer :: cgns_nBlock,npts,normallistflag
-      integer(kind=CGSIZE_T) :: ipnts(3,2)
+      integer :: cgns_nBlock
+      integer(kind=CGSIZE_T) :: ipnts(3,2),npts,normallistflag
       integer                :: normalindex(3)
       integer                :: normallist,ndataset,normaldatatype,iptset,ibocotype
       integer                :: cgns_nBoco
