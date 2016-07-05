@@ -117,16 +117,21 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    use data_mod
    implicit none
-      integer :: ib, d
+      integer :: ib, d,ibb
       logical :: fexists
       integer(kind=CGSIZE_T) :: cgns_file,ierror,cgns_base,cgns_physDim,cgns_zone,zonetype
       integer(kind=CGSIZE_T) :: cgns_nSol,nVar_in,datatype,data_location,var,cgns_dimen
       integer(kind=CGSIZE_T) :: cgns_nBlock
+      integer(kind=CGSIZE_T) :: ipnts(3,2),npts,normallistflag
+      integer                :: normalindex(3)
+      integer                :: normallist,ndataset,normaldatatype,iptset,ibocotype
+      integer                :: cgns_nBoco
       
       integer(kind=CGSIZE_T),allocatable :: isize(:,:),istart(:)
       character(len=32)  :: cgns_solname,varname_in
       character(len=32)  :: cgns_zonename
       character(len=32)  :: cgns_basename
+      character(len=32)  :: cgns_boconame
 !      real(kind=dp) :: T
       real(REAL_KIND), allocatable :: data_in(:,:,:)
       nCell = 0
@@ -247,7 +252,43 @@ contains
                end select
           end do
           deallocate(data_in)
-      end associate
+         !  find out number of BCs that exist under this zone
+          call cg_nbocos_f(cgns_file,cgns_base,cgns_zone,cgns_nBoco,ierror)
+         !  do loop over the total number of BCs
+          do ibb = 1, cgns_nBoco
+         !  get BC info
+            call cg_boco_info_f(cgns_file,cgns_base,cgns_zone,ibb,               &
+                 cgns_boconame,ibocotype,iptset,npts,normalindex,normallistflag,        &
+                 normaldatatype,ndataset,ierror)
+            if (iptset .ne. PointRange) then
+              write(6,'(" Error.  For this program, BCs must be set",            &
+              &" up as PointRange type",a32)') PointSetTypeName(iptset)
+              stop 1
+            end if
+            write(6,'('' BC number: '',i5)') ibb
+            write(6,'(''    name='',a32)') cgns_boconame
+            write(6,'(''    type='',a32)') BCTypeName(ibocotype)
+            !  read point range in here
+            call cg_boco_read_f(cgns_file,cgns_base,cgns_zone,ibb,               &
+                 ipnts,normallist,ierror)
+            write(6,'(''    i-range='',2i5)') ipnts(1,1),ipnts(1,2)
+            write(6,'(''    j-range='',2i5)') ipnts(2,1),ipnts(2,2)
+            write(6,'(''    k-range='',2i5)') ipnts(3,1),ipnts(3,2)
+            select case (ibocotype) 
+            case (BCInflow)
+               b % boundary(ibb) % bc_type = BC_INFLOW
+            case (BCOutflow)
+               b % boundary(ibb) % bc_type = BC_OUTFLOW
+            case (BCWall)
+               b % boundary(ibb) % bc_type = BC_WALL
+            case (BCSymmetryPlane)
+               b % boundary(ibb) % bc_type = BC_SYMMETRY
+            case default
+               write(*,*) "BCType unknown"
+               stop 1
+            end select
+          enddo
+       end associate
        end do
       call cg_close_f(cgns_file,ierror)
       if (ierror /= CG_OK) call cg_error_exit_f()

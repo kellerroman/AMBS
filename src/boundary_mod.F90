@@ -37,12 +37,12 @@ contains
          block % heatKoeffs   (:,:,i)                    = block % heatKoeffs   (:,:,1)
          block % heatKoeffs   (:,:,block % nPkts(3)-i)   = block % heatKoeffs   (:,:,block % nCells(3))
       end do
-      block % boundary(DIR_EAST ) % bc_type = BC_OUTFLOW
-      block % boundary(DIR_WEST ) % bc_type = BC_INFLOW
-      block % boundary(DIR_SOUTH) % bc_type = BC_WALL
-      block % boundary(DIR_NORTH) % bc_type = BC_SYMMETRY
-      block % boundary(DIR_FRONT) % bc_type = BC_SYMMETRY
-      block % boundary(DIR_BACK ) % bc_type = BC_SYMMETRY
+!      block % boundary(DIR_EAST ) % bc_type = BC_OUTFLOW
+!      block % boundary(DIR_WEST ) % bc_type = BC_INFLOW
+!      block % boundary(DIR_SOUTH) % bc_type = BC_WALL
+!      block % boundary(DIR_NORTH) % bc_type = BC_SYMMETRY
+!      block % boundary(DIR_FRONT) % bc_type = BC_SYMMETRY
+!      block % boundary(DIR_BACK ) % bc_type = BC_SYMMETRY
    end subroutine init_boundary
    subroutine set_boundary(block,nBoundaryCells)
    implicit none
