@@ -254,6 +254,9 @@ contains
           deallocate(data_in)
          !  find out number of BCs that exist under this zone
           call cg_nbocos_f(cgns_file,cgns_base,cgns_zone,cgns_nBoco,ierror)
+          if (cgns_nBoco /= 6) then
+            call error_wr(" Not enough Boundary Conditions in CGNS File",__FILE__,__LINE__) 
+          end if 
          !  do loop over the total number of BCs
           do ibb = 1, cgns_nBoco
          !  get BC info
@@ -284,8 +287,7 @@ contains
             case (BCSymmetryPlane)
                b % boundary(ibb) % bc_type = BC_SYMMETRY
             case default
-               write(*,*) "BCType unknown"
-               stop 1
+               call error_wr("BYType unknown: "//trim(BCTypeName(ibocotype)),__FILE__,__LINE__) 
             end select
           enddo
        end associate
