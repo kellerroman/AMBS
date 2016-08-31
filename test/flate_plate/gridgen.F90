@@ -7,16 +7,10 @@ integer, parameter :: imax = 100
 integer, parameter :: jmax = 30
 integer, parameter :: kmax = 2
 
-integer, parameter :: Version = 1000
-INTEGER, PARAMETER :: ioout = 10
-
 integer, parameter :: Dimen = 3
-integer, parameter :: nBlock = 1
 integer, parameter :: nVar   = 4
 
 real(kind=8),parameter :: RGas = 287.102D0
-
-integer, parameter :: bc(4) = (/-2,-3,-1,-4/)
 
 real(kind=8) :: xyz (imax,jmax,kmax,Dimen)
 real(kind=8),allocatable :: vec (:,:,:,:)
@@ -24,12 +18,12 @@ real(kind=8) :: p,gamma,rho,u,v,gm1,t,dy,ma
 
 integer :: i,j
 
-integer(kind = CGSIZE_T) :: ierror,cgns_file,cgns_base,cgns_zone,cgns_coord,cgns_var,cgns_sol,cgns_bc
+integer :: ierror,cgns_file,cgns_base,cgns_zone,cgns_coord,cgns_var,cgns_sol,cgns_bc
 
 integer(kind=CGSIZE_T) :: isize (dimen,3)
 integer(kind=CGSIZE_T) :: ibc   (dimen,2,6)
 
-write(*,*) "AIRFOIL converter"
+write(*,*) "Flate PLate Grid geneerator"
 dy = 1.0D-4
 do i = 1,imax
     dy = 5.0D-5
@@ -179,17 +173,6 @@ call cg_close_f(cgns_file,ierror)
 
 if (ierror /= CG_OK) call cg_error_exit_f()
 
-
-
-open (ioout,file="bc.bin",form="unformatted",access="stream",status="replace")
-
-write (ioout) Version,Dimen,nBlock
-
-i = 3*4
-write(ioout) i
-
-write (ioout)  bc
-close (ioout)
 write(*,*) "done"
 
 end program

@@ -126,6 +126,7 @@ contains
       integer                :: normalindex(3)
       integer                :: normallist,ndataset,normaldatatype,iptset,ibocotype
       integer                :: cgns_nBoco
+      integer                :: dir_of_boundary
       
       integer(kind=CGSIZE_T),allocatable :: isize(:,:),istart(:)
       character(len=32)  :: cgns_solname,varname_in
@@ -264,28 +265,45 @@ contains
                  cgns_boconame,ibocotype,iptset,npts,normalindex,normallistflag,        &
                  normaldatatype,ndataset,ierror)
             if (iptset .ne. PointRange) then
-              write(6,'(" Error.  For this program, BCs must be set",            &
-              &" up as PointRange type",a32)') PointSetTypeName(iptset)
-              stop 1
+              call error_wr("Error.  For this program, BCs must be set"// &
+                            " up as PointRange type"//&
+                            trim(PointSetTypeName(iptset)),__FILE__,__LINE__)
             end if
-            write(6,'('' BC number: '',i5)') ibb
-            write(6,'(''    name='',a32)') cgns_boconame
-            write(6,'(''    type='',a32)') BCTypeName(ibocotype)
             !  read point range in here
             call cg_boco_read_f(cgns_file,cgns_base,cgns_zone,ibb,               &
                  ipnts,normallist,ierror)
-            write(6,'(''    i-range='',2i5)') ipnts(1,1),ipnts(1,2)
-            write(6,'(''    j-range='',2i5)') ipnts(2,1),ipnts(2,2)
-            write(6,'(''    k-range='',2i5)') ipnts(3,1),ipnts(3,2)
+            dir_of_boundary = -1
+            if      (ipnts(1,1) == 1 .and. ipnts(1,2) == 1 ) then
+               dir_of_boundary = DIR_WEST
+            else if (ipnts(1,1) == b % nCells(1) .and. ipnts(1,2) == b % nCells(1) ) then
+               dir_of_boundary = DIR_EAST
+            else if (ipnts(2,1) == 1 .and. ipnts(2,2) == 1 ) then
+               dir_of_boundary = DIR_SOUTH
+            else if (ipnts(2,1) == b % nCells(2) .and. ipnts(2,2) == b % nCells(2) ) then
+               dir_of_boundary = DIR_NORTH
+            else if (ipnts(3,1) == 1 .and. ipnts(3,2) == 1 ) then
+               dir_of_boundary = DIR_FRONT
+            else if (ipnts(3,1) == b % nCells(3) .and. ipnts(3,2) == b % nCells(3) ) then
+               dir_of_boundary = DIR_BACK
+            else 
+               call error_wr("Boundary not in any direcion",__FILE__,__LINE__)
+            end if
+            write(6,'("dir: ",a6," type: ",a15," range=",3(1x,2i5))') &
+                   DIR_NAMES(dir_of_boundary), trim(BCTypeName(ibocotype)) &
+                  ,ipnts(1,1),ipnts(1,2) &
+                  ,ipnts(2,1),ipnts(2,2) &
+                  ,ipnts(3,1),ipnts(3,2)
             select case (ibocotype) 
             case (BCInflow)
-               b % boundary(ibb) % bc_type = BC_INFLOW
+               b % boundary(dir_of_boundary) % bc_type = BC_INFLOW
             case (BCOutflow)
-               b % boundary(ibb) % bc_type = BC_OUTFLOW
+               b % boundary(dir_of_boundary) % bc_type = BC_OUTFLOW
             case (BCWall)
-               b % boundary(ibb) % bc_type = BC_WALL
+               b % boundary(dir_of_boundary) % bc_type = BC_WALL
             case (BCSymmetryPlane)
-               b % boundary(ibb) % bc_type = BC_SYMMETRY
+               b % boundary(dir_of_boundary) % bc_type = BC_SYMMETRY
+            case (BCGeneral)
+               b % boundary(dir_of_boundary) % bc_type = BC_PERIODIC
             case default
                call error_wr("BYType unknown: "//trim(BCTypeName(ibocotype)),__FILE__,__LINE__) 
             end select
