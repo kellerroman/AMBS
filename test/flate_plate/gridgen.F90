@@ -10,6 +10,7 @@ integer, parameter :: kmax = 2
 integer, parameter :: Dimen = 3
 integer, parameter :: nVar   = 4
 
+integer(kind=CGSIZE_T),parameter :: CG_NPKT = 2
 real(kind=8),parameter :: RGas = 287.102D0
 
 real(kind=8) :: xyz (imax,jmax,kmax,Dimen)
@@ -123,7 +124,7 @@ ibc(3,1,1)  = 1
 ibc(1,2,1)  = 1
 ibc(2,2,1)  = jmax - 1
 ibc(3,2,1)  = kmax - 1
-call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'WEST',BCInflow,PointRange,2,ibc(:,:,1),cgns_bc,ierror)
+call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'WEST',BCInflow,PointRange,CG_NPKT,ibc(:,:,1),cgns_bc,ierror)
 
 !!! EAST OUTFLOW
 ibc(1,1,2)  = imax - 1
@@ -132,7 +133,7 @@ ibc(3,1,2)  = 1
 ibc(1,2,2)  = imax - 1
 ibc(2,2,2)  = jmax - 1
 ibc(3,2,2)  = kmax - 1
-call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'EAST',BCOutflow,PointRange,2,ibc(:,:,2),cgns_bc,ierror)
+call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'EAST',BCOutflow,PointRange,CG_NPKT,ibc(:,:,2),cgns_bc,ierror)
 
 !!! SOUTH WALL
 ibc(1,1,3)  = 1
@@ -141,7 +142,7 @@ ibc(3,1,3)  = 1
 ibc(1,2,3)  = imax - 1
 ibc(2,2,3)  = 1
 ibc(3,2,3)  = kmax - 1
-call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'SOUTH',BCWall,PointRange,2,ibc(:,:,3),cgns_bc,ierror)
+call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'SOUTH',BCWall,PointRange,CG_NPKT,ibc(:,:,3),cgns_bc,ierror)
 
 !!! WEST INFLOW
 ibc(1,1,4)  = 1
@@ -150,7 +151,7 @@ ibc(3,1,4)  = 1
 ibc(1,2,4)  = imax - 1
 ibc(2,2,4)  = jmax - 1
 ibc(3,2,4)  = kmax - 1
-call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'NORTH',BCOutflow,PointRange,2,ibc(:,:,4),cgns_bc,ierror)
+call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'NORTH',BCOutflow,PointRange,CG_NPKT,ibc(:,:,4),cgns_bc,ierror)
 
 !!! WEST INFLOW
 ibc(1,1,5)  = 1
@@ -159,7 +160,7 @@ ibc(3,1,5)  = 1
 ibc(1,2,5)  = imax - 1
 ibc(2,2,5)  = jmax - 1
 ibc(3,2,5)  = 1
-call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'FRONT',BCSymmetryPlane,PointRange,2,ibc(:,:,5),cgns_bc,ierror)
+call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'FRONT',BCSymmetryPlane,PointRange,CG_NPKT,ibc(:,:,5),cgns_bc,ierror)
 
 !!! WEST INFLOW
 ibc(1,1,6)  = 1
@@ -168,7 +169,7 @@ ibc(3,1,6)  = kmax - 1
 ibc(1,2,6)  = imax - 1
 ibc(2,2,6)  = jmax - 1
 ibc(3,2,6)  = kmax - 1
-call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'BACK',BCSymmetryPlane,PointRange,2,ibc(:,:,6),cgns_bc,ierror)
+call cg_boco_write_f(cgns_file,cgns_base,cgns_zone,'BACK',BCSymmetryPlane,PointRange,CG_NPKT,ibc(:,:,6),cgns_bc,ierror)
 call cg_close_f(cgns_file,ierror)
 
 if (ierror /= CG_OK) call cg_error_exit_f()
