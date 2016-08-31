@@ -5,43 +5,22 @@ public
    integer, parameter :: INT_KIND  = selected_int_kind(8)
 
 
-   integer, parameter :: DIR_EASTWEST        = 1
-   integer, parameter :: DIR_SOUTHNORTH      = 2
-   integer, parameter :: DIR_FRONTBACK       = 3
+   enum, bind(C)
+      enumerator :: DIR_EASTWEST = 1, DIR_SOUTHNORTH, DIR_FRONTBACK
    
-   integer, parameter :: DIR_WEST            = 1
-   integer, parameter :: DIR_EAST            = 2
-   integer, parameter :: DIR_SOUTH           = 3
-   integer, parameter :: DIR_NORTH           = 4
-   integer, parameter :: DIR_FRONT           = 5
-   integer, parameter :: DIR_BACK            = 6
+      enumerator :: DIR_WEST= 1, DIR_EAST, DIR_SOUTH, DIR_NORTH, DIR_FRONT, DIR_BACK
 
-   integer, parameter :: VEC_RHO             = 1
-   integer, parameter :: VEC_SPU             = 2
-   integer, parameter :: VEC_SPV             = 3
-   integer, parameter :: VEC_SPW             = 4
-   integer, parameter :: VEC_ENE             = 5
+      enumerator :: VEC_RHO = 1, VEC_SPU, VEC_SPV, VEC_SPW, VEC_ENE
 
-   integer, parameter :: GRAD_DX             = 1
-   integer, parameter :: GRAD_DY             = 2
-   integer, parameter :: GRAD_DZ             = 3
+      enumerator :: GRAD_DX = 1, GRAD_DY, GRAD_DZ
 
-   integer, parameter :: GRAD_SPU            = 1
-   integer, parameter :: GRAD_SPV            = 2
-   integer, parameter :: GRAD_SPW            = 3
-   integer, parameter :: GRAD_TEMP           = 4
+      enumerator :: GRAD_SPU = 1, GRAD_SPV, GRAD_SPW, GRAD_TEMP
 
-   integer, parameter :: TAU_TXX             = 1
-   integer, parameter :: TAU_TYY             = 2
-   integer, parameter :: TAU_TZZ             = 3
-   integer, parameter :: TAU_TXY             = 4
-   integer, parameter :: TAU_TXZ             = 5
-   integer, parameter :: TAU_TYZ             = 6
+      enumerator :: TAU_TXX = 1, TAU_TYY, TAU_TZZ, TAU_TXY, TAU_TXZ, TAU_TYZ
 
-   integer, parameter :: BC_OUTFLOW          = 1
-   integer, parameter :: BC_INFLOW           = 2
-   integer, parameter :: BC_WALL             = 3
-   integer, parameter :: BC_SYMMETRY         = 4
+      enumerator :: BC_OUTFLOW = 1, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC
+
+   end enum
 
    real(REAL_KIND),parameter :: EPSI    = 1.00E-20_REAL_KIND
    real(REAL_KIND),parameter :: ZERO    = 0.00E+00_REAL_KIND
@@ -54,4 +33,11 @@ public
 
    real(REAL_KIND),parameter :: GAMMA   = 1.40E+00_REAL_KIND   ! Ratio of specific heats
    real(REAL_KIND),parameter :: RGAS    = 287.102E0_REAL_KIND
+
+   character(len = 5), parameter  :: DIR_NAMES(6) = ["WEST " &
+                                                    ,"EAST " &
+                                                    ,"SOUTH" &
+                                                    ,"NORTH" &
+                                                    ,"FRONT" &
+                                                    ,"BACK " ]
 end module const_mod

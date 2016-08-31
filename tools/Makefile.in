@@ -13,7 +13,7 @@ SOURCE_DIR = ../src
 
 _SCRIPT=pre_config make_dependencies
 
-_EXE= extract_1D
+_EXE= extract_1D pre_config
 #sol2vtk
 
 EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
@@ -28,6 +28,9 @@ $(EXECUTABLE_DIR)/make_dependencies:
 $(EXECUTABLE_DIR)/pre_config:
 	@ln -s $(SOURCE_DIR)/pre_config.py $@
 
+
+#$(EXECUTABLE_DIR)/pre_config:$(SOURCE_DIR)/pre_config.F90
+#	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
 $(EXECUTABLE_DIR)/extract_1D:$(SOURCE_DIR)/extract_1D.F90 file_io_mod.o const_mod.o cgns.o data_mod.o screen_io_mod.o control_mod.o
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)

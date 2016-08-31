@@ -133,6 +133,31 @@ contains
             end do
          end do
       end do
+   else if (space_order == 3) then
+      do k = 1, ubound(cellvars,3) - nBoundaryCells
+         do j = 1, ubound(cellvars,2) - nBoundaryCells
+            do i = 1, ubound(cellvars,1) - nBoundaryCells + 1
+              faceVarsLeftI  (i,j,k,:) = HALF * (cellvars (i-1,j  ,k  ,:) + cellvars (i  ,j  ,k  ,:))
+              faceVarsRightI (i,j,k,:) = faceVarsLeftI  (i,j,k,:)
+            end do
+         end do
+      end do
+      do k = 1, ubound(cellvars,3) - nBoundaryCells
+         do j = 1, ubound(cellvars,2) - nBoundaryCells + 1
+            do i = 1, ubound(cellvars,1) - nBoundaryCells 
+              faceVarsLeftJ  (i,j,k,:) = HALF * (cellvars (i,j-1,k  ,:) + cellvars (i  ,j  ,k  ,:))
+              faceVarsRightJ (i,j,k,:) = faceVarsLeftJ  (i,j,k,:)
+            end do
+         end do
+      end do
+      do k = 1, ubound(cellvars,3) - nBoundaryCells + 1
+         do j = 1, ubound(cellvars,2) - nBoundaryCells
+            do i = 1, ubound(cellvars,1) - nBoundaryCells
+              faceVarsLeftK  (i,j,k,:) = HALF * (cellvars (i  ,j  ,k-1,:) + cellvars (i  ,j  ,k  ,:))
+              faceVarsRightK (i,j,k,:) = faceVarsLeftK  (i,j,k,:)
+            end do
+         end do
+      end do
    end if
    end subroutine face_values
    subroutine minmod ( a )

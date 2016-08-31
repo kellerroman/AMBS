@@ -1,0 +1,197 @@
+!=========================================== 
+!===               cns.dat               ===
+!===========================================
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~           
+!~~~ control parameters ~~~           
+!~~~~~~~~~~~~~~~~~~~~~~~~~~           
+ 
+ start = 0, continue = 1 ........................  ISC     =        0
+ 2D(planar) = 0, 2D(axisymmetric) = 1, 3D = 2 ...  AXSYM   =        2
+ maximum number of iterations ...................  ITMAX   =   113000
+ interval (iterations) for data output...........  ITOUT   =    -1000
+ i - interval (direction) for data output .......  IOUT    =        1
+ j - interval (direction) for data output .......  JOUT    =        1
+ k - interval (direction) for data output .......  KOUT    =        1
+ interval for residual output ...................  ITRES   =       50
+ residual 1 for output ..........................  IR1     =        1
+ residual 2 for output ..........................  IR2     =        6
+ output CPU-time 0, 1=PC, .......................  ICPU    =        1
+ constant 2 species gas composition (0,1) .......  CONGC   =        0
+ positive eigenvalue for TS calculation (0,1) ...  IPOSEW  =        0
+ minimal contribution of cell time step .........  FZR     =    0.100
+ stop at minimal temperature (K) ................  TSTOP   =    50.00
+ interval for gas property calculation ..........  ITPRO   =        1
+ negative concentrations allowed (1), limited (0)  NCO     =        0
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ discretisation in time ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ order for time integration (1-3) ...............  ORT     =        2
+ time accurate simulation (0,1) .................  TAI     =        1
+ 0: reduced CFL number at beginning (no. iter.) .  REDCFL  =    10000
+ 1: iteration at start of averaging  ............  IAMW    =        0
+ 1: start = 0, continue = 1 of averaging ........  AMWSC   =        0
+ 1: inner iterations (1) or accuracy (2) fixed ..  CIN     =        2
+ 1: number of inner iterations (max for CIN=2) ..  NII     =       50
+ 1: error reduction (ord. magnitude) ............  ERO     =        3
+ 1: screen/file output res in. iter. (0,1) ......  ITIN    =        1
+ 1: simulation time .............................  SIMT    = 1.00E+20
+ 1: number of in between data outputs (INITCO) ..  IBOUT   =        0
+ 1: use given time step (0,1) ...................  MTS     =        1
+ 1: time step size ..............................  TSZ     =   5.0E-8
+ 1: CFL - number (pseudo time) ..................  CFP     =    10.00
+ CFL - number ...................................  CFL     =     5.00
+ stopping residual ..............................  RESS    =  5.0D-09
+ 
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ discretisation in space ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ central (0), AUSM+(1),up (2), PW (3) ...........  DISC    =        2
+ 0: coefficient for 2nd order damping ...........  C2      =    1.800
+ 0: coefficient for 4th order damping ...........  C4      =    0.100
+ 0: epsilon for tvd property ....................  CEPS    =    0.800
+ 0: exponent for anisotropic damping ............  ALP     =    0.660
+ 0: coefficient for 2nd order coarse grid damping  C2C     =    1.600
+ 1: reference Mach number for AUSM+up ...........  MINF    =    0.100
+ 2: limiter: no (0), option (1-7) ...............  ILI     =        8
+ 2: multidimensional limiting (MLP) .............  MLP     =        1
+ 3: MLP model (1) Kim, (2,3) Peter ..............  MLPV    =        3
+ 3: TVD sensor for LES off (0), on (1) ..........  ITVD    =        1
+ 3: minimal TVD flux contribution ...............  FTVD    =    0.000
+ 3: EPS in TVD sensor ...........................  GTVD    =  1.0D+20
+ 2: constant for limiter activation .............  CFLA    =  1.0D-05
+ 2: pressure sensor for limiter .................  IPS     =        0
+ 2: pressure constant for sensor activation .....  CIPS    =  2.0D+01
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ turbulence modelling ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ LAM(-1), RANS(0), SAS(1), DDES(2) or MILES (3)..  LES     =        3
+ DDES Modification from Peter ...................  NEWDDES =        0
+ 1: constant c_my for SAS .......................  CMYSAS  =    0.090
+ 1: constant zeta2 for SAS ......................  ZETA2   =    1.470   
+ 1: constant C_sas for SAS ......................  CSAS    =    2.000 
+ 1: constant kappa for SAS ......................  KAPSAS  =    0.410
+ 1: constant sigma_phi for SAS ..................  SIGPHI  =    0.667
+ 1: constant Cs_sas for SAS .....................  CSSAS   =    0.150
+ 1: constant alpha for SAS ......................  ALPHAS  =    0.440
+ 1: constant beta for SAS .......................  BETAS   =   0.0828
+ 2: constant CSSMG for DDES......................  CSSMG   =     0.70
+ 2: constant kar2 for DDES ......................  KAR2    =   0.1681
+ q-omega(0) or k-omega(1) or sst(2) turb.-model .  TMOD    =        1
+ Omega limitation for reattaching flows .........  LIMATT  =        0
+ turbulent Prandtl number .......................  PRT     =    0.700 
+ turbulent Schmidt number .......................  SCT     =    0.700
+ 0: sigma for q-equation ........................  SIGKQW  =    0.800
+ 0: sigma for omega-equation ....................  SIGEQW  =    2.000
+ 0: constant C_omega_2 ..........................  CW2     =    0.833
+ 0: constant C_omega_3 ..........................  CW3     =    0.666
+ 0: constant C_my ...............................  CMY     =    0.090
+ 0: constant alpha_{q,omega} ....................  AQW     =    0.022
+ 1: sigma for k-equation ........................  SIGKKW  =    0.600
+ 1: sigma for omega-equation ....................  SIGEKW  =    0.500
+ 1: constant C_lim ..............................  CLIM    =    0.875
+ 1: constant beta_k .............................  BETAK   =    0.090
+ 1: constant beta_0 .............................  BETA0   =   0.0708
+ 1: constant sigma d0 ...........................  SIGMA0  =    0.125
+ 1: alpha for k-omega-model .....................  ALPHKW  =    0.520
+ 2: sigma1 for k-equation .......................  SIGKST1 =    2.000
+ 2: sigma2 for k-equation .......................  SIGKST2 =    1.000
+ 2: sigma1 for omega-equation ...................  SIGEST1 =    2.000
+ 2: sigma2 for omega-equation ...................  SIGEST2 =    1.168
+ 2: constant alpha1 .............................  ALPHA1  =    0.556
+ 2: constant alpha2 .............................  ALPHA2  =    0.440
+ 2: constant beta for sst .......................  BETASST =    0.090
+ 2: constant beta1 for sst ......................  BETA1   =    0.075
+ 2: constant beta2 for sst ......................  BETA2   =   0.0828
+ 
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ Newton-Raphson iteration ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ maximum number of iterations ...................  MNR     =       20
+ stopping criterion for the iteration ...........  DNR     = 0.10E-08
+ 
+!~~~~~~~~~~~~~~~~~~~~~~
+!~~~ tpdf modelling ~~~
+!~~~~~~~~~~~~~~~~~~~~~~
+ 
+ transported PDF (0,1) ..........................  TPDF    =        0
+ 
+!~~~~~~~~~~~~~~~~~~~~~~
+!~~~ apdf modelling ~~~
+!~~~~~~~~~~~~~~~~~~~~~~
+ 
+ assumed pdf modelling, yes = 1, no = 0 .........  PDF     =        0
+ create pdf tables = 1, input = 0 ...............  CPDF    =        0
+ parameter for temperature variance .............  CPE     =     2.00
+ parameter for species variances ................  CPS     =     2.00
+
+!~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ preconditioning ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~
+ preconditioning, yes = 1, no = 0 ...............  PRE     =        1
+ preconditioning constant epsilon ...............  EPSIP   =      0.5
+
+!~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ thermodynamics  ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ equation of state ..............................  EOS     =       IG
+ preferred NASA polynomial form: old(1), new(1) .  NASAPF  =        0
+ add NASA T-intervals: no (0),yes (1,2,3) .......  NASAADD =        0
+ 
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~ multigrid technique ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ number of grid levels used .....................  NG      =        1
+ nested multigrid, yes = 1, no = 0 ..............  INM     =        0
+ grid level for nested multigrid start ..........  NMG     =        1
+ residual drop for switch to next finer grid ....  DRES    =  9.0D-01
+ damping exponent (chem.) for restriction .......  DFR     =    0.250
+ damping exponent for timestep reduction ........  DEX     =    1.000
+ number of iterations at 1st grid level .........  IT1     =        1
+ 
+!-------------------------------------------------------------------!
+!-------------------------------------------------------------------!
+!                       MASSFLOW - DEBUG                            !
+!-------------------------------------------------------------------!
+!-------------------------------------------------------------------!
+ AUSGABE DER WERTE AUF DEN RANDZELLEN ...........  BC_OUT  =        0
+ WO SOLL DER ZWEITE MASSENSTROM BERECHNET WERDEN.  MF_POS  =        0
+ ITERATIONSZAHL FueR MF AUSGABE .................  MF_DOUT =    10000
+ WELCHE ERRECHNETER MF GENOMMEN WERDEN SOLL......  MF_PUSE =        1
+ WIE OFT DER MASSENSTROM GEREGELT WERDE SOLL.....  MF_INT  =        1
+ WIE OFT DER DRUCK GEREGELT WERDEN SOLL..........  PRE_INT =        1
+
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~       animation     ~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+ OB EINE ANIMATIONSDATEI GESCHRIEBEN WERDEN SOLL.  ANI_DO  =        1
+ WIE OFT DIE ANIMATIONSDATEN AUSGESCHRIEBEN WERD.  ANI_OUT =      100
+ WELCHE VARIABEN WERDEN AUSGESCHRIEBEN(R,U,V,T,P)  ANI_VAR = U,V,W
+ 
+!========================================
+!possible limiters for higher order MUSCL
+!========================================
+!0 - no limiter, 1. order scheme
+!----------------------------------------
+!1 - van Albada    5 - 3. order (2/1)
+!2 - van Leer      6 - 4. order (3/1)
+!3 - minmod        7 - 5. order (3/2)
+!4 - superbee      8 - 5./6. order (3/2,3/3)
+
+!=============================
+!options for NASA polynomials
+!=============================
+! NASAADD = 0: no additional interval
+! NASAADD = 1: only additional low-temperature interval
+! NASAADD = 2: only additional high-temperature interval
+! NASAADD = 3: additional low- and high-temperature interval
+

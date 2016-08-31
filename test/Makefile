@@ -9,6 +9,6 @@ clean: $(SUBCLEAN)
 test:
 	@echo $(SUBCLEAN)
 $(SUBDIRS):
-	@$(MAKE) -C $@ --no-print-directory
+	@$(MAKE) -C $@ #--no-print-directory
 $(SUBCLEAN): %.clean:
 	@$(MAKE) -C $* clean --no-print-directory
