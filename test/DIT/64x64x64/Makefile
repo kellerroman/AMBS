@@ -19,7 +19,7 @@ PROGRAM=$(HOMEDIR)bin/AMBS
 .PHONY: all cmp run clean cp grid_inf show
 
 	
-all: cmp run post exp_vel
+all: cmp export_velocities run post exp_vel
 
 exp_vel: export_velocities
 	@./$<
@@ -55,10 +55,10 @@ file_io_mod.o:../../../src/file_io_mod.F90 screen_io_mod.o data_mod.o
 	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 screen_io_mod.o:../../../src/screen_io_mod.F90 control_mod.o
 	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-control_mod.o:../../../src/control_mod.F90
+control_mod.o:../../../src/control_mod.F90 const_mod.o
 	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
+	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen export_velocities *.silo *.dx stubex *.cgns *.csv
 	@rm -vrf *~
 
 ##### CLEAN PROJECT
