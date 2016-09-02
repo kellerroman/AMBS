@@ -1,5 +1,5 @@
-SUBDIRS = i-Direction
-#SUBDIRS := ${shell find ./*  -maxdepth 0 -type d -print }
+#SUBDIRS = i-Direction
+SUBDIRS := ${shell find ./*  -maxdepth 0 -type d -print }
 SUBCLEAN = $(addsuffix .clean,$(SUBDIRS))
 .PHONY: subdirs $(SUBDIRS) clean $(SUBCLEAN)
  
@@ -12,7 +12,7 @@ test:
 	@echo $(SUBCLEAN)
      
 $(SUBDIRS):
-	@$(MAKE) -C $@ --no-print-directory
+	@$(MAKE) -C $@ #--no-print-directory
 
 $(SUBCLEAN): %.clean:
 	@$(MAKE) -C $* clean --no-print-directory
