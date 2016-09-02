@@ -1,5 +1,4 @@
 program pre_config   
-
 implicit none
 integer, parameter                        :: PARAMETER_LEN =  50
 integer, parameter                        :: LINE_LEN      = 100
