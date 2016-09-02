@@ -1,10 +1,10 @@
 FC=gfortran
 #FC=ifort
 
-CGNSlibs = /home/kell_ro/software/cgns/src/cgns_build/lib/libcgns.a /media/LDS/module/tools/hdf5/1.8.15_GCC-4.9.2/lib/libhdf5.a
-LIBS = $(CGNSlibs) -lm -ldl -lz
+CGNSlibs = -lcgns -lhdf5
+LIBS = $(CGNSlibs) -lm
 
-INCLUDE = -I/usr/include/ -I/home/kell_ro/software/cgns/src/cgns_build/include/
+INCLUDE = -I/usr/include/
 CFLAGS = -std=f2008
 CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed

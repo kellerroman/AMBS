@@ -1,9 +1,9 @@
 FC=gfortran
 
-CGNSlibs = /home/kell_ro/software/cgns/src/cgns_build/lib/libcgns.a /media/LDS/module/tools/hdf5/1.8.15_GCC-4.9.2/lib/libhdf5.a
-LIBS = $(CGNSlibs) -lm -ldl -lz
+CGNSlibs = -lcgns -lhdf5
+LIBS = $(CGNSlibs) -lm
 
-INCLUDE = -I/usr/include/ -I/home/kell_ro/software/cgns/src/cgns_build/include/
+INCLUDE = -I/usr/include/
 
 CFLAGS = -std=f2008
 CFLAGS +=-g -fbacktrace
@@ -13,7 +13,7 @@ SOURCE_DIR = ../src
 
 _SCRIPT=pre_config make_dependencies
 
-_EXE= extract_1D pre_config
+_EXE= extract_1D
 #sol2vtk
 
 EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
@@ -28,9 +28,6 @@ $(EXECUTABLE_DIR)/make_dependencies:
 $(EXECUTABLE_DIR)/pre_config:
 	@ln -s $(SOURCE_DIR)/pre_config.py $@
 
-
-#$(EXECUTABLE_DIR)/pre_config:$(SOURCE_DIR)/pre_config.F90
-#	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
 $(EXECUTABLE_DIR)/extract_1D:$(SOURCE_DIR)/extract_1D.F90 file_io_mod.o const_mod.o cgns.o data_mod.o screen_io_mod.o control_mod.o
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
