@@ -35,9 +35,9 @@ contains
       res_max = 0.0E0_REAL_KIND
       res_avg = 0.0E0_REAL_KIND
 
-!      if (mod(current_iteration,10) == 0) then
-!         solution_to_file = .true.
-!      end if
+      if (mod(current_iteration,solution_out) == 0) then
+         solution_to_file = .true.
+      end if
       if (current_iteration >= max_iteration) then
 
          end_main_loop = .true.
