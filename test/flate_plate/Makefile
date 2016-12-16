@@ -1,65 +1,52 @@
 FC=gfortran
 
 HOMEDIR=../../
+CODE_OBJ=$(HOMEDIR)obj/
+TOOLS_OBJ=$(HOMEDIR)tools/obj/
 
-CGNSlibs = /home/kell_ro/software/cgns/src/cgns_build/lib/libcgns.a /media/LDS/module/tools/hdf5/1.8.15_GCC-4.9.2/lib/libhdf5.a
-LIBS = $(CGNSlibs) -lm -ldl -lz
+LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
 
-INCLUDE = -I/usr/include/ -I/home/kell_ro/software/cgns/src/cgns_build/include/
+INCLUDE = -I/usr/include/ -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 CFLAGS = -std=f2008
 CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed
 CFLAGS += -O3
 
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-#SOL2VTK=$(HOMEDIR)tools/bin/sol2vtk
-SOL2VTK=/usr/bin/cgnstools/cgns_to_vtk data_out.cgns
+CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
 PROGRAM=$(HOMEDIR)bin/AMBS
 
 .PHONY: all cmp run clean cp grid_inf show
 
 	
-all: cmp run post #show
+all: compile run post #show
 
-cmp:
+compile: compile_source flate_plate_extract
+compile_source:
 	@$(MAKE) -C $(HOMEDIR) --no-print-directory
 
-	
-
-run: data_in.cgns config.bin
+run: data_in.h5 config.bin
 	@$(PROGRAM) #-debug
-post: flate_plate_extract
-	@$(SOL2VTK)
+	@$(CREATE_XDMF)
+post: compile
 	@./flate_plate_extract
 show:
 	@gnuplot -p plot.gnuplot
 
-data_in.cgns: gridgen
+data_in.h5: gridgen
 	@./$<
 
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
 
-gridgen: gridgen.F90
+gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
-flate_plate_extract:flate_plate_extract.F90 const_mod.o control_mod.o data_mod.o file_io_mod.o screen_io_mod.o
+flate_plate_extract: flate_plate_extract.F90 $(TOOLS_OBJ)module_post.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)control_mod.o
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
-%.o:../../src/%.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-const_mod.o:../../src/const_mod.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-data_mod.o:../../src/data_mod.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-file_io_mod.o:../../src/file_io_mod.F90 screen_io_mod.o
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-screen_io_mod.o:../../src/screen_io_mod.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-control_mod.o:../../src/control_mod.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv flate_plate_extract
+	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.h5 *.csv flate_plate_extract *.xdmf
 	@rm -vrf *~
 
 ##### CLEAN PROJECT

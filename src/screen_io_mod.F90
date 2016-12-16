@@ -6,7 +6,7 @@ module screen_io_mod
 !
 ! START DATE: 04.03.2016
 ! 
-! LAST CHANGE: 04.03.2016
+! LAST CHANGE: 17.10.2016
 !
 ! CHANGELOG:
 ! 04.03.2016,RK: Start of Coding
@@ -28,7 +28,7 @@ implicit none
    write(stdout,FORMAT_SEPLINE) 
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_LINE) ""
-   write(stdout,FORMAT_LINE) "AMBS by ROMAN KELLER                                        "
+   write(stdout,FORMAT_LINE) "AMBS 2016                                                   "
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_SEPLINE) 

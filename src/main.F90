@@ -6,7 +6,7 @@ program AMBS
 !
 ! START DATE: 04.03.2016
 ! 
-! LAST CHANGE: 12.04.2016
+! LAST CHANGE: 08.09.2016
 !
 ! CHANGELOG:
 ! 04.03.2016,RK: Start of Coding
@@ -23,22 +23,24 @@ program AMBS
    use inv_fluxes_mod, only: calc_fluxes
    use viscous_fluxes_mod, only: calc_face_gradients,calc_viscous_fluxes
    use thermprop_mod, only: update_thermprop
+   use turb_mod, only: dudn_cell_center, smagorinsky_SGS
 implicit none
    integer :: b
 call screen_wr_start()
 
 call datin_control()
 call datin_sol()
+call datin_bc()
 call calc_grid()
 call init_sol()
+
 do b = 1, nBlock
    call update_thermprop(blocks(b) ) 
    call init_boundary(blocks(b),nBoundaryCells)
 end do
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!
-! START OF CALCULATION
-!
+!!!!!!!!!!!!                     START OF CALCULATION                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 call screen_wr_start_calc()
 end_main_loop = .false.
@@ -58,7 +60,21 @@ main_loop: do while (.not. end_main_loop)
                        , nBoundaryCells)
       call calc_fluxes ( blocks(b) )
       call calc_face_gradients(blocks(b))
-      call calc_viscous_fluxes(blocks(b)) 
+      call dudn_cell_center ( blocks(b) % vars              &
+                            , blocks(b) % dnw               &
+                            , blocks(b) % dns               &
+                            , blocks(b) % dnb               &
+                            , blocks(b) % volumes           &
+                            , blocks(b) % dUdN              &
+                            , nBoundaryCells                )
+!      call smagorinsky_SGS( blocks(b) % viscosities         &
+!                          , blocks(b) % dUdN                &
+!                          , blocks(b) % vars                &
+!                          , blocks(b) % lles                &
+!                          , nBoundaryCells                  ) 
+      if (equation == EQU_TYP_NS) then
+         call calc_viscous_fluxes(blocks(b)) 
+      end if
       call update_residual(blocks(b),res_max,res_avg)
    end do block_loop
 
@@ -69,14 +85,6 @@ main_loop: do while (.not. end_main_loop)
       call update_thermprop(blocks(b) ) 
    end do block_loop_update
    if (solution_to_file) call datout_sol()
-!   write(*,*) blocks(1) % vars(10,1,1,1:5)
-!   write(*,*) blocks(1) % vars(10,0,1,1:5)
-!   write(*,*) blocks(1) % dudnJ (10,1,1,:,GRAD_DX)
-!   write(*,*) blocks(1) % dudnJ (10,1,1,:,GRAD_DY)
-!   write(*,*) blocks(1) % visFluxesI(10,1,1,1:5)
-!   write(*,*) blocks(1) % visFluxesI(11,1,1,1:5)
-!   write(*,*) blocks(1) % visFluxesJ(10,1,1,1:5)
-!   write(*,*) blocks(1) % visFluxesJ(10,2,1,1:5)
 end do main_loop
 call screen_wr_end()
 end program AMBS

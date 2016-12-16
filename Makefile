@@ -2,7 +2,7 @@ OBJECTS_DIR= obj
 REALMAKEFILE=../src/Makefile.in
 TOOLMAKEFILE=../tools/Makefile.in
 
-all: tools solver
+all: solver tools 
 
 solver: FORCE
 	@(cd $(OBJECTS_DIR) && $(MAKE) -f $(REALMAKEFILE) --no-print-directory)

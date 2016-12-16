@@ -4,7 +4,6 @@ public
    integer, parameter :: REAL_KIND = selected_real_kind(15 , 307)
    integer, parameter :: INT_KIND  = selected_int_kind(8)
 
-
    enum, bind(C)
       enumerator :: DIR_EASTWEST = 1, DIR_SOUTHNORTH, DIR_FRONTBACK
    
@@ -19,6 +18,8 @@ public
       enumerator :: TAU_TXX = 1, TAU_TYY, TAU_TZZ, TAU_TXY, TAU_TXZ, TAU_TYZ
 
       enumerator :: BC_OUTFLOW = 1, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC
+
+      enumerator :: EQU_TYPE_EULER = 1, EQU_TYP_NS
 
    end enum
 
@@ -40,4 +41,9 @@ public
                                                     ,"NORTH" &
                                                     ,"FRONT" &
                                                     ,"BACK " ]
+   character(len = 8), parameter  :: BC_NAMES(5) =  ["OUTFLOW " &
+                                                    ,"INFLOW  " &
+                                                    ,"WALL    " &
+                                                    ,"SYMMETRY" &
+                                                    ,"PERIODIC" ]
 end module const_mod

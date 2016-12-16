@@ -64,9 +64,14 @@ type :: block_type
    real(REAL_KIND), allocatable  :: heatfluxJ      (:,:,:,:)
    real(REAL_KIND), allocatable  :: heatfluxK      (:,:,:,:)
 
+   !> DuDn at the faces
    real(REAL_KIND), allocatable  :: dUdnI          (:,:,:,:,:)
    real(REAL_KIND), allocatable  :: dUdnJ          (:,:,:,:,:)
    real(REAL_KIND), allocatable  :: dUdnK          (:,:,:,:,:)
+
+   real(REAL_KIND), allocatable  :: dUdn           (:,:,:,:,:)
+   !<DuDn at the Cell center, for turbulence Model
+   !< Dimension: (i,j,k,Komponente,Space-Dir)
 
    real(REAL_KIND), allocatable  :: cellFaceAreasI (:,:,:)
    !< Fläche der Zellflächen(3D) & Zellkanten (2D) in I Richtung (EAST & WEST)
@@ -116,6 +121,17 @@ type :: block_type
    !< Vektor mit Schwerpunkt-Abständen für die Berechnung der Ableitungen in K Richtung (FROMT & BACK)
    !< Dimen, NPkt(1), NCell(2), NPkt(3)
 
+   real(REAL_KIND), allocatable :: dnw(:,:,:,:)
+   !< Normalenvektoren der Zellseite Westseite
+   real(REAL_KIND), allocatable :: dns(:,:,:,:)
+   !< Normalenvektoren der Zellseite Suedseite
+   real(REAL_KIND), allocatable :: dnb(:,:,:,:)
+   !< Normalenvektoren der Zellseite Backseite
+
+   real(REAL_KIND), allocatable :: cellsizes (:,:,:,:) 
+   !< Zelllaengen
+   !< Dimensionen: (i,j,k,Richtung)
+   real(REAL_KIND), allocatable :: lles(:,:,:)
 end type block_type
 
 type(block_type), allocatable    :: blocks      (:)
@@ -213,6 +229,16 @@ contains
          allocate(b % dUdnI             (       pi     ,cj     ,ck     ,dimen+1,dimen) )
          allocate(b % dUdnJ             (       ci     ,pj     ,ck     ,dimen+1,dimen) )
          allocate(b % dUdnK             (       ci     ,cj     ,pk     ,dimen+1,dimen) )
+
+         allocate(b % dUdn              (       ci     ,cj     ,ck     ,dimen  ,dimen) )
+         allocate(b % dnw               ( dimen,pi     ,cj     ,ck            ) )
+         allocate(b % dns               ( dimen,ci     ,pj     ,ck            ) )
+         allocate(b % dnb               ( dimen,ci     ,cj     ,pk            ) )
+
+         allocate(b % cellsizes         (       ci     ,cj     ,ck     ,dimen ) ) 
+
+         allocate(b % lles              (       ci     ,cj     ,ck            ) ) 
+
          b % visFluxesI = 0.0E0_REAL_KIND
          b % visFluxesJ = 0.0E0_REAL_KIND
          b % visFluxesK = 0.0E0_REAL_KIND
@@ -223,13 +249,11 @@ contains
 
    end subroutine allocate_vars
    subroutine calc_grid()
+      use control_mod, only: c_les_sgs
 
    implicit none
       integer     :: ib, i,j,k
       real(REAL_KIND), allocatable :: swps(:,:,:,:)
-      real(REAL_KIND), allocatable :: dnw(:,:,:,:)
-      real(REAL_KIND), allocatable :: dns(:,:,:,:)
-      real(REAL_KIND), allocatable :: dnb(:,:,:,:)
       real(REAL_KIND), dimension(dimen) :: vec1, vec2
       real(REAL_KIND) :: len
       do ib = 1,nBlock
@@ -241,9 +265,6 @@ contains
                  pj => blocks(ib) % nPkts(2) ,&
                  pk => blocks(ib) % nPkts(3) )
          allocate (swps(dimen,ci,cj,ck))
-         allocate (dnw (dimen,pi,cj,ck))
-         allocate (dns (dimen,ci,pj,ck))
-         allocate (dnb (dimen,ci,cj,pk))
          !!
          !! CELL CENTER POINTS
          !!
@@ -268,18 +289,37 @@ contains
          DO  K = 1,ck 
             DO J = 1,cj 
                DO I = 1,pi 
-                  dnw(1,I,J,K) =  0.5D+0 * ( (b % coords(I,J,K,2) - b % coords(I,J+1,K+1,2))&
-                                         *(b % coords(I,J,K+1,3)-b % coords(I,J+1,K,3))&
-                                         -(b % coords(I,J,K,3)-b % coords(I,J+1,K+1,3))&
-                                         *(b % coords(I,J,K+1,2)-b % coords(I,J+1,K,2)) )
-                  dnw(2,I,J,K) =  - 0.5D+0 * ( (b % coords(I,J,K,3)-b % coords(I,J+1,K+1,3))&
-                                         *(b % coords(I,J,K+1,1)-b % coords(I,J+1,K,1))&
-                                         -(b % coords(I,J,K,1)-b % coords(I,J+1,K+1,1))&
-                                         *(b % coords(I,J,K+1,3)-b % coords(I,J+1,K,3)) )
-                  dnw(3,I,J,K) =  0.5D+0 * ( (b % coords(I,J,K,1)-b % coords(I,J+1,K+1,1))&
-                                         *(b % coords(I,J,K+1,2)-b % coords(I,J+1,K,2))&
-                                         -(b % coords(I,J,K,2)-b % coords(I,J+1,K+1,2))&
-                                         *(b % coords(I,J,K+1,1)-b % coords(I,J+1,K,1)) )
+                  b % dnw(1,I,J,K) =  0.5D+0 * ( (b % coords(I  ,J  ,K  ,2) - b % coords(I  ,J+1,K+1,2)) &
+                                             * (  b % coords(I  ,J  ,K+1,3) - b % coords(I  ,J+1,K  ,3)) &
+                                             - (  b % coords(I  ,J  ,K  ,3) - b % coords(I  ,J+1,K+1,3)) &
+                                             * (  b % coords(I  ,J  ,K+1,2) - b % coords(I  ,J+1,K  ,2)) )
+                  b % dnw(2,I,J,K) = -0.5D+0 * ( (b % coords(I  ,J  ,K  ,3) - b % coords(I  ,J+1,K+1,3)) &
+                                             * (  b % coords(I  ,J  ,K+1,1) - b % coords(I  ,J+1,K  ,1)) &
+                                             - (  b % coords(I  ,J  ,K  ,1) - b % coords(I  ,J+1,K+1,1)) &
+                                             * (  b % coords(I  ,J  ,K+1,3) - b % coords(I  ,J+1,K  ,3)) )
+                  b % dnw(3,I,J,K) =  0.5D+0 * ( (b % coords(I  ,J  ,K  ,1) - b % coords(I  ,J+1,K+1,1)) &
+                                             * (  b % coords(I  ,J  ,K+1,2) - b % coords(I  ,J+1,K  ,2)) &
+                                             - (  b % coords(I  ,J  ,K  ,2) - b % coords(I  ,J+1,K+1,2)) &
+                                             * (  b % coords(I  ,J  ,K+1,1) - b % coords(I  ,J+1,K  ,1)) )
+                  if (i == 30 .and. j == 30 .and. k == 30 ) then
+                  write(*,*) "======", i,j,k, "======"
+                  write(*,*) "dnw1", b % dnw(1,i,j,k)
+                  write(*,*) b % coords(I  ,J  ,K  ,2) , b % coords(I  ,J+1,K+1,2)
+                  write(*,*) b % coords(I  ,J  ,K+1,3) , b % coords(I  ,J+1,K  ,3)
+                  write(*,*) b % coords(I  ,J  ,K  ,3) , b % coords(I  ,J+1,K+1,3)
+                  write(*,*) b % coords(I  ,J  ,K+1,2) , b % coords(I  ,J+1,K  ,2)
+                  write(*,*) "dnw2", b % dnw(2,i,j,k)
+                  write(*,*) b % coords(I  ,J  ,K  ,3) , b % coords(I  ,J+1,K+1,3)
+                  write(*,*) b % coords(I  ,J  ,K+1,1) , b % coords(I  ,J+1,K  ,1)
+                  write(*,*) b % coords(I  ,J  ,K  ,1) , b % coords(I  ,J+1,K+1,1)
+                  write(*,*) b % coords(I  ,J  ,K+1,3) , b % coords(I  ,J+1,K  ,3)
+                  write(*,*) "dnw3", b % dnw(3,i,j,k)
+                  write(*,*) b % coords(I  ,J  ,K  ,1) , b % coords(I  ,J+1,K+1,1)
+                  write(*,*) b % coords(I  ,J  ,K+1,2) , b % coords(I  ,J+1,K  ,2)
+                  write(*,*) b % coords(I  ,J  ,K  ,2) , b % coords(I  ,J+1,K+1,2)
+                  write(*,*) b % coords(I  ,J  ,K+1,1) , b % coords(I  ,J+1,K  ,1)
+               !stop
+            end if
                end do
             end do
          end do
@@ -287,18 +327,37 @@ contains
          DO K = 1,ck 
             DO J = 1,pj 
                DO I = 1,ci 
-                  dns(1,I,J,K) =  0.5D+0 * ( (b % coords(I,J,K,2)-b % coords(I+1,J,K+1,2))&
-                                         *(b % coords(I+1,J,K,3)-b % coords(I,J,K+1,3))&
-                                         -(b % coords(I,J,K,3)-b % coords(I+1,J,K+1,3))&
-                                         *(b % coords(I+1,J,K,2)-b % coords(I,J,K+1,2)) )
-                  dns(2,I,J,K) =  - 0.5D+0 * ( (b % coords(I,J,K,3)-b % coords(I+1,J,K+1,3))&
-                                         *(b % coords(I+1,J,K,1)-b % coords(I,J,K+1,1))&
-                                         -(b % coords(I,J,K,1)-b % coords(I+1,J,K+1,1))&
-                                         *(b % coords(I+1,J,K,3)-b % coords(I,J,K+1,3)) )
-                  dns(3,I,J,K) =  0.5D+0 * ( (b % coords(I,J,K,1)-b % coords(I+1,J,K+1,1))&
-                                         *(b % coords(I+1,J,K,2)-b % coords(I,J,K+1,2))&
-                                         -(b % coords(I,J,K,2)-b % coords(I+1,J,K+1,2))&
-                                         *(b % coords(I+1,J,K,1)-b % coords(I,J,K+1,1)) )
+                  b % dns(1,I,J,K) =  0.5D+0 * ( (b % coords(I  ,J,K,2)-b % coords(I+1,J,K+1,2)) &
+                                             * (  b % coords(I+1,J,K,3)-b % coords(I  ,J,K+1,3)) &
+                                             - (  b % coords(I  ,J,K,3)-b % coords(I+1,J,K+1,3)) &
+                                             * (  b % coords(I+1,J,K,2)-b % coords(I  ,J,K+1,2)) )
+                  b % dns(2,I,J,K) = -0.5D+0 * ( (b % coords(I  ,J,K,3)-b % coords(I+1,J,K+1,3)) &
+                                             * (  b % coords(I+1,J,K,1)-b % coords(I  ,J,K+1,1)) &
+                                             - (  b % coords(I  ,J,K,1)-b % coords(I+1,J,K+1,1)) &
+                                             * (  b % coords(I+1,J,K,3)-b % coords(I  ,J,K+1,3)) )
+                  b % dns(3,I,J,K) =  0.5D+0 * ( (b % coords(I  ,J,K,1)-b % coords(I+1,J,K+1,1)) &
+                                             * (  b % coords(I+1,J,K,2)-b % coords(I  ,J,K+1,2)) &
+                                             - (  b % coords(I  ,J,K,2)-b % coords(I+1,J,K+1,2)) &
+                                             * (  b % coords(I+1,J,K,1)-b % coords(I  ,J,K+1,1)) )
+                  if (i == 30 .and. j == 30 .and. k == 30 ) then
+                  write(*,*) "======", i,j,k, "======"
+                  write(*,*) "dns1", b % dns(1,I,J,K)
+                  write(*,*) b % coords(I,J,K,2),b % coords(I+1,J,K+1,2)
+                  write(*,*) b % coords(I+1,J,K,3),b % coords(I,J,K+1,3)
+                  write(*,*) b % coords(I,J,K,3),b % coords(I+1,J,K+1,3)
+                  write(*,*) b % coords(I+1,J,K,2),b % coords(I,J,K+1,2)
+                  write(*,*) "dns2", b % dns(2,I,J,K) 
+                  write(*,*) b % coords(I,J,K,3),b % coords(I+1,J,K+1,3)
+                  write(*,*) b % coords(I+1,J,K,1),b % coords(I,J,K+1,1)
+                  write(*,*) b % coords(I,J,K,1),b % coords(I+1,J,K+1,1)
+                  write(*,*) b % coords(I+1,J,K,3),b % coords(I,J,K+1,3)
+                  write(*,*) "dns3", b % dns(3,I,J,K)
+                  write(*,*) b % coords(I,J,K,1),b % coords(I+1,J,K+1,1)
+                  write(*,*) b % coords(I+1,J,K,2),b % coords(I,J,K+1,2)
+                  write(*,*) b % coords(I,J,K,2),b % coords(I+1,J,K+1,2)
+                  write(*,*) b % coords(I+1,J,K,1),b % coords(I,J,K+1,1)
+               !stop
+            end if
                end do
             end do
          end do
@@ -306,18 +365,37 @@ contains
          DO K = 1,pk 
             DO J = 1,cj  
                DO I = 1,ci 
-                  dnb(1,I,J,K) =  0.5D+0 * ( (b % coords(I,J,K,2)-b % coords(I+1,J+1,K,2))&
-                                         *(b % coords(I,J+1,K,3)-b % coords(I+1,J,K,3))&
-                                         -(b % coords(I,J,K,3)-b % coords(I+1,J+1,K,3))&
-                                         *(b % coords(I,J+1,K,2)-b % coords(I+1,J,K,2)) )
-                  dnb(2,I,J,K) =  - 0.5D+0 * ( (b % coords(I,J,K,3)-b % coords(I+1,J+1,K,3))&
-                                         *(b % coords(I,J+1,K,1)-b % coords(I+1,J,K,1))&
-                                         -(b % coords(I,J,K,1)-b % coords(I+1,J+1,K,1))&
-                                         *(b % coords(I,J+1,K,3)-b % coords(I+1,J,K,3)) )
-                  dnb(3,I,J,K) =  0.5D+0 * ( (b % coords(I,J,K,1)-b % coords(I+1,J+1,K,1))&
-                                         *(b % coords(I,J+1,K,2)-b % coords(I+1,J,K,2))&
-                                         -(b % coords(I,J,K,2)-b % coords(I+1,J+1,K,2))&
-                                         *(b % coords(I,J+1,K,1)-b % coords(I+1,J,K,1)) )
+                  b % dnb(1,I,J,K) =  0.5D+0 * ( (b % coords(I,J  ,K,2)-b % coords(I+1,J+1,K,2)) &
+                                             * (  b % coords(I,J+1,K,3)-b % coords(I+1,J  ,K,3)) &
+                                             - (  b % coords(I,J  ,K,3)-b % coords(I+1,J+1,K,3)) &
+                                             * (  b % coords(I,J+1,K,2)-b % coords(I+1,J  ,K,2)) )
+                  b % dnb(2,I,J,K) = -0.5D+0 * ( (b % coords(I,J  ,K,3)-b % coords(I+1,J+1,K,3)) &
+                                             * (  b % coords(I,J+1,K,1)-b % coords(I+1,J  ,K,1)) &
+                                             - (  b % coords(I,J  ,K,1)-b % coords(I+1,J+1,K,1)) &
+                                             * (  b % coords(I,J+1,K,3)-b % coords(I+1,J  ,K,3)) )
+                  b % dnb(3,I,J,K) =  0.5D+0 * ( (b % coords(I,J  ,K,1)-b % coords(I+1,J+1,K,1)) &
+                                             * (  b % coords(I,J+1,K,2)-b % coords(I+1,J  ,K,2)) &
+                                             - (  b % coords(I,J  ,K,2)-b % coords(I+1,J+1,K,2)) &
+                                             * (  b % coords(I,J+1,K,1)-b % coords(I+1,J  ,K,1)) )
+                  if (i == 30 .and. j == 30 .and. k == 30 ) then
+                  write(*,*) "======", i,j,k, "======"
+                  write(*,*)  "dnb1", b % dnb(1,I,J,K)
+                  write(*,*)  b % coords(I,J  ,K,2),b % coords(I+1,J+1,K,2)
+                  write(*,*)  b % coords(I,J+1,K,3),b % coords(I+1,J  ,K,3)
+                  write(*,*)  b % coords(I,J  ,K,3),b % coords(I+1,J+1,K,3)
+                  write(*,*)  b % coords(I,J+1,K,2),b % coords(I+1,J  ,K,2)
+                  write(*,*)  "dnb2", b % dnb(2,I,J,K)
+                  write(*,*)  b % coords(I,J  ,K,3),b % coords(I+1,J+1,K,3)
+                  write(*,*)  b % coords(I,J+1,K,1),b % coords(I+1,J  ,K,1)
+                  write(*,*)  b % coords(I,J  ,K,1),b % coords(I+1,J+1,K,1)
+                  write(*,*)  b % coords(I,J+1,K,3),b % coords(I+1,J  ,K,3)
+                  write(*,*)  "dnb3", b % dnb(3,I,J,K)
+                  write(*,*)  b % coords(I,J  ,K,1),b % coords(I+1,J+1,K,1)
+                  write(*,*)  b % coords(I,J+1,K,2),b % coords(I+1,J  ,K,2)
+                  write(*,*)  b % coords(I,J  ,K,2),b % coords(I+1,J+1,K,2)
+                  write(*,*)  b % coords(I,J+1,K,1),b % coords(I+1,J  ,K,1)
+               !stop
+            end if
                end do
             end do
          end do
@@ -340,9 +418,9 @@ contains
                         b % coords(I+1,J,K,3)-b % coords(I+1,J+1,K,3)-&
                         b % coords(I+1,J,K+1,3)-b % coords(I+1,J+1,K+1,3)
                   b % volumes(I,J,K) = b % volumes(I,J,K)&
-                       + vec1(1) * ( + DnW(2,I,J,K) + DnW(2,I+1,J,K) )&
-                       + vec1(2) * ( - DnW(1,I,J,K) - DnW(1,I+1,J,K) )&
-                       + vec1(3) * ( + DnW(3,I,J,K) + DnW(3,I+1,J,K) )
+                       + vec1(1) * ( + b % DnW(2,I,J,K) + b % DnW(2,I+1,J,K) )&
+                       + vec1(2) * ( - b % DnW(1,I,J,K) - b % DnW(1,I+1,J,K) )&
+                       + vec1(3) * ( + b % DnW(3,I,J,K) + b % DnW(3,I+1,J,K) )
      
      !                 - S + N -
                   vec1(1) = b % coords(I,J,K,1)  +b % coords(I,J,K+1,1)  +&
@@ -358,9 +436,9 @@ contains
                         b % coords(I,J+1,K,3)-b % coords(I,J+1,K+1,3)-&
                         b % coords(I+1,J+1,K,3)-b % coords(I+1,J+1,K+1,3)
                   b % volumes(I,J,K) = b % volumes(I,J,K)&
-                       + vec1(1) * ( + dns(2,I,J,K) + dns(2,I,J+1,K) )&
-                       + vec1(2) * ( - dns(1,I,J,K) - dns(1,I,J+1,K) )&
-                       + vec1(3) * ( + dns(3,I,J,K) + dns(3,I,J+1,K) )
+                       + vec1(1) * ( + b % dns(2,I,J,K) + b % dns(2,I,J+1,K) )&
+                       + vec1(2) * ( - b % dns(1,I,J,K) - b % dns(1,I,J+1,K) )&
+                       + vec1(3) * ( + b % dns(3,I,J,K) + b % dns(3,I,J+1,K) )
      
      !                 - B + F -
                   vec1(1) = b % coords(I,J,K,1)  +b % coords(I+1,J,K,1)  +&
@@ -376,9 +454,9 @@ contains
                         b % coords(I,J,K+1,3)-b % coords(I+1,J,K+1,3)-&
                         b % coords(I,J+1,K+1,3)-b % coords(I+1,J+1,K+1,3)
                   b % volumes(I,J,K) = b % volumes(I,J,K)&
-                       + vec1(1) * ( + dnb(2,I,J,K) + dnb(2,I,J,K+1) )&
-                       + vec1(2) * ( - dnb(1,I,J,K) - dnb(1,I,J,K+1) )&
-                       + vec1(3) * ( + dnb(3,I,J,K) + dnb(3,I,J,K+1) )
+                       + vec1(1) * ( + b % dnb(2,I,J,K) + b % dnb(2,I,J,K+1) )&
+                       + vec1(2) * ( - b % dnb(1,I,J,K) - b % dnb(1,I,J,K+1) )&
+                       + vec1(3) * ( + b % dnb(3,I,J,K) + b % dnb(3,I,J,K+1) )
                   b % volumes(I,J,K) = 8.0E0_REAL_KIND / b % volumes(I,J,K) 
                end do
             end do
@@ -582,11 +660,84 @@ contains
                end do
             end do
          end do
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!    Zelllaengen (abstand der Zellseitenschwerpunkte   !!!!!!!!!!!
+!!!!  heatflux array i sused as temp (due to their dimension)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!! OST/WEST-Richtung
+         do k = 1, ck
+            do j = 1, cj
+               do i = 1, pi
+                  b % heatfluxI(i,j,k,:) = 0.25d0 *                              &
+                                                  ( b % coords ( i  ,j  ,k  ,:)  &
+                                                  + b % coords ( i  ,j+1,k  ,:)  &
+                                                  + b % coords ( i  ,j  ,k+1,:)  &
+                                                  + b % coords ( i  ,j+1,k+1,:)  )
+                  
+               end do
+               do i = 1, ci
+                  b % cellsizes(i,j,k,DIR_EASTWEST) = sqrt  &
+                                                      ( (b % heatfluxI (i+1,j,k,1) - b % heatfluxI (i  ,j,k,1)) **2 &
+                                                      + (b % heatfluxI (i+1,j,k,2) - b % heatfluxI (i  ,j,k,2)) **2 &
+                                                      + (b % heatfluxI (i+1,j,k,3) - b % heatfluxI (i  ,j,k,3)) **2 )
+               end do
+            end do
+         end do
+         
+!!!!!!!!! SUEF/NORD-Richtung
+         do k = 1, ck
+            do j = 1, pj
+               do i = 1, ci
+                  b % heatfluxJ(i,j,k,:) = 0.25d0 *                              &
+                                                  ( b % coords ( i  ,j  ,k  ,:)  &
+                                                  + b % coords ( i+1,j  ,k  ,:)  &
+                                                  + b % coords ( i  ,j  ,k+1,:)  &
+                                                  + b % coords ( i+1,j  ,k+1,:)  )
+                  
+               end do
+            end do
+            do j = 1, cj
+               do i = 1, ci
+                  b % cellsizes(i,j,k,DIR_SOUTHNORTH) = sqrt  &
+                                                      ( (b % heatfluxJ (i,j+1,k,1) - b % heatfluxJ (i,j,k,1)) **2 &
+                                                      + (b % heatfluxJ (i,j+1,k,2) - b % heatfluxJ (i,j,k,2)) **2 &
+                                                      + (b % heatfluxJ (i,j+1,k,3) - b % heatfluxJ (i,j,k,3)) **2 )
+               end do
+            end do
+         end do
+!!!!!!!!! SUEF/NORD-Richtung
+         do k = 1, pk
+            do j = 1, cj
+               do i = 1, ci
+                  b % heatfluxK(i,j,k,:) = 0.25d0 *                              &
+                                                  ( b % coords ( i  ,j  ,k  ,:)  &
+                                                  + b % coords ( i+1,j  ,k  ,:)  &
+                                                  + b % coords ( i  ,j+1,k  ,:)  &
+                                                  + b % coords ( i+1,j+1,k  ,:)  )
+                  
+               end do
+            end do
+         end do
+         do k = 1, ck
+            do j = 1, cj
+               do i = 1, ci
+                  b % cellsizes(i,j,k,DIR_FRONTBACK) = sqrt  &
+                                                      ( (b % heatfluxK (i,j,k+1,1) - b % heatfluxK (i,j,k,1)) **2 &
+                                                      + (b % heatfluxK (i,j,k+1,2) - b % heatfluxK (i,j,k,2)) **2 &
+                                                      + (b % heatfluxK (i,j,k+1,3) - b % heatfluxK (i,j,k,3)) **2 )
+               end do
+            end do
+         end do
+         do k = 1, ck
+            do j = 1, cj
+               do i = 1, ci
+                  b % lles(i,j,k) = (c_les_sgs * maxval(b % cellsizes(i,j,k,:) )) ** 2
+               end do
+            end do
+         end do
       end associate
       deallocate (swps)
-      deallocate (dnw )
-      deallocate (dns )
-      deallocate (dnb )
    end do
    contains
       subroutine cross(a, b, vec_out)

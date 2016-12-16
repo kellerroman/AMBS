@@ -2,17 +2,18 @@ FC=gfortran
 
 HOMEDIR=../../../
 
-CGNSlibs = /usr/lib/libcgns.so -lhdf5
-LIBS = $(CGNSlibs) -lm
+LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
 
-INCLUDE = -I/usr/include/
+INCLUDE = -I/usr/include/ -I$(HOMEDIR)tools/obj/ -I$(HOMEDIR)obj/
 CFLAGS = -std=f2008
 CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed
 CFLAGS += -O3
 
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
+CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
 EXTRACT_1D=$(HOMEDIR)tools/bin/extract_1D
+CALC_ERROR=../calc_error &>> errors.txt
 PROGRAM=$(HOMEDIR)bin/AMBS
 
 .PHONY: all cmp run clean cp grid_inf show
@@ -29,25 +30,23 @@ str.dx: ../stubex
 ../stubex: ../stubex.f
 	@$(FC) $(CFLAGS) $< -o $@
 
-run: data_in.cgns str.dx config.bin
+run: data_in.h5 str.dx config.bin
 	@echo 'Running Grid-Adaper on simple Chamber'
 	@$(PROGRAM) #-debug
 	@$(EXTRACT_1D)
+	@$(CREATE_XDMF)
 show:
 	@gnuplot -p plot.gnuplot
 
-data_in.cgns: gridgen
+data_in.h5: gridgen
 	@./$<
 
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
-gridgen: gridgen.F90 cgnslib.o
+
+gridgen: gridgen.F90 $(HOMEDIR)tools/obj/module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
-cgnslib.o: $(HOMEDIR)src/cgns.F90
-	$(FC) -c $(CFLAGS) $< -o $@ 
-
-
 sens: cmp gridgen str.dx
 	./gridgen 101
 	@$(PRE_CONFIG) disc/space_order=1
@@ -78,13 +77,6 @@ sens: cmp gridgen str.dx
 	@mv data_1d.csv data_ni_500_sp_2.csv
 	@gnuplot -p plot_sens.gnuplot
         
-
-
-
-
-
-
-
 grid_rot: cmp gridgen
 	./gridgen 101 0.0
 	$(MAKE) run
@@ -98,7 +90,7 @@ grid_rot: cmp gridgen
 	@gnuplot -p plot_grid_rot.gnuplot
 
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
+	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.h5 *.csv *.xdmf
 	@rm -vrf *~
 
 ##### CLEAN PROJECT

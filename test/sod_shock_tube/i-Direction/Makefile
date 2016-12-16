@@ -2,17 +2,20 @@ FC=gfortran
 
 HOMEDIR=../../../
 
-CGNSlibs = /usr/lib/libcgns.so -lhdf5
-LIBS = $(CGNSlibs) -lm
+CODE_OBJ=$(HOMEDIR)obj/
+TOOLS_OBJ=$(HOMEDIR)tools/obj/
+LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
 
-INCLUDE = -I/usr/include/
+INCLUDE = -I/usr/include/ -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 CFLAGS = -std=f2008
 CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed
 CFLAGS += -O3
 
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
+CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
 EXTRACT_1D=$(HOMEDIR)tools/bin/extract_1D
+CALC_ERROR=../calc_error &>> errors.txt
 PROGRAM=$(HOMEDIR)bin/AMBS
 
 .PHONY: all cmp run clean cp grid_inf show
@@ -29,49 +32,64 @@ str.dx: ../stubex
 ../stubex: ../stubex.f
 	@$(FC) $(CFLAGS) $< -o $@
 
-run: data_in.cgns str.dx config.bin
-	@echo 'Running Grid-Adaper on simple Chamber'
+run: data_in.h5 str.dx config.bin
+	@echo ' Running SOD Shock Tube'
 	@$(PROGRAM) #-debug
+	@$(CREATE_XDMF)
 	@$(EXTRACT_1D)
 show:
 	@gnuplot -p plot.gnuplot
 
-data_in.cgns: gridgen
+data_in.h5: gridgen
 	@./$<
 
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
-gridgen: gridgen.F90
+
+gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
 sens: cmp gridgen str.dx
+	@rm -f errors.txt
 	./gridgen 101
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_1.csv
+	@mv error.csv error_ni_100_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_2.csv
+	@mv error.csv error_ni_100_sp_2.csv
 	./gridgen 201
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_1.csv
+	@mv error.csv error_ni_200_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_2.csv
+	@mv error.csv error_ni_200_sp_2.csv
 	./gridgen 501
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_500_sp_1.csv
+	@mv error.csv error_ni_500_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_500_sp_2.csv
+	@mv error.csv error_ni_500_sp_2.csv
 	@gnuplot -p plot_sens.gnuplot
         
 
@@ -94,7 +112,7 @@ grid_rot: cmp gridgen
 	@gnuplot -p plot_grid_rot.gnuplot
 
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
+	@rm -vf *.o *.mod *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.dx stubex *.csv *.h5 *.xdmf
 	@rm -vrf *~
 
 ##### CLEAN PROJECT

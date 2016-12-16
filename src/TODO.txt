@@ -1,12 +1,16 @@
+TODO:
+   central config_Makefile in base folder
+   SGS Model (Smagorinsky)
+   higher temporal order
+
 testcases:
-   laminar Flate Plate
-   DIT (MILES, Smago)
++  laminar Flate Plate
+-  DIT (MILES, Smago)
    Backward Facing Step
 
 Capabilities:
-   boundary conditions (from CGNS)
++  boundary conditions (from CGNS)
 +  viscous fluxes
-   higher temporal order
    multi-block
    shared memory parallelism
    MPI

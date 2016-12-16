@@ -2,18 +2,15 @@ FC=gfortran
 
 HOMEDIR=../../
 
-CGNSlibs = /home/kell_ro/software/cgns/src/cgns_build/lib/libcgns.a /media/LDS/module/tools/hdf5/1.8.15_GCC-4.9.2/lib/libhdf5.a
-LIBS = $(CGNSlibs) -lm -ldl -lz
+LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
 
-INCLUDE = -I/usr/include/ -I/home/kell_ro/software/cgns/src/cgns_build/include/
+INCLUDE = -I/usr/include/ -I$(HOMEDIR)tools/obj/ -I$(HOMEDIR)obj/
 CFLAGS = -std=f2008
 CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed
 CFLAGS += -O3
 
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-#SOL2VTK=$(HOMEDIR)tools/bin/sol2vtk
-SOL2VTK=/usr/bin/cgnstools/cgns_to_vtk data_out.cgns
 PROGRAM=$(HOMEDIR)bin/AMBS
 
 .PHONY: all cmp run clean cp grid_inf show
@@ -26,22 +23,25 @@ cmp:
 
 	
 
-run: data_in.cgns config.bin
+#run: gridgen
+#	@./gridgen
+
+run: data_in.h5 config.bin
 	@$(PROGRAM) #-debug
-	@$(SOL2VTK)
+
 show:
 	@gnuplot -p plot.gnuplot
 
-data_in.cgns: gridgen
+data_in.h5: gridgen
 	@./$<
 
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
-gridgen: gridgen.F90
+gridgen: gridgen.F90 $(HOMEDIR)tools/obj/module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
+	@rm -vf *.o *.mod *.ufo *.dat *.plt *.png *.txt *.bin gridgen *.silo *.dx *.csv *.h5 *.xdmf
 	@rm -vrf *~
 
 ##### CLEAN PROJECT

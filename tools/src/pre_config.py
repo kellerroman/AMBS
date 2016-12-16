@@ -31,6 +31,7 @@ integers.append(["disc","time_order",integer_init])
 
 reals.append(["disc","CFL",real_init])
 reals.append(["disc","timestep",real_init])
+reals.append(["disc","c_les_sgs",real_init])
 
 int_in_file=[]
 real_in_file=[]
@@ -48,7 +49,7 @@ for var in strings:
 
 
 version = 10000*len(integers)+100*len(reals)+len(strings)
-version = 1
+version = 2
 
 for section_name in parser.sections():
     #print ('Section:', section_name)
@@ -81,9 +82,7 @@ for i,var in enumerate(int_in_file):
         print (integers[i][1],"not found in file")
         exit (1)
 #
-#
 #   KOMMANDOZEILEN PARAMETER
-#
 #
 for i in sys.argv[1:]:
     section_name = i.split("/")[0].strip().lower()

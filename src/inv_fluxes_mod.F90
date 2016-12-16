@@ -7,35 +7,86 @@ contains
    subroutine calc_fluxes( block )
    implicit none
    type(block_type), intent(inout) :: block
-   if (riemann_solver == 1) then
-      call inviscid_roe_n( block % faceVarsLeftI     &
-                         , block % faceVarsRightI    &
-                         , block % CellFaceVecsI     &
-                         , block % fluxesI           )
-      call inviscid_roe_n( block % faceVarsLeftJ     &
-                         , block % faceVarsRightJ    &
-                         , block % CellFaceVecsJ     &
-                         , block % fluxesJ           )
-      call inviscid_roe_n( block % faceVarsLeftK     &
-                         , block % faceVarsRightK    &
-                         , block % CellFaceVecsK     &
-                         , block % fluxesK           )
+   if (space_order == 3) then
+      call central ( block % faceVarsLeftI              &
+                   , block % CellFaceVecsI              &
+                   , block % fluxesI                    )
+      call central ( block % faceVarsLeftJ              &
+                   , block % CellFaceVecsJ              &
+                   , block % fluxesJ                    )
+      call central ( block % faceVarsLeftK              &
+                   , block % CellFaceVecsK              &
+                   , block % fluxesK                    )
    else
-      call lax_friedrich_n( block % faceVarsLeftI     &
-                         , block % faceVarsRightI    &
-                         , block % CellFaceVecsI     &
-                         , block % fluxesI           )
-      call lax_friedrich_n( block % faceVarsLeftJ     &
-                         , block % faceVarsRightJ    &
-                         , block % CellFaceVecsJ     &
-                         , block % fluxesJ           )
-      call lax_friedrich_n( block % faceVarsLeftK     &
-                         , block % faceVarsRightK    &
-                         , block % CellFaceVecsK     &
-                         , block % fluxesK           )
-   end if
+      if (riemann_solver == 1) then
+         call inviscid_roe_n( block % faceVarsLeftI     &
+                            , block % faceVarsRightI    &
+                            , block % CellFaceVecsI     &
+                            , block % fluxesI           )
+         call inviscid_roe_n( block % faceVarsLeftJ     &
+                            , block % faceVarsRightJ    &
+                            , block % CellFaceVecsJ     &
+                            , block % fluxesJ           )
+         call inviscid_roe_n( block % faceVarsLeftK     &
+                            , block % faceVarsRightK    &
+                            , block % CellFaceVecsK     &
+                            , block % fluxesK           )
+      else
+         call lax_friedrich_n( block % faceVarsLeftI     &
+                            , block % faceVarsRightI    &
+                            , block % CellFaceVecsI     &
+                            , block % fluxesI           )
+         call lax_friedrich_n( block % faceVarsLeftJ     &
+                            , block % faceVarsRightJ    &
+                            , block % CellFaceVecsJ     &
+                            , block % fluxesJ           )
+         call lax_friedrich_n( block % faceVarsLeftK     &
+                            , block % faceVarsRightK    &
+                            , block % CellFaceVecsK     &
+                            , block % fluxesK           )
+      end if ! riemann solver
+   end if ! space_order
    end subroutine calc_fluxes
 
+   subroutine central(prim, njk,  num_flux)
+  
+   implicit none
+   
+   !Input
+   real(REAL_KIND), intent( in) :: prim     (:,:,:,:) ! Input: primitive variables
+   real(REAL_KIND), intent( in) :: njk       (:,:,:,:) ! Input: face normal vector
+   
+   !Output
+   real(REAL_KIND), intent(out) :: num_flux  (:,:,:,:)        ! Output: numerical flux
+
+   integer :: i,j,k
+   real(REAL_KIND) :: rho,u,v,w,p,rH,qn
+   real(REAL_KIND) :: nx,ny,nz
+   do k = 1, ubound(num_flux,3)
+      do j = 1, ubound(num_flux,2)
+         do i = 1, ubound(num_flux,1)
+            nx                = abs(njk(1,i,j,k))
+            ny                = abs(njk(2,i,j,k))
+            nz                = abs(njk(3,i,j,k))
+   
+            rho               = prim(i,j,k,1)
+            u                 = prim(i,j,k,2)
+            v                 = prim(i,j,k,3)
+            w                 = prim(i,j,k,4)
+            p                 = (GAMMA-one)*( prim(i,j,k,5) - half*rho*(u*u+v*v+w*w) )
+
+            qn                = u * nx + v * ny + w * nz
+            rH                = ( prim(i,j,k,5) + p )
+
+            num_flux(i,j,k,1) = rho * qn
+            num_flux(i,j,k,2) = rho * qn * u + p*nx
+            num_flux(i,j,k,3) = rho * qn * v + p*ny
+            num_flux(i,j,k,4) = rho * qn * w + p*nz
+            num_flux(i,j,k,5) = qn * rH
+         end do
+      end do
+   end do
+   end subroutine central
    !********************************************************************************
    !* -- 3D Roe's Flux Function with an entropy fix and without tangent vectors --
    !*

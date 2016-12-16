@@ -19,7 +19,7 @@ PROGRAM=$(HOMEDIR)bin/AMBS
 .PHONY: all cmp run clean cp grid_inf show
 
 	
-all: cmp export_velocities run post exp_vel
+all: cmp export_velocities run post exp_vel show
 
 exp_vel: export_velocities
 	@./$<
