@@ -1,0 +1,91 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title> Shu and Osher's Shocktube</title>
+</head>
+<body bgcolor="#e8e8e8">
+
+<!-- ========================= Page Header ============================== -->
+<table width="850"> <tbody><tr>
+<td align="CENTER">
+<h1> Shu and Osher's Shocktube Test</h1> <br><br>
+</td> </tr></tbody></table>
+<br>
+
+<hr>
+<dl>
+<h2>Reference:</h2>
+</dl>
+<p>
+Shu, C and Osher, S., "Efficient Implementation of Essentially
+Non-Oscillatory Shock-Capturing Schemes, II", J. Computational Physics,
+83, 32-78 (1989).  The test is Example 8.
+
+
+</p>
+
+<hr>
+<dl>
+<h2>Description:</h2>
+</dl>
+<p>
+This test is a hydrodynamic shocktube where the left and the right states
+are given as follows.  Left: (ρ=3.857143; Vx= 2.629369, P = 10.33333)
+Right: (ρ=1 + 0.2 sin(5 π x); Vx=0; P=1).  Essentially it is a Mach=3
+shock interacting with a sine wave in density.
+
+
+</p>
+
+<hr>
+<dl>
+<h2>What's important about this test?</h2>
+</dl>
+<p>
+This test shows the difficulty of capturing both small-scale smooth flow, and
+shocks.
+</p>
+
+<hr>
+<dl>
+<h2>Results:</h2>
+</dl>
+
+<p>
+Results for the density at time=0.47 computed with Athena using the
+third-order Roe
+ solver on an array of 800 cells (solid line) and 200
+cells (squares)
+ with a Courant number of 0.8 and γ = 1.4. Note that
+the plot is
+ normalized to a spatial extent of [-1,1] as opposed to the
+[-4,4]
+ shown in the reference.  By comparing to Fig. 14c in the text,
+it
+ is possible to see the significant improvement in performance per
+
+ zone at low resolution.  At a resolution of 200 cells, all of the
+
+short-wavelength extrema are captured, albeit with a lower amplitude
+
+than the 800 cell calculation. The velocity and pressure profiles do
+
+not contain as much interesting structure and are not shown.
+
+
+</p>
+
+
+<p>
+<br><br><table width="800"> <tbody><tr>
+<td align="CENTER">
+<img src="Shu%20and%20Osher%27s%20Shocktube_files/Shu-Osher.gif" align="middle"><br>
+</td>
+</tr>
+<tr>
+</tr></tbody></table><br>
+
+
+</p>
+
+
+</body></html>

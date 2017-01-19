@@ -21,7 +21,7 @@ call add_block(imax-1,jmax-1,kmax-1)
 call allocate_blocks(nVar)
 dy = 1.0D-4
 do i = 1,imax
-    dy = 5.0D-5
+    dy = 5.0D-4
     do j = 1, jmax
       blocks(1) % xyzs(i,j,:,1) = 1.0D0 * dble(i-21) / dble(imax-1)
       if (j == 1) then

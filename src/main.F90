@@ -42,6 +42,7 @@ end do
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!                     START OF CALCULATION                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+call set_start_time()
 call screen_wr_start_calc()
 end_main_loop = .false.
 
@@ -75,7 +76,7 @@ main_loop: do while (.not. end_main_loop)
       if (equation == EQU_TYP_NS) then
          call calc_viscous_fluxes(blocks(b)) 
       end if
-      call update_residual(blocks(b),res_max,res_avg)
+      call update_residual(blocks(b) % residuals,blocks(b),res_max,res_avg)
    end do block_loop
 
    if(residual_on_screen) call screen_residual()

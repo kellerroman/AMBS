@@ -38,12 +38,12 @@ do i = 1, blocks(b) % nCells(1)
 !   end do
 !   avg_vel = avg_vel / blocks(b) % nCells(2) 
    do j = 1, blocks(b) % nCells(2)
-      if  ( blocks(b) % solutions(1) % vars(i,j,k,Y_SPU) >= 0.99E0_REAL_KIND * avg_vel) then
+      if  ( blocks(b) % solutions(nSol) % vars(i,j,k,Y_SPU) >= 0.99E0_REAL_KIND * avg_vel) then
          if (j > 1) then
             y1 = 0.5E0_REAL_KIND * ( blocks(b) % coords(i,j,k,2) + blocks(b) % coords(i,j-1,k,2))
             y2 = 0.5E0_REAL_KIND * ( blocks(b) % coords(i,j,k,2) + blocks(b) % coords(i,j+1,k,2))
-            v1 = blocks(b) % solutions(1) % vars(i,j-1,k,Y_SPU)
-            v2 = blocks(b) % solutions(1) % vars(i,j  ,k,Y_SPU)
+            v1 = blocks(b) % solutions(nSol) % vars(i,j-1,k,Y_SPU)
+            v2 = blocks(b) % solutions(nSol) % vars(i,j  ,k,Y_SPU)
             grenzschicht_dicke(i) = y1 + (y2-y1) / (v2-v1) * (avg_vel-v1)
          else
             grenzschicht_dicke(i) = 0.0E0_REAL_KIND 
@@ -52,7 +52,7 @@ do i = 1, blocks(b) % nCells(1)
          exit
       end if
    end do
-   write(*,*) i,j, grenzschicht_dicke(i), blocks(b) % solutions(1) % vars(i,j-1:j+1,k,Y_SPU),avg_vel
+   !write(*,*) i,j, grenzschicht_dicke(i), blocks(b) % solutions(1) % vars(i,j-1:j+1,k,Y_SPU),avg_vel
 end do
 
 open(newunit = fo , file = trim(file_out))
@@ -93,7 +93,7 @@ j = 1
 i = 1
 k = 1
 do j = blocks(b) % nCells(2),1,-1 
-write(fo,*) (blocks(b) % coords(i,j,k,Y_SPU)+blocks(b) % coords(i,j+1,k,Y_SPU)) * 0.5d0,blocks(b) % solutions(1) % vars(:,j,k,Y_SPU) 
+write(fo,*) (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0,blocks(b) % solutions(nSol) % vars(:,j,k,Y_SPU) 
 end do
 close(fo)
 write(*,*) "========== EXTRACT 1D SOLUTION done ========="

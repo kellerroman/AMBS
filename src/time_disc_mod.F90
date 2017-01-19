@@ -3,17 +3,18 @@ module time_disc_mod
    use data_mod, only: block_type
 implicit none
 contains
-   subroutine update_residual(block,res_max,res_avg)
+   subroutine update_residual(residuals,block,res_max,res_avg)
    implicit none
+   real(REAL_KIND), intent(out) :: residuals(:,:,:,:)
    type(block_type), intent(inout) :: block
    real(REAL_KIND) , intent(inout) :: res_max
    real(REAL_KIND) , intent(inout) :: res_avg
    integer :: i,j,k
-   real(REAL_KIND) :: res
-   do k = 1, ubound(block % residuals,3)
-      do j = 1, ubound(block % residuals,2)
-         do i = 1, ubound(block % residuals,1)
-            block % residuals(i,j,k,:) = &
+   real(REAL_KIND) :: re
+   do k = 1, ubound(residuals,3)
+      do j = 1, ubound(residuals,2)
+         do i = 1, ubound(residuals,1)
+            residuals(i,j,k,:) = &
                +  block % CellFaceAreasI (i  ,j  ,k  ) &
                *  ( block % fluxesI      (i  ,j  ,k  ,:) & 
                   + block % visFluxesI   (i  ,j  ,k  ,:))&  
@@ -32,9 +33,9 @@ contains
                -  block % CellFaceAreasK (i  ,j  ,k+1) &
                *  ( block % fluxesK      (i  ,j  ,k+1,:)&
                   + block % visFluxesK   (i  ,j  ,k+1,:))
-            res = abs(block % residuals(i,j,k,1))
-            res_avg = res_avg + res
-            res_max = max(res_max,res)
+            re = abs(residuals(i,j,k,1))
+            res_avg = res_avg + re
+            res_max = max(res_max,re)
 !            if ( i == 50 .and. j == 1) then
 !            write(*,*) i,j,k   
 !            write(*,*) "RHO",block % vars (i:i+1,j,k,1)

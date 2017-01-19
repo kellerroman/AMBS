@@ -1,0 +1,603 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html xmlns="http://www.w3.org/TR/REC-html40" xmlns:st1="urn:schemas-microsoft-com:office:smarttags" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml"><head><meta content="IE=5.0000" http-equiv="X-UA-Compatible">
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=gbk"> 
+<meta name="ProgId" content="Word.Document"> 
+<meta name="GENERATOR" content="MSHTML 10.00.9200.16576"> 
+<meta name="Originator" content="Microsoft Word 11"> <link href="http://www.ttctech.com/Samples/shockwave/shockwave_files/filelist.xml" rel="File-List"> <link href="http://www.ttctech.com/Samples/shockwave/shockwave_files/editdata.mso" rel="Edit-Time-Data"> 
+<link href="http://www.ttctech.com/Samples/shockwave/shockwave_files/oledata.mso" rel="OLE-Object-Data"> <!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]--> 
+<title>Shu-Osher Problem</title> </head>
+<body style="tab-interval: .5in;" link="blue" lang="EN-US" vlink="purple"><o:smarttagtype downloadurl="http://www.5iamas-microsoft-com:office:smarttags" name="City" namespaceuri="urn:schemas-microsoft-com:office:smarttags"> 
+<o:smarttagtype downloadurl="http://www.5iantlavalamp.com/" name="place" namespaceuri="urn:schemas-microsoft-com:office:smarttags"><!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>HP Authorized Customer</o:Author>
+  <o:Template>Normal</o:Template>
+  <o:LastAuthor>HP Authorized Customer</o:LastAuthor>
+  <o:Revision>4</o:Revision>
+  <o:TotalTime>517</o:TotalTime>
+  <o:LastPrinted>2007-10-09T16:56:00Z</o:LastPrinted>
+  <o:Created>2008-02-08T19:45:00Z</o:Created>
+  <o:LastSaved>2008-06-03T18:45:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>669</o:Words>
+  <o:Characters>3816</o:Characters>
+  <o:Company>UB</o:Company>
+  <o:Lines>31</o:Lines>
+  <o:Paragraphs>8</o:Paragraphs>
+  <o:CharactersWithSpaces>4477</o:CharactersWithSpaces>
+  <o:Version>11.5606</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:PunctuationKerning/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:ApplyBreakingRules/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+   <w:UseFELayout/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+ </w:LatentStyles>
+</xml><![endif]--><!--[if !mso]><object
+ classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
+<style>
+st1\:*{behavior:url(#ieooui) }
+</style>
+<![endif]--> 
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:SimSun;
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt:SimSun;
+	mso-font-charset:134;
+	mso-generic-font-family:roman;
+	mso-font-pitch:auto;
+	mso-font-signature:3 135135232 16 0 262145 0;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
+@font-face
+	{font-family:"\@SimSun";
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 135135232 16 0 262145 0;}
+@font-face
+	{font-family:Verdana;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:536871559 0 0 0 415 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:SimSun;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p.msoacetate0, li.msoacetate0, div.msoacetate0
+	{mso-style-name:msoacetate;
+	mso-style-noshow:yes;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:8.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:SimSun;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 81.0pt;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:1362171874;
+	mso-list-template-ids:-788643470;}
+@list l1
+	{mso-list-id:2004965033;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-606807092 1530834584 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l1:level1
+	{mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+ <!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="6146"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]--> 
+<div class="Section1">
+<p class="MsoNormal"><b><a href="http://www.ttctech.com/Default.aspx">Home</a></b> &nbsp; 
+<b>&gt;</b>&nbsp; <b><a href="http://www.ttctech.com/Samples/aeroflo_samples.htm">Sample
+ Problems</a></b> &nbsp; <b>&gt; </b>&nbsp; <b>Shu-Osher Shock Tube</b></p>
+<div class="MsoNormal" style="text-align: center;" align="center">
+<hr size="2" align="center" width="100%">
+</div>
+<p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;"><span style="font-size: 16pt;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;"><span style="font-size: 16pt;">Shu-Osher Shock Tube Problem<o:p></o:p></span></b></p>
+<p class="MsoNormal"><b style="mso-bidi-font-weight: normal;"><u><span style="font-size: 16pt;"><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></span></u></b></p>
+<p class="MsoNormal"><u>Problem Description<o:p></o:p></u></p>
+<p class="MsoNormal"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%;">The Shu-Osher problem simulates 
+a normal shock front moving inside a one-dimensional inviscid flow with
+ artificial density fluctuations. In the test case, the length of the
+ computation domain is <i style="mso-bidi-font-style: normal;">1</i>. The
+ downstream flow is assumed to have a sinusoidal density fluctuation (<i style="mso-bidi-font-style: normal;">ρ=</i><span style="mso-bidi-font-style: italic;">1+εsin(</span><i style="mso-bidi-font-style: normal;">x/λ</i><span style="mso-bidi-font-style: italic;">)) </span>with a wave length of <i style="mso-bidi-font-style: normal;">λ 
+</i><span style="mso-bidi-font-style: italic;">= 1/8</span><i style="mso-bidi-font-style: normal;"> 
+</i>and an amplitude of ε = 0.2.<i style="mso-bidi-font-style: normal;">A</i> 
+normal shock front with a Mach number of 3.0 is initially placed at the position 
+<i style="mso-bidi-font-style: normal;">x</i><span style="mso-bidi-font-style: italic;"> 
+= </span><i style="mso-bidi-font-style: normal;">λ</i>.<span style="mso-spacerun: yes;">&nbsp; 
+</span>The initial conditions for the simulation are </p>
+<p class="MsoNormal" style="line-height: 150%;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; margin-left: 0.25in; tab-stops: 1.75in 225.0pt 4.25in;"><i style="mso-bidi-font-style: normal;"><span style="line-height: 150%; font-family: Verdana; font-size: 10pt; mso-bidi-font-family: Arial;">ρ=3.857143;<span style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span>u=2.629369;<span style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span>P=10.3333<span style="mso-tab-count: 2;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span></span></i><span style="line-height: 150%; font-family: Verdana; font-size: 10pt; mso-bidi-font-family: Arial;">when 
+<i style="mso-bidi-font-style: normal;">x&lt;1/8<span style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp; </span><o:p></o:p></i></span></p>
+<p class="MsoNormal" style="line-height: 150%; margin-left: 0.25in; tab-stops: 1.75in 225.0pt 4.5in;"><i style="mso-bidi-font-style: normal;"><span style="line-height: 150%; font-family: Verdana; font-size: 10pt; mso-bidi-font-family: Arial;">ρ=1+0.2sin8x;<span style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span>u=0;<span style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span>P=1<span style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</span></span></i><span style="line-height: 150%; font-family: Verdana; font-size: 10pt; mso-bidi-font-family: Arial;">when 
+<i style="mso-bidi-font-style: normal;">x≥1/8<o:p></o:p></i></span></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><span style="line-height: 150%; font-family: Verdana; font-size: 10pt; mso-bidi-font-family: Arial;"><o:p>&nbsp;</o:p></span></p>
+<p class="MsoNormal"><u>Mesh<o:p></o:p></u></p>
+<p class="MsoNormal"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal">The mesh is an even spaced 1D grid. Two kinds of grids are
+ used: a coarse grid (192 grid points) and a fine grid (384 grid points)</p>
+<p class="MsoNormal"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal"><u>Simulation Parameters<o:p></o:p></u></p>
+<p class="MsoNormal"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<div align="center">
+<table class="MsoTableGrid" style="border: currentColor; margin-left: 23.4pt; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0in 5.4pt 0in 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" cellspacing="0" cellpadding="0" border="1">
+  <tbody>
+  <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes;">
+    <td style="background: silver; padding: 0in 5.4pt; border: 1pt solid windowtext; width: 382.45pt; mso-border-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;">Overall 
+      Flow Conditions<o:p></o:p></b></p></td></tr>
+  <tr style="mso-yfti-irow: 1;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">Mach 
+      No.</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 229.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" colspan="2" width="306" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">3.0</p></td></tr>
+  <tr style="mso-yfti-irow: 2;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">Viscosity</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 229.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" colspan="2" width="306" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">Inviscid</p></td></tr>
+  <tr style="mso-yfti-irow: 3;">
+    <td style="background: silver; border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 382.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;">Spatial 
+      Scheme<o:p></o:p></b></p></td></tr>
+  <tr style="mso-yfti-irow: 4;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">MUSCL</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 107.95pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="144" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">WENO 
+    33</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 121.5pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="162" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">WENO 
+    34</p></td></tr>
+  <tr style="mso-yfti-irow: 5;">
+    <td style="background: silver; border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 382.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;">Time 
+      Scheme<o:p></o:p></b></p></td></tr>
+  <tr style="mso-yfti-irow: 6;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">Runge-Kutta 4<sup>th</sup>  order</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 107.95pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="144" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><sub><!--[if gte vml 1]><v:shapetype
+   id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+   path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+   <v:stroke joinstyle="miter"/>
+   <v:formulas>
+    <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+    <v:f eqn="sum @0 1 0"/>
+    <v:f eqn="sum 0 0 @1"/>
+    <v:f eqn="prod @2 1 2"/>
+    <v:f eqn="prod @3 21600 pixelWidth"/>
+    <v:f eqn="prod @3 21600 pixelHeight"/>
+    <v:f eqn="sum @0 0 1"/>
+    <v:f eqn="prod @6 1 2"/>
+    <v:f eqn="prod @7 21600 pixelWidth"/>
+    <v:f eqn="sum @8 21600 0"/>
+    <v:f eqn="prod @7 21600 pixelHeight"/>
+    <v:f eqn="sum @10 21600 0"/>
+   </v:formulas>
+   <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+   <o:lock v:ext="edit" aspectratio="t"/>
+  </v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:54pt;
+   height:14.25pt' o:ole="">
+   <v:imagedata src="shockwave_files/image001.wmz" o:title=""/>
+  </v:shape><![endif]--><!--[if !vml]--><img src="Shu-Osher%20Problem_files/image002.gif" v:shapes="_x0000_i1025" height="19" width="72" border="0"><!--[endif]--></sub><!--[if gte mso 9]><xml>
+   <o:OLEObject Type="Embed" ProgID="Equation.3" ShapeID="_x0000_i1025"
+    DrawAspect="Content" ObjectID="_1274009518">
+   </o:OLEObject>
+  </xml><![endif]--></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 121.5pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="162" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><sub><!--[if gte vml 1]><v:shape
+   id="_x0000_i1026" type="#_x0000_t75" style='width:42.75pt;height:14.25pt'
+   o:ole="">
+   <v:imagedata src="shockwave_files/image003.wmz" o:title=""/>
+  </v:shape><![endif]--><!--[if !vml]--><img src="Shu-Osher%20Problem_files/image004.gif" v:shapes="_x0000_i1026" height="19" width="57" border="0"><!--[endif]--></sub><!--[if gte mso 9]><xml>
+   <o:OLEObject Type="Embed" ProgID="Equation.3" ShapeID="_x0000_i1026"
+    DrawAspect="Content" ObjectID="_1274009519">
+   </o:OLEObject>
+  </xml><![endif]--></p></td></tr>
+  <tr style="mso-yfti-irow: 7;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">2 
+      subiterations per  time step</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 107.95pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="144" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><sub><!--[if gte vml 1]><v:shape
+   id="_x0000_i1027" type="#_x0000_t75" style='width:65.25pt;height:18pt'
+   o:ole="">
+   <v:imagedata src="shockwave_files/image005.wmz" o:title=""/>
+  </v:shape><![endif]--><!--[if !vml]--><img src="Shu-Osher%20Problem_files/image006.gif" v:shapes="_x0000_i1027" height="24" width="87" border="0"><!--[endif]--></sub><!--[if gte mso 9]><xml>
+   <o:OLEObject Type="Embed" ProgID="Equation.3" ShapeID="_x0000_i1027"
+    DrawAspect="Content" ObjectID="_1274009520">
+   </o:OLEObject>
+  </xml><![endif]--></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 121.5pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="162" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><o:p>&nbsp;</o:p></p></td></tr>
+  <tr style="mso-yfti-irow: 8;">
+    <td style="background: silver; border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 382.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;">Boundary 
+      Conditions<o:p></o:p></b></p></td></tr>
+  <tr style="height: 9.85pt; mso-yfti-irow: 9;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; height: 9.85pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">I=1: 
+      Inlet</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 229.45pt; height: 9.85pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" colspan="2" width="306" valign="top">
+      <p class="MsoNormal"><i style="mso-bidi-font-style: normal;">ρ=3.857143;</i><i style="mso-bidi-font-style: normal;"><span style="font-family: Verdana; font-size: 10pt; mso-bidi-font-family: Arial;"><span style="mso-spacerun: yes;">&nbsp;  </span></span>u=2.629369;<span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;&nbsp; 
+      </span>P=10.3333<o:p></o:p></i></p></td></tr>
+  <tr style="mso-yfti-irow: 10;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 153pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="204" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center">I=178: 
+      Outlet</p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 229.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" colspan="2" width="306" valign="top">
+      <p class="MsoNormal">Outflow boundary condition (type 31)</p></td></tr>
+  <tr style="mso-yfti-irow: 11;">
+    <td style="background: silver; border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 382.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal" style="text-align: center;" align="center"><b style="mso-bidi-font-weight: normal;">Initial 
+      Conditions<o:p></o:p></b></p></td></tr>
+  <tr style="mso-yfti-irow: 12;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 382.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal"><i style="mso-bidi-font-style: normal;"><span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+       </span>x&lt;1/8:<span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;  
+      </span>ρ=3.857143;<span style="mso-spacerun: yes;">&nbsp; </span><span style="mso-tab-count: 1;">&nbsp; </span><span style="mso-spacerun: yes;">&nbsp;&nbsp;</span>u=2.629369;<span style="mso-tab-count: 1;"></span><span style="mso-spacerun: yes;">&nbsp;  </span>P=10.3333</i></p></td></tr>
+  <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 382.45pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" colspan="3" width="510" valign="top">
+      <p class="MsoNormal"><i style="mso-bidi-font-style: normal;"><span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+       </span>x≥1/8:<span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;  
+      </span>ρ=1+0.2sin8x;<span style="mso-tab-count: 1;"></span><span style="mso-spacerun: yes;">&nbsp; 
+      </span>u=0;<span style="mso-tab-count: 1;">&nbsp; </span><span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+       </span>P=1</i></p></td></tr></tbody></table></div>
+<p class="MsoNormal" style="text-align: center;" align="center"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="text-align: center;" align="center"><b><span style="font-size: 10pt;">Table 
+1. Simulation Parameters for Shu-Osher Problem<o:p></o:p></span></b></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;">A WENO simulation 
+result with a very fine grid (768 grid points) can be regarded as the exact 
+solution. Figure 1 shows the initial density profile and the fine grid density 
+profile at <i style="mso-bidi-font-style: normal;">t </i><span style="mso-bidi-font-style: italic;">= 
+0.178</span>.<span style="mso-spacerun: yes;">&nbsp;&nbsp; </span></p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><!--[if gte vml 1]><v:shape id="_x0000_i1028"
+ type="#_x0000_t75" style='width:309.75pt;height:274.5pt'>
+ <v:imagedata src="shockwave_files/image007.wmz" o:title="initial_exact"/>
+</v:shape><![endif]--><!--[if !vml]--><img src="Shu-Osher%20Problem_files/image008.gif" v:shapes="_x0000_i1028" height="366" width="413" border="0"><!--[endif]--></p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><b><span style="line-height: 150%; font-size: 10pt;">Figure 1. The initial and exact 
+density profiles</span></b>.</p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u>Obtain the 
+Files<o:p></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;">Both mesh files and 
+project input files can be accessed below. Remember to place the grid files in a 
+subfolder with the set up file <i style="mso-bidi-font-style: normal;">/shockwave</i>.</p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;">Setup file (<a title="Preferably right click, and select Save As" href="http://www.ttctech.com/Samples/shockwave/shockwave.afl">shockwave.afl</a>)</p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;">Grid file (<a title="Preferably right click, and select Save As" href="http://www.ttctech.com/Samples/shockwave/shock.in">shock.in</a>).</p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u>Start the 
+Simulation<o:p></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;">Change the directory 
+to the subfolder with the selected grid and spatial scheme. Start the simulation 
+by</p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><b style="mso-bidi-font-weight: normal;"><i style="mso-bidi-font-style: normal;">mpirun –np 1 mpiaeroflo.exe &lt; 
+shockwave.afl <o:p></o:p></i></b></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><b style="mso-bidi-font-weight: normal;"><i style="mso-bidi-font-style: normal;"><o:p>&nbsp;</o:p></i></b></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u>Comparison of 
+Different Spatial Schemes<o:p></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="text-align: justify; line-height: 150%; -ms-text-justify: inter-ideograph; tab-stops: 1.75in 225.0pt 4.5in;">The 
+MUSCL, WENO 33, and WENO 34 schemes are used for the simulations with a coarse 
+grid (192 grid points) and a fine grid (384), respectively.<span style="mso-spacerun: yes;">&nbsp;
+</span>The density profiles for different spatial schemes are shown in Figure 2
+ for coarse grid simulation and in Figure 3 for fine grid simulation,
+ respectively. Both of the results are compared with the exact result. The
+ result shows that the fine grid results are much better than coarse grid
+ results and for the same grid simulation the WENO results (both 33 and 34
+ schemes) are better than MUSCL result, and WENO 34 is a little bit better than
+ WENO 33.</p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><!--[if gte vml 1]><v:shape id="_x0000_i1029"
+ type="#_x0000_t75" style='width:455.25pt;height:404.25pt'>
+ <v:imagedata src="shockwave_files/image009.wmz" o:title="coarse_den"/>
+</v:shape><![endif]--><!--[if !vml]--><img src="Shu-Osher%20Problem_files/image010.gif" v:shapes="_x0000_i1029" height="539" width="607" border="0"><!--[endif]--></p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><b><span style="line-height: 150%; font-size: 10pt;">Figure 2. The density profiles of 
+MUSCL, WENO 33, and WENO 34 schemes at t=0.178 for a coarse grid 
+simulation.<o:p></o:p></span></b></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><!--[if gte vml 1]><v:shape id="_x0000_i1030"
+ type="#_x0000_t75" style='width:455.25pt;height:404.25pt'>
+ <v:imagedata src="shockwave_files/image011.wmz" o:title="fine_den"/>
+</v:shape><![endif]--><!--[if !vml]--><img src="Shu-Osher%20Problem_files/image012.gif" v:shapes="_x0000_i1030" height="539" width="607" border="0"><!--[endif]--></p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><b><span style="line-height: 150%; font-size: 10pt;">Figure 3. The density profiles of 
+MUSCL, WENO 33, and WENO 34 schemes at t=0.178 for a fine grid 
+simulation.</span></b><i style="mso-bidi-font-style: normal;"><o:p></o:p></i></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u>CFL
+ Test<o:p></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;">The CFL performances 
+for different spatial schemes are also tested for this problem. The test results 
+are summarized in Table 2. Since the problem is an unsteady, for all test 
+simulations, whether the simulation is converged or diverged is decided by if 
+the simulation can be calculated to <i style="mso-bidi-font-style: normal;">t 
+</i><span style="mso-bidi-font-style: italic;">= 0.178</span> without being 
+blowout<i style="mso-bidi-font-style: normal;">.</i></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<div align="center">
+<table class="MsoTableGrid" style="border: currentColor; width: 461.8pt; margin-left: 5.4pt; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0in 5.4pt 0in 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" width="616" cellspacing="0" cellpadding="0" border="1">
+  <tbody>
+  <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes;">
+    <td style="padding: 0in 5.4pt; border: 1pt solid windowtext; width: 63pt; mso-border-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;"><o:p>&nbsp;</o:p></span></p></td>
+    <td style="border-width: 1pt 1pt 1pt medium; border-style: solid solid solid none; border-color: windowtext windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">Spatial 
+      Scheme<o:p></o:p></span></p></td>
+    <td style="border-width: 1pt 1pt 1pt medium; border-style: solid solid solid none; border-color: windowtext windowtext windowtext currentColor; padding: 0in 5.4pt; width: 47.8pt; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="64">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">Time 
+      Scheme<o:p></o:p></span></p></td>
+    <td style="border-width: 1pt 1pt 1pt medium; border-style: solid solid solid none; border-color: windowtext windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">Turbulence 
+      Model<o:p></o:p></span></p></td>
+    <td style="border-width: 1pt 1pt 1pt medium; border-style: solid solid solid none; border-color: windowtext windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">Grid 
+Size<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">Δs=min(Δx<sub>i</sub>)<o:p></o:p></span></p></td>
+    <td style="border-width: 1pt 1pt 1pt medium; border-style: solid solid solid none; border-color: windowtext windowtext windowtext currentColor; padding: 0in 5.4pt; width: 189pt; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" colspan="3" width="252">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">Test Value<span style="mso-spacerun: yes;">&nbsp; 
+      </span>CFL= Δt/ Δs, CFL<sub>a</sub>=(1+1/M)CFL<o:p></o:p></span></p></td></tr>
+  <tr style="mso-yfti-irow: 1;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;">Converge  (√) or 
+      Diverge(x)<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;"><o:p>&nbsp;</o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 47.8pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="64">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;"><o:p>&nbsp;</o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;"><o:p>&nbsp;</o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;"><o:p>&nbsp;</o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">√<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">√<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">x<o:p></o:p></span></p></td></tr>
+  <tr style="mso-yfti-irow: 2;">
+    <td style="border-width: medium 1pt 1pt; border-style: none solid solid; border-color: currentColor windowtext windowtext; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt;" rowspan="3" width="84">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;">Shu-Osher  
+      Problem<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;"><o:p>&nbsp;</o:p></span></p>
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;">Ma=3.0<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;">MUSCL<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 47.8pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="64">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">RK4<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">inviscid<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" rowspan="3" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">5.2356E-3<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.0E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.191<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.255<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.6E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.306<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.407<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.7E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.325<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.433<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">N=58<o:p></o:p></span></p></td></tr>
+  <tr style="mso-yfti-irow: 3;">
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;">WENO 
+    33<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 47.8pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="64">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">RK4<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">inviscid<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.0E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.191<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.255<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.9E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.363<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.484<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">2.0E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.382<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.509<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">N=2<o:p></o:p></span></p></td></tr>
+  <tr style="mso-yfti-irow: 4; mso-yfti-lastrow: yes;">
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal"><span style="font-family: Arial; font-size: 8pt;">WENO 
+    34<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 47.8pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="64">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">RK4<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 0.75in; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="72">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">inviscid<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.0E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.191<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.255<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.7E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.325<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.433<o:p></o:p></span></p></td>
+    <td style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor windowtext windowtext currentColor; padding: 0in 5.4pt; width: 63pt; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt;" width="84">
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">1.8E-3<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL=0.344<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">CFL<sub>a</sub>=0.459<o:p></o:p></span></p>
+      <p class="MsoNormal" style="text-align: center;" align="center"><span style="font-family: Arial; font-size: 8pt;">N=0<o:p></o:p></span></p></td></tr></tbody></table></div>
+<p class="MsoNormal" style="margin-left: 2in; tab-stops: 1.75in 225.0pt 4.5in;"><span style="font-size: 10pt;">*<span style="mso-spacerun: yes;">&nbsp; </span>The CFL condition is computed by 
+CFL=</span><span style="font-family: Arial; font-size: 8pt;"> Δt/ Δs, which 
+assume the reference flow velocity u=1.0.<o:p></o:p></span></p>
+<p class="MsoNormal" style="margin-left: 2in; tab-stops: 1.75in 225.0pt 4.5in;"><span style="font-family: Arial; font-size: 8pt;">**<span style="mso-spacerun: yes;">&nbsp; </span>Δs=min(Δx<sub>i</sub>) is the minimum
+ computational grid spacing<o:p></o:p></span></p>
+<p class="MsoNormal" style="margin-left: 2in; tab-stops: 1.75in 225.0pt 4.5in;"><span style="font-family: Arial; font-size: 8pt;">*** 
+CFL<sub>a</sub>=(u+a) Δt/ Δs=u(1+1/M)CFL is a measure of how far a sound wave 
+can travel through the flow.<o:p></o:p></span></p>
+<p class="MsoNormal" style="margin-left: 2.15pt; tab-stops: 1.75in 225.0pt 4.5in;"><span style="font-size: 10pt;"><o:p>&nbsp;</o:p></span></p>
+<p class="MsoNormal" style="text-align: center; line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;" align="center"><b><span style="line-height: 150%; font-size: 10pt;">Table 2. CFL Number Test for 
+Different Schemes<o:p></o:p></span></b></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u>Reference:<o:p></o:p></u></p>
+<p class="MsoNormal" style="line-height: 150%; tab-stops: 1.75in 225.0pt 4.5in;"><u><o:p><span style="text-decoration: none;">&nbsp;</span></o:p></u></p>
+<ol style="margin-top: 0in;" start="1" type="1">
+  <li class="MsoNormal" style="line-height: 150%; tab-stops: list .5in left 1.75in 225.0pt 4.5in; mso-list: l1 level1 lfo3;"><st1:city w:st="on"><st1:place w:st="on">Taylor</st1:place></st1:city>, E.M., Wu, M., 
+  and Martin, M.P.,      “Optimization of Nonlinear Error for Weighted 
+  Essentially Non-Oscillatory     Methods in Direct Numerical Simulations of 
+  Compressible Turbulence,”      Journal of Computational Physics, Vol. 223, 
+  2007, pp. 
+384-397</li></ol></div></o:smarttagtype></o:smarttagtype>
+</body></html>

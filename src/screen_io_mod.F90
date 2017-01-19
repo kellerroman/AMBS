@@ -24,12 +24,16 @@ implicit none
 contains
 subroutine screen_wr_start()
 implicit none
+   integer :: start_time(8)
+   call date_and_time(values = start_time)
    write(stdout,'(A)') RED_START
    write(stdout,FORMAT_SEPLINE) 
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_LINE) "AMBS 2016                                                   "
    write(stdout,FORMAT_LINE) ""
+   write(stdout,'(3("="),23X,"Date:",4X,I2.2,"-",I2.2,"-",I4.4,52X,3("="))') start_time(3),start_time(2),start_time(1)
+   write(stdout,'(3("="),23X,"Time:",4X,I2.2,"-",I2.2,"-",I2.2,54X,3("="))') start_time(5),start_time(6),start_time(7)
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_SEPLINE) 
    write(stdout,'(A)') RED_END
@@ -43,13 +47,21 @@ implicit none
    write(stdout,'(A)') GREEN_END
 end subroutine
 subroutine screen_wr_end()
+   use control_mod, only: get_runtime
 implicit none
+   integer :: date_time(8)
+   call date_and_time(values = date_time)
    write(stdout,'(A)') RED_START
    write(stdout,FORMAT_SEPLINE) 
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_LINE) "AMBS done!                                                 "
    write(stdout,FORMAT_LINE) ""
+   write(stdout,'(3("="),23X,"Date:",4X,I2.2,"-",I2.2,"-",I4.4,52X,3("="))') date_time(3),date_time(2),date_time(1)
+   write(stdout,'(3("="),23X,"Time:",4X,I2.2,"-",I2.2,"-",I2.2,54X,3("="))') date_time(5),date_time(6),date_time(7)
+   write(stdout,'(3("="),23X,"Runtime:",1X,F10.2,"s",51X,3("="))') get_runtime()
+                                                                  
+                                                                  
    write(stdout,FORMAT_LINE) ""
    write(stdout,FORMAT_SEPLINE) 
    write(stdout,'(A)') RED_END
@@ -119,11 +131,12 @@ subroutine screen_wr(text,level)
    end subroutine error_wr
 
    subroutine screen_residual()
-      use control_mod ,only: current_iteration,res_avg,res_max,solution_time
+      use control_mod ,only: current_iteration,res_avg,res_max,solution_time, get_runtime
    implicit none
-      write(stdout,'(I10,3(1X,ES10.4))') current_iteration & 
+      write(stdout,'(I10,4(1X,ES10.4))') current_iteration & 
                                            , res_max &
                                            , res_avg &
-                                           , solution_time
+                                           , solution_time &
+                                           , get_runtime()
    end  subroutine screen_residual
 end module screen_io_mod

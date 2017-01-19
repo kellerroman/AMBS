@@ -16,6 +16,7 @@ integer(INT_KIND) :: space_order
 integer(INT_KIND) :: riemann_solver
 integer(INT_KIND) :: timestep_method
 integer(INT_KIND) :: time_order
+integer(INT_KIND),private :: start_time(8)
 
 real(REAL_KIND) :: res_max
 real(REAL_KIND) :: res_avg
@@ -54,4 +55,19 @@ contains
       end if
 !         residual_on_screen = .true.
    end subroutine main_loop_control
+   function get_runtime() result (runtime)
+   real(REAL_KIND) :: runtime
+   integer(INT_KIND) :: current_time(8)
+
+   call date_and_time(values = current_time)
+
+   runtime =  real(current_time(7) - start_time(7)) &           !sekonds 
+             +real(current_time(8) - start_time(8))/ 1.0d3 &    ! miliseconds
+             +real(current_time(6) - start_time(6))* 6.0d1 &    ! minutes
+             +real(current_time(5) - start_time(5))* 3.6d3      ! hours
+
+   end function
+   subroutine set_start_time()
+   call date_and_time(values = start_time)
+   end subroutine
 end module control_mod
