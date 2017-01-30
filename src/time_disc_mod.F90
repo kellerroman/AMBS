@@ -85,7 +85,7 @@ contains
                                          )                               &
                                        )
             block % temperatures (i,j,k) = block % pressures (i,j,k) & 
-                  / ( RGas * block % vars (i,j,k,1))
+                                         / ( RGas * rho )
          end do
       end do
    end do

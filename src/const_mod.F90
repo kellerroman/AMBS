@@ -17,7 +17,7 @@ public
 
       enumerator :: TAU_TXX = 1, TAU_TYY, TAU_TZZ, TAU_TXY, TAU_TXZ, TAU_TYZ
 
-      enumerator :: BC_OUTFLOW = 1, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC
+      enumerator :: BC_OUTFLOW = -4, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC
 
       enumerator :: EQU_TYPE_EULER = 1, EQU_TYP_NS
 
@@ -41,9 +41,32 @@ public
                                                     ,"NORTH" &
                                                     ,"FRONT" &
                                                     ,"BACK " ]
-   character(len = 8), parameter  :: BC_NAMES(5) =  ["OUTFLOW " &
-                                                    ,"INFLOW  " &
-                                                    ,"WALL    " &
-                                                    ,"SYMMETRY" &
-                                                    ,"PERIODIC" ]
+   contains
+   function bc_names(i) result(string)
+      implicit none
+      character(len = :), allocatable :: string
+      integer, intent(in) :: i
+      character(len = 2) :: tmp
+      select case(i)
+         case(1:)
+            write(tmp,'(I0)') i
+            string = "BloCo "//trim(tmp)
+         case(BC_OUTFLOW)
+            string = "OUTFLOW"
+
+         case(BC_INFLOW)
+            string = "INFLOW"
+         case(BC_WALL)
+            string = "WALL"
+         case(BC_SYMMETRY)
+            string = "SYMMETRY"
+         case(BC_PERIODIC)
+            string = "PERIODIC"
+         end select
+   end function
+!   character(len = 8), parameter  :: BC_NAMES(-4:0) =  ["OUTFLOW " &
+!                                                    ,"INFLOW  " &
+!                                                    ,"WALL    " &
+!                                                    ,"SYMMETRY" &
+!                                                    ,"PERIODIC" ]
 end module const_mod

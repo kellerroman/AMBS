@@ -52,7 +52,8 @@ blocks(1) % vars(:,:,:,5) = p / gm1 + 0.5D0*rho*(u*u+v*v)
 blocks(1) % boundary_condition(DIR_WEST) = BC_INFLOW
 blocks(1) % boundary_condition(DIR_EAST) = BC_OUTFLOW
 blocks(1) % boundary_condition(DIR_SOUTH) = BC_WALL
-blocks(1) % boundary_condition(DIR_NORTH) = BC_SYMMETRY
+!blocks(1) % boundary_condition(DIR_NORTH) = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_NORTH) = BC_OUTFLOW
 blocks(1) % boundary_condition(DIR_FRONT) = BC_SYMMETRY
 blocks(1) % boundary_condition(DIR_BACK) = BC_SYMMETRY
 

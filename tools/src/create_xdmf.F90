@@ -142,10 +142,10 @@
       write(fu,'(A)') '   </Time>'
    end if
    do ns = 1, hdf5_nSol
+      write(fu,'(A)') '   <Grid Name="All" GridType="Tree">'
       do nb = 1, nBlock
 
          write(block_group,'(A,I0)') GROUP_BLOCK,nb
-
          write(fu,'(A,I0,A)') '   <Grid Name="Block',nb,'" GridType="Uniform">'
          write(fu,'(A,3(I0,1X),A)') '     <Topology TopologyType="3DSMesh" NumberOfElements="'&
                                    ,(dims(d,nb),d=RANK,1,-1) &
@@ -172,6 +172,7 @@
          end do
          write(fu,'(A)') '   </Grid>'
       end do
+      write(fu,'(A)') '   </Grid>'
    end do
    if (hdf5_nSol > 1) then
       write(fu,'(A)') '   </Grid>'

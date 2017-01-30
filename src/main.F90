@@ -37,6 +37,7 @@ call init_sol()
 do b = 1, nBlock
    call update_thermprop(blocks(b) ) 
    call init_boundary(blocks(b),nBoundaryCells)
+   write(*,*) b, blocks(b) % vars(0,1,1,2)
 end do
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -50,7 +51,7 @@ current_iteration = 0
 main_loop: do while (.not. end_main_loop)
    call main_loop_control()
    block_loop: do b = 1, nBlock
-      call set_boundary(blocks(b),nBoundaryCells)
+      call set_boundary(blocks,b,nBoundaryCells)
       call face_values ( blocks(b) % vars     &
                        , blocks(b) % faceVarsLeftI & 
                        , blocks(b) % faceVarsRightI & 
@@ -86,6 +87,15 @@ main_loop: do while (.not. end_main_loop)
       call update_thermprop(blocks(b) ) 
    end do block_loop_update
    if (solution_to_file) call datout_sol()
+!  b = 1
+!  write(*,*) blocks(b) % vars(0,1,1,2), blocks(b) % vars(0,1,1,5), blocks(b) % pressures(0,1,1), blocks(b) % temperatures(0,1,1)
+!  write(*,*) blocks(b) % vars(1,1,1,2), blocks(b) % vars(1,1,1,5), blocks(b) % pressures(1,1,1), blocks(b) % temperatures(1,1,1)
 end do main_loop
+!b = 1
+!write(*,*) b, blocks(b) % vars(blocks(b) % nCells(1)+1,1,1,:)
+!write(*,*) b, blocks(b) % vars(blocks(b) % nCells(1)  ,1,1,:)
+!b = 2
+!write(*,*) b, blocks(b) % vars(                      0,1,1,:)
+!write(*,*) b, blocks(b) % vars(                      1,1,1,:)
 call screen_wr_end()
 end program AMBS

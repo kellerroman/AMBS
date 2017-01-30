@@ -172,11 +172,11 @@ contains
 
       call h5gn_members_f(file_id, GROUP_GRID, nBlock, error)
       !!!!!!!!! ONLY ONE BLOCK SUPPORTED AT THE MOMENT
-      if (nBlock > 1) then
-         write(*,*) "Only one Block supported at the Moment"
-         write(*,*) "Number of Blocks in File:",nBlock
-         nBlock = 1
-      end if
+!      if (nBlock > 1) then
+!         write(*,*) "Only one Block supported at the Moment"
+!         write(*,*) "Number of Blocks in File:",nBlock
+!         nBlock = 1
+!      end if
       !!!!!!!!! ONLY ONE BLOCK SUPPORTED AT THE MOMENT
       allocate(blocks(nBlock))
       do ib = 1, nBlock
@@ -198,12 +198,12 @@ contains
          blocks(ib) % nCells = max(1,blocks(ib) % nPkts - 1)
          nCell = nCell + product(blocks(ib) % nCells)
 
-         write(*,*) dimen,dims
+!         write(*,*) dimen,dims
          
          nFaces = dimen * 2
          nCorners = 2 ** dimen
          !!!! MUSS VERSCHOBEN WERDEN FUER MULTIBLOCK
-         call allocate_vars()
+         call allocate_vars(ib)
 
          allocate (data_in(blocks(ib)%nPkts(1),blocks(ib)%nPkts(2),blocks(ib)%nPkts(3)))
          do d = 1,dimen
@@ -301,7 +301,7 @@ contains
          write(*,'("========== BLOCK",I2.2,"==========")') ib
          do bc = 1,6
             read(file_unit) blocks(ib) % boundary(bc) % bc_type
-            write(*,'(A,3X,A)') DIR_NAMES(bc), trim(BC_NAMES(blocks(ib) % boundary(bc) % bc_type))
+            write(*,'(A,3X,A)') DIR_NAMES(bc), bc_names(blocks(ib) % boundary(bc) % bc_type)
          end do
       end do
    end subroutine datin_bc
@@ -390,7 +390,7 @@ contains
 
       allocate (data_out(blocks(b) % nCells(1),blocks(b) % nCells(2),blocks(b) % nCells(3))) 
 
-      do var = 1, 6!sol_out_nVar
+      do var = 1, 8!sol_out_nVar
          select case(var)!VarName(var))
          case(1)!VarName_Rho)
             varname_out = VarName_Rho
@@ -417,14 +417,16 @@ contains
             data_out = blocks(b) % vars(1:blocks(b) % nCells(1)  &
                                        ,1:blocks(b) % nCells(2)  &
                                        ,1:blocks(b) % nCells(3),VEC_ENE)
-!            case(VarName_Pre)
-!               data_out = blocks(b) % P(1:block(b) % nCell(1)  &
-!                                      ,1:block(b) % nCell(2)  &
-!                                      ,1:block(b) % nCell(3))
-!            case(VarName_Temp)
-!               data_out = blocks(b) % T(1:block(b) % nCell(1)  &
-!                                      ,1:block(b) % nCell(2)  &
-!                                      ,1:block(b) % nCell(3))
+         case(7)!VarName_Pre)
+            varname_out = "Druck"
+            data_out = blocks(b) % pressures(1:blocks(b) % nCells(1)  &
+                                            ,1:blocks(b) % nCells(2)  &
+                                            ,1:blocks(b) % nCells(3))
+         case(8)!VarName_Temp)
+            varname_out = "Temperatur"
+            data_out = blocks(b) % temperatures(1:blocks(b) % nCells(1)  &
+                                               ,1:blocks(b) % nCells(2)  &
+                                               ,1:blocks(b) % nCells(3))
          case(6)
             varname_out = "Mach Number"
             data_out = sqrt( &

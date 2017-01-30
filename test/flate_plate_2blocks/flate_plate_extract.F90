@@ -16,6 +16,7 @@ real(REAL_KIND) :: avg_vel,y1,y2,v1,v2
 
 write(*,*) "========== EXTRACT 1D SOLUTION =============="
 debug = .true.
+debug = .false.
 call read_solution()
 write(*,*) "Solution with ",nBlock," Blocks, ",nVar, " Variables  and ",nSol," Solutions read"
 do i = 1, nVar

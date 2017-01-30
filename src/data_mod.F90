@@ -143,11 +143,11 @@ integer(INT_KIND)                :: nCell
 integer(INT_KIND)                :: nVar
 
 contains
-   subroutine allocate_vars()
+   subroutine allocate_vars(ib)
       use control_mod, only: nBoundaryCells
    implicit none
 
-   integer :: ib
+   integer, intent(in) :: ib
    !< Blockindex
    integer :: ci,cj,ck
    ! Number of Cells
@@ -159,7 +159,7 @@ contains
    ! Cellsindex End including boundary cells
    
       nvar = 5
-      block_loop: do ib = 1, nBlock
+!      block_loop: do ib = 1, nBlock
       associate (b => blocks(ib))
          ci = b % nCells(1)
          cj = b % nCells(2)
@@ -244,7 +244,7 @@ contains
          b % visFluxesK = 0.0E0_REAL_KIND
       end associate
    
-      end do block_loop
+!      end do block_loop
 
 
    end subroutine allocate_vars

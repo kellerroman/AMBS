@@ -53,6 +53,7 @@ contains
          & mod(current_iteration,residual_out) == 0) then
          residual_on_screen = .true.
       end if
+
 !         residual_on_screen = .true.
    end subroutine main_loop_control
    function get_runtime() result (runtime)
