@@ -94,7 +94,7 @@ j = 1
 i = 1
 k = 1
 do j = blocks(b) % nCells(2),1,-1 
-write(fo,*) (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0,blocks(b) % solutions(nSol) % vars(:,j,k,Y_SPU) 
+   write(fo,*) (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0,blocks(b) % solutions(nSol) % vars(:,j,k,Y_SPU) 
 end do
 close(fo)
 write(*,*) "========== EXTRACT 1D SOLUTION done ========="

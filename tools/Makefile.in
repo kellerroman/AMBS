@@ -14,7 +14,7 @@ SOURCE_DIR = ../src
 
 _SCRIPT=pre_config make_dependencies
 
-_EXE= extract_1D create_xdmf
+_EXE= extract_1D create_xdmf pre_config
 #sol2vtk
 
 EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
@@ -26,8 +26,8 @@ $(EXECUTABLE_DIR)/make_dependencies:
 	@ln -s $(SOURCE_DIR)/make_dependencies.py $@
 
 
-$(EXECUTABLE_DIR)/pre_config:
-	@ln -s $(SOURCE_DIR)/pre_config.py $@
+#$(EXECUTABLE_DIR)/pre_config:
+	#@ln -s $(SOURCE_DIR)/pre_config.py $@
 
 
 $(EXECUTABLE_DIR)/extract_1D:$(SOURCE_DIR)/extract_1D.F90 module_post.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)control_mod.o

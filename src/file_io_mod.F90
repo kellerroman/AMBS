@@ -86,6 +86,7 @@ contains
       open(newunit = file_unit, file=trim(filename_control),form="unformatted",access="stream")
       read(file_unit) cfv_version
       if (cfv_version /= CONFIG_FILE_VERSION) then
+         close(file_unit,status='delete')
          call error_wr("Config Datei Version stimmt nicht",__FILE__,__LINE__)
       end if
       read(file_unit) max_iteration   
@@ -235,11 +236,13 @@ contains
          !write(*,*) "opening", block_group
          call h5gopen_f(group_id1,block_group,group_id2,error)
          call h5gn_members_f(group_id1, block_group, nVar_in, error)
-         write(*,*) "Anzahl der Variablen:", nVar_in
+         if (ib == 1) &
+         write(*,'(A,I0,A)',ADVANCE="NO") "Variablen(", nVar_in,"):"
          allocate (data_in(blocks(ib)%nCells(1),blocks(ib)%nCells(2),blocks(ib)%nCells(3)))
          do var = 1, nVar_in
             call h5gget_obj_info_idx_f(group_id1, block_group, var-1,varName_in, var_type, error)
-            write(*,*) var, varName_in
+         if (ib == 1) &
+            write(*,'(1X,A)',ADVANCE="NO") varName_in
             call h5dopen_f(group_id2, varName_in, dset_id, error)
             call h5dget_space_f(dset_id,dspace_id,error)
             
@@ -272,6 +275,8 @@ contains
                   write(*,*) varname_in," nicht erkannt"
              end select
          end do
+         if (ib == 1) &
+         write(*,*)
          deallocate(data_in)
          call h5gclose_f(group_id2, error)
       end do
@@ -297,13 +302,19 @@ contains
          call error_wr("Config Datei: '"//trim(filename_bc_in)//"' nicht gefunden!",__FILE__,__LINE__)
       end if
       open(newunit = file_unit, file=trim(filename_bc_in),form="unformatted",access="stream")
+      write(*,'(88("="))')
+      write(*,'(A4,3(1X,A5),6(1X,A10))') "B#","NI","NJ","NK","WEST","EAST","SOUTH","NORTH","FRONT","BACK"
+      write(*,'(88("-"))')
       do ib = 1, nBlock
-         write(*,'("========== BLOCK",I2.2,"==========")') ib
+      write(*,'(I4,3(1X,I5))',ADVANCE="NO") ib, blocks(ib) % NCells
+         !write(*,'("========== BLOCK",I2.2,"==========")') ib
          do bc = 1,6
             read(file_unit) blocks(ib) % boundary(bc) % bc_type
-            write(*,'(A,3X,A)') DIR_NAMES(bc), bc_names(blocks(ib) % boundary(bc) % bc_type)
+            write(*,'(1X,A10)',ADVANCE="NO") bc_names(blocks(ib) % boundary(bc) % bc_type)
          end do
+         write(*,*)
       end do
+      write(*,'(88("="))')
    end subroutine datin_bc
    subroutine datout_sol()
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

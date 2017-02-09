@@ -59,6 +59,7 @@ contains
       integer :: i,j,k
       integer :: ib,i1,ig
       integer :: jb,j1,jg
+      integer :: kb,k1,kg
       integer :: ob !other block
       real(REAL_KIND) :: un
       !< U_Normal Mormalengeschwindigkeit
@@ -76,17 +77,17 @@ contains
             end do
          case(BC_INFLOW) 
             do i = 0, - nBoundaryCells + 1, -1
-            block % pressures   (i,:,:)   = block % pressures   (block % nCells(1) + i,:,:)
-            block % vars(i,:,:,VEC_ENE) = block % pressures(i,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
-                                        + 0.5E0_REAL_KIND                     &
-                                        * block % vars(i,:,:,VEC_RHO)         &
-                                        * ( blocks(b) % vars (i,:,:,VEC_SPU)  &
-                                          * blocks(b) % vars (i,:,:,VEC_SPU)  & 
-                                          + blocks(b) % vars (i,:,:,VEC_SPV)  &
-                                          * blocks(b) % vars (i,:,:,VEC_SPV)  &
-                                          + blocks(b) % vars (i,:,:,VEC_SPW)  &
-                                          * blocks(b) % vars (i,:,:,VEC_SPW)  &
-                                          )
+!            block % pressures   (i,:,:)   = block % pressures   (block % nCells(1) + i,:,:)
+!            block % vars(i,:,:,VEC_ENE) = block % pressures(i,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
+!                                        + 0.5E0_REAL_KIND                     &
+!                                        * block % vars(i,:,:,VEC_RHO)         &
+!                                        * ( blocks(b) % vars (i,:,:,VEC_SPU)  &
+!                                          * blocks(b) % vars (i,:,:,VEC_SPU)  & 
+!                                          + blocks(b) % vars (i,:,:,VEC_SPV)  &
+!                                          * blocks(b) % vars (i,:,:,VEC_SPV)  &
+!                                          + blocks(b) % vars (i,:,:,VEC_SPW)  &
+!                                          * blocks(b) % vars (i,:,:,VEC_SPW)  &
+!                                          )
             end do
          case(1:)
             associate (ob => blocks(block % boundary(DIR_WEST) % bc_type))
@@ -299,6 +300,29 @@ contains
             do i = 0, - nBoundaryCells + 1, -1
                block % vars(:,:,i,:) = block % vars(:,:,block % nCells(3)+i,:)   
             end do
+         case(BC_SYMMETRY)
+            kg = 1        !!! GEOMETRIE ZELLE (aendert sich nicht für due unterschiedlichen BOUNDARY ZELLEN 
+            do k = 0, - nBoundaryCells + 1, -1
+               k1 = 1 - k !!! FELDZELLE INDEX
+               kb = 0 + k !!! BOUNDARYZELLE INDEX
+               do j = 1, block % nCells(2)
+                  do i = 1, block % nCells(1)
+                     un = block % vars (i, j, k1 ,2)         &
+                        * block % cellFaceVecsK(1, i, j, kg) &
+                        + block % vars (i, j, k1, 3)         &
+                        * block % cellFaceVecsK(2, i, j, kg) &
+                        + block % vars (i, j, k1, 4)         &
+                        * block % cellFaceVecsK(3, i, j, kg) 
+                     block % vars(i,j,kb,:) = block % vars(i,j,k1,:)   
+                     block % vars(i,j,kb,2) = block % vars(i,j,k1,2) &
+                                            - un * block % cellFaceVecsK(1,i,j,kg)
+                     block % vars(i,j,kb,3) = block % vars(i,j,k1,3) &
+                                            - un * block % cellFaceVecsK(2,i,j,kg)
+                     block % vars(i,j,kb,4) = block % vars(i,j,k1,4) &
+                                            - un * block % cellFaceVecsK(3,i,j,kg)
+                  end do
+               end do
+            end do
          case  default
             do i = 0, - nBoundaryCells + 1, -1
                block % vars(:,:,i,:) = block % vars(:,:,1,:)
@@ -314,6 +338,29 @@ contains
          case(BC_PERIODIC)
             do i = 0, - nBoundaryCells + 1, -1
                block % vars(:,:,block % nPkts(3)-i,:) = block % vars(:,:,1-i,:)   
+            end do
+         case(BC_SYMMETRY)
+            kg = block % nPkts (3)        !!! GEOMETRIE ZELLE (aendert sich nicht für due unterschiedlichen BOUNDARY ZELLEN 
+            do k = 0, - nBoundaryCells + 1, -1
+            k1 = block % nCells(3) + k !!! FELDZELLE INDEX
+            kb = block % nPkts (3) - k !!! BOUNDARYZELLE INDEX
+               do j = 1, block % nCells(2)
+                  do i = 1, block % nCells(1)
+                     un = block % vars (i, j, k1 ,2)         &
+                        * block % cellFaceVecsK(1, i, j, kg) &
+                        + block % vars (i, j, k1, 3)         &
+                        * block % cellFaceVecsK(2, i, j, kg) &
+                        + block % vars (i, j, k1, 4)         &
+                        * block % cellFaceVecsK(3, i, j, kg) 
+                     block % vars(i,j,kb,:) = block % vars(i,j,k1,:)   
+                     block % vars(i,j,kb,2) = block % vars(i,j,k1,2) &
+                                            - un * block % cellFaceVecsK(1,i,j,kg)
+                     block % vars(i,j,kb,3) = block % vars(i,j,k1,3) &
+                                            - un * block % cellFaceVecsK(2,i,j,kg)
+                     block % vars(i,j,kb,4) = block % vars(i,j,k1,4) &
+                                            - un * block % cellFaceVecsK(3,i,j,kg)
+                  end do
+               end do
             end do
          case  default
             do i = 0, - nBoundaryCells + 1, -1
