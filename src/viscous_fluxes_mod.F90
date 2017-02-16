@@ -186,7 +186,7 @@ contains
                                             * block % tauJ(i,j,k,TAU_TXY)    &
                                             + block % absCellFaceVecsJ(3,i,j,k) &
                                             * block % tauJ(i,j,k,TAU_TXZ)    )
-!            if (i == 10 .and. j == 1) then
+!            if (i == 10 .and. j <= 2) then
 !               write(*,*) block%tauJ(i,j,k,TAU_TXY), block % absCellFaceVecsJ(2,i,j,k),block % visFluxesJ(i,j,k,2), mu_local &
 !                                                  ,block % dUdnJ ( i,j,k,GRAD_SPU,GRAD_DY) &
 !                                                  ,block % dUdnJ ( i,j,k,GRAD_SPV,GRAD_DX)

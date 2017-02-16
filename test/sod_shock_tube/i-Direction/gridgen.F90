@@ -5,7 +5,7 @@ program gridgen
 
 implicit none
 
-integer :: imax = 2001
+integer :: imax = 201
 integer :: jmax = 2
 integer :: kmax = 2
 integer, parameter :: Dimen = 3

@@ -77,17 +77,17 @@ contains
             end do
          case(BC_INFLOW) 
             do i = 0, - nBoundaryCells + 1, -1
-!            block % pressures   (i,:,:)   = block % pressures   (block % nCells(1) + i,:,:)
-!            block % vars(i,:,:,VEC_ENE) = block % pressures(i,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
-!                                        + 0.5E0_REAL_KIND                     &
-!                                        * block % vars(i,:,:,VEC_RHO)         &
-!                                        * ( blocks(b) % vars (i,:,:,VEC_SPU)  &
-!                                          * blocks(b) % vars (i,:,:,VEC_SPU)  & 
-!                                          + blocks(b) % vars (i,:,:,VEC_SPV)  &
-!                                          * blocks(b) % vars (i,:,:,VEC_SPV)  &
-!                                          + blocks(b) % vars (i,:,:,VEC_SPW)  &
-!                                          * blocks(b) % vars (i,:,:,VEC_SPW)  &
-!                                          )
+               block % pressures   (i,:,:)   = block % pressures   (block % nCells(1) + i,:,:)
+               block % vars(i,:,:,VEC_ENE) = block % pressures(i,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
+                                           + 0.5E0_REAL_KIND                     &
+                                           * block % vars(i,:,:,VEC_RHO)         &
+                                           * ( blocks(b) % vars (i,:,:,VEC_SPU)  &
+                                             * blocks(b) % vars (i,:,:,VEC_SPU)  & 
+                                             + blocks(b) % vars (i,:,:,VEC_SPV)  &
+                                             * blocks(b) % vars (i,:,:,VEC_SPV)  &
+                                             + blocks(b) % vars (i,:,:,VEC_SPW)  &
+                                             * blocks(b) % vars (i,:,:,VEC_SPW)  &
+                                             )
             end do
          case(1:)
             associate (ob => blocks(block % boundary(DIR_WEST) % bc_type))
@@ -112,9 +112,9 @@ contains
             do i = 0, - nBoundaryCells + 1, -1
                i1 = block % nPkts(1)-i
                ib = block % nCells(1)
-               block % vars(i1,:,:,:)       = block % vars      (b,:,:,:)   
-               !block % pressures(i1,:,:)    = 41368.5D0 !block % pressures(ib,:,:)   
-               block % pressures(i1,:,:)    = block % pressures(ib,:,:)   
+               block % vars(i1,:,:,:)       = block % vars      (ib,:,:,:)   
+               block % pressures(i1,:,:)    = 1E5
+               !block % pressures(i1,:,:)    = block % pressures(ib,:,:)   
                block % vars(i1,:,:,VEC_ENE) = block % pressures(i1,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
                                             + 0.5E0_REAL_KIND                     &
                                             * block % vars(i1,:,:,VEC_RHO)         &
@@ -232,11 +232,6 @@ contains
                                             - un * block % cellFaceVecsJ(2,i,jg,k)
                      block % vars(i,jb,k,4) = block % vars(i,j1,k,4) &
                                             - un * block % cellFaceVecsJ(3,i,jg,k)
-                     if (i == 25 .and. jb == 0) then
-!                        write(*,*) block % vars(i,0:1,k,2:3) , un
-!                        write(*,*) block % cellFaceVecsJ(1:3,i,jg,k)
-
-                     end if
                   end do
                end do
             end do

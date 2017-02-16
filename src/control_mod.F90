@@ -16,10 +16,12 @@ integer(INT_KIND) :: space_order
 integer(INT_KIND) :: riemann_solver
 integer(INT_KIND) :: timestep_method
 integer(INT_KIND) :: time_order
+integer(INT_KIND) :: res_out1 = 1      ! Residuum 1 welches gemittelt und ausgegben wird
+integer(INT_KIND) :: res_out2 = 2      ! Residuum 2 welches gemittelt und ausgegben wird
 integer(INT_KIND),private :: start_time(8)
 
-real(REAL_KIND) :: res_max
-real(REAL_KIND) :: res_avg
+real(REAL_KIND) :: res_max(2)
+real(REAL_KIND) :: res_avg(2)
 real(REAL_KIND) :: solution_time = 0.0E+0_REAL_KIND
 real(REAL_KIND) :: cfl
 real(REAL_KIND) :: timestep
@@ -28,6 +30,7 @@ real(REAL_KIND) :: c_les_sgs
 !< SUBGRID CONSTANT FOR LES LENGTHSCALE
 
 contains
+
    subroutine main_loop_control
    implicit none
       current_iteration = current_iteration + 1
@@ -56,6 +59,7 @@ contains
 
 !         residual_on_screen = .true.
    end subroutine main_loop_control
+
    function get_runtime() result (runtime)
    real(REAL_KIND) :: runtime
    integer(INT_KIND) :: current_time(8)
@@ -68,7 +72,9 @@ contains
              +real(current_time(5) - start_time(5))* 3.6d3      ! hours
 
    end function
+
    subroutine set_start_time()
    call date_and_time(values = start_time)
    end subroutine
+
 end module control_mod

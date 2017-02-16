@@ -685,7 +685,7 @@ contains
             end do
          end do
          
-!!!!!!!!! SUEF/NORD-Richtung
+!!!!!!!!! SUED/NORD-Richtung
          do k = 1, ck
             do j = 1, pj
                do i = 1, ci
@@ -706,7 +706,7 @@ contains
                end do
             end do
          end do
-!!!!!!!!! SUEF/NORD-Richtung
+!!!!!!!!! FRONT/BACK-Richtung
          do k = 1, pk
             do j = 1, cj
                do i = 1, ci

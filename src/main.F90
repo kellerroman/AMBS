@@ -62,25 +62,28 @@ main_loop: do while (.not. end_main_loop)
                        , nBoundaryCells)
       call calc_fluxes ( blocks(b) )
       call calc_face_gradients(blocks(b))
-      call dudn_cell_center ( blocks(b) % vars              &
-                            , blocks(b) % dnw               &
-                            , blocks(b) % dns               &
-                            , blocks(b) % dnb               &
-                            , blocks(b) % volumes           &
-                            , blocks(b) % dUdN              &
-                            , nBoundaryCells                )
+
+!      call dudn_cell_center ( blocks(b) % vars              &
+!                            , blocks(b) % dnw               &
+!                            , blocks(b) % dns               &
+!                            , blocks(b) % dnb               &
+!                            , blocks(b) % volumes           &
+!                            , blocks(b) % dUdN              &
+!                            , nBoundaryCells                )
+
 !      call smagorinsky_SGS( blocks(b) % viscosities         &
 !                          , blocks(b) % dUdN                &
 !                          , blocks(b) % vars                &
 !                          , blocks(b) % lles                &
 !                          , nBoundaryCells                  ) 
+
       if (equation == EQU_TYP_NS) then
          call calc_viscous_fluxes(blocks(b)) 
       end if
       call update_residual(blocks(b) % residuals,blocks(b),res_max,res_avg)
    end do block_loop
 
-   if(residual_on_screen) call screen_residual()
+   if (residual_on_screen) call screen_residual()
 
    block_loop_update: do b = 1, nBlock
       call update_sol(blocks(b))

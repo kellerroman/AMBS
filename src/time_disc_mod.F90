@@ -7,10 +7,10 @@ contains
    implicit none
    real(REAL_KIND), intent(out) :: residuals(:,:,:,:)
    type(block_type), intent(inout) :: block
-   real(REAL_KIND) , intent(inout) :: res_max
-   real(REAL_KIND) , intent(inout) :: res_avg
+   real(REAL_KIND) , intent(inout) :: res_max(2)
+   real(REAL_KIND) , intent(inout) :: res_avg(2)
    integer :: i,j,k
-   real(REAL_KIND) :: re
+   real(REAL_KIND) :: re(2)
    do k = 1, ubound(residuals,3)
       do j = 1, ubound(residuals,2)
          do i = 1, ubound(residuals,1)
@@ -33,10 +33,12 @@ contains
                -  block % CellFaceAreasK (i  ,j  ,k+1) &
                *  ( block % fluxesK      (i  ,j  ,k+1,:)&
                   + block % visFluxesK   (i  ,j  ,k+1,:))
-            re = abs(residuals(i,j,k,1))
+            re(1) = abs(residuals(i,j,k,res_out1))
+            re(2) = abs(residuals(i,j,k,res_out2))
             res_avg = res_avg + re
-            res_max = max(res_max,re)
-!            if ( i == 50 .and. j == 1) then
+            res_max(1) = max(res_max(1),re(1))
+            res_max(2) = max(res_max(2),re(2))
+!            if ( i == 10 .and. j <= 2) then
 !            write(*,*) i,j,k   
 !            write(*,*) "RHO",block % vars (i:i+1,j,k,1)
 !            write(*,*) "SPU",block % vars (i:i+1,j,k,2)
@@ -46,6 +48,12 @@ contains
 !            write(*,*) "j  ",block % fluxesJ        (i  ,j  ,k  ,1:3)  
 !            write(*,*) "j+1",block % fluxesJ        (i  ,j+1,k  ,1:3)  
 !            write(*,*) "Res",block % residuals(i,j,k,1:3)
+!            write(*,*) block % visFluxesI   (i  ,j  ,k  ,:)  
+!            write(*,*) block % visFluxesI   (i+1,j  ,k  ,:) 
+!            write(*,*) block % visFluxesJ   (i  ,j  ,k  ,:) 
+!            write(*,*) block % visFluxesJ   (i  ,j+1,k  ,:) 
+!            write(*,*) block % visFluxesK   (i  ,j  ,k  ,:) 
+!            write(*,*) block % visFluxesK   (i  ,j  ,k+1,:)
 !            !stop
 !         end if
          end do

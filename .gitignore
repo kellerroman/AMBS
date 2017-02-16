@@ -25,6 +25,10 @@
 *.a
 *.lib
 
+# solutions
+*.h5
+*.xdmf
+
 # Executables
 *.exe
 *.out
