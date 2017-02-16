@@ -32,7 +32,7 @@ include $(SOURCE_DIR)/inc_Makefile_dep
 .PHONY: clean compile
 
 clean:
-	@rm -vf $(EXECUTABLE) *.o *.mod $(SOURCE_DIR)/*~
+	@rm -vf $(EXECUTABLE) *.o *.mod $(SOURCE_DIR)/*~ $(SOURCE_DIR)/*.mod
 	@rm -vrf ../*~
 
 debug: CFLAGS += -DDEBUG 
