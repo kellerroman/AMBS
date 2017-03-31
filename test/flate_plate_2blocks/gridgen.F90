@@ -13,7 +13,7 @@ integer, parameter :: kmax = 1
 
 integer, parameter :: nVar   = 5
 
-real(kind=8) :: p,rho,u,v,gm1,t,ma
+real(kind=8) :: p,rho,u,v,t,ma
 
 integer :: i,j,k,b
 integer :: io
@@ -40,7 +40,8 @@ do j = 1, jmax + 1
             imax1 = i - 1
             imax = ni_git - imax1
             write(*,*) "Blockgrenze bei",i
-            write(*,*) "Blockdimensionen:",imax1,imax
+            write(*,*) "Blockdimensionen:",imax1,imax,jmax
+            write(*,*) coords(i,1,1)
          end if
       end if
    end do
@@ -48,7 +49,7 @@ end do
 
 close(io)
 
-write(*,*) "Flate PLate Grid geneerator"
+write(*,*) "Flate PLate Grid generator"
 call add_block(imax1,jmax,kmax)
 call add_block(imax, jmax,kmax)
 call allocate_blocks(nVar)
@@ -58,20 +59,24 @@ do b = 1, 2
       do j = 1, blocks(b) % npkts(2)
          do k = 1, blocks(b) % npkts(3)
           blocks(b) % xyzs(i,j,k,1:2) = coords(i+io,j,:)
-          blocks(b) % xyzs(i,j,k,3) = dble(k-1) *  2.0D-3
+          blocks(b) % xyzs(i,j,k,3) = dble(k-1) !*  2.0D-3
           end do
        end do
    end do
    io = io + blocks(b) % nCells(1)
 end do
 deallocate(coords)
-gm1 = gamma - 1.0D0
 t = 288.15
 ma = 0.5D0
 p = 1E5
 rho = p / (RGAS * t)
 u = ma * sqrt( gamma * RGAS * t) 
 v = 0.0D0
+write(*,'(A20,1X,ES10.3)') "Density:",rho
+write(*,'(A20,1X,ES10.3)') "Velocity:",u
+write(*,'(A20,1X,ES10.3)') "Mach-Number:",ma
+write(*,'(A20,1X,ES10.3)') "Temperature:",t
+write(*,'(A20,1X,ES10.3)') "Pressure:",p
 !write(*,*) rho,p,t,u
 
 do b = 1, 2

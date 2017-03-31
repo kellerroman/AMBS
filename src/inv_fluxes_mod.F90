@@ -9,43 +9,54 @@ contains
    type(block_type), intent(inout) :: block
    if (space_order == 3) then
       call central ( block % faceVarsLeftI              &
-                   , block % CellFaceVecsI              &
+                   , block % absCellFaceVecsI           &
                    , block % fluxesI                    )
+
       call central ( block % faceVarsLeftJ              &
-                   , block % CellFaceVecsJ              &
+                   , block % absCellFaceVecsJ           &
                    , block % fluxesJ                    )
+
       call central ( block % faceVarsLeftK              &
-                   , block % CellFaceVecsK              &
+                   , block % absCellFaceVecsK           &
                    , block % fluxesK                    )
    else
       if (riemann_solver == 1) then
          call inviscid_roe_n( block % faceVarsLeftI     &
                             , block % faceVarsRightI    &
-                            , block % CellFaceVecsI     &
+                            , block % absCellFaceVecsI  &
                             , block % fluxesI           )
+
          call inviscid_roe_n( block % faceVarsLeftJ     &
                             , block % faceVarsRightJ    &
-                            , block % CellFaceVecsJ     &
+                            , block % absCellFaceVecsJ  &
                             , block % fluxesJ           )
+
          call inviscid_roe_n( block % faceVarsLeftK     &
                             , block % faceVarsRightK    &
-                            , block % CellFaceVecsK     &
+                            , block % absCellFaceVecsK  &
                             , block % fluxesK           )
       else
-         call lax_friedrich_n( block % faceVarsLeftI     &
+         call lax_friedrich_n(block % faceVarsLeftI     &
                             , block % faceVarsRightI    &
-                            , block % CellFaceVecsI     &
+                            , block % absCellFaceVecsI  &
                             , block % fluxesI           )
-         call lax_friedrich_n( block % faceVarsLeftJ     &
+
+         call lax_friedrich_n(block % faceVarsLeftJ     &
                             , block % faceVarsRightJ    &
-                            , block % CellFaceVecsJ     &
+                            , block % absCellFaceVecsJ  &
                             , block % fluxesJ           )
-         call lax_friedrich_n( block % faceVarsLeftK     &
+
+         call lax_friedrich_n(block % faceVarsLeftK     &
                             , block % faceVarsRightK    &
-                            , block % CellFaceVecsK     &
+                            , block % absCellFaceVecsK  &
                             , block % fluxesK           )
       end if ! riemann solver
    end if ! space_order
+   if (block % boundary(DIR_SOUTH) % bc_type == BC_WALL) then
+      !write(*,*) block % fluxesJ(:,1,:,:)
+      block % fluxesJ(:,1,:,:) = 0.0D0 
+         block % fluxesJ(:,1,:,3) = 0.0D0 + block % pressures(1:block % nCells(1),1,1:block % nCells(3))
+   end if
    end subroutine calc_fluxes
 
    subroutine central(prim, njk,  num_flux)
@@ -218,6 +229,10 @@ contains
    
    !First compute the Roe-averaged quantities
    
+!   if ( j == 101 .or. i == 101) then
+!      write(*,*) i,j,k,rhoL,uL,vL,qnL
+!      write(*,*) i,j,k,rhoR,uR,vR,qnR
+!   end if
    !  NOTE: See http://www.cfdnotes.com/cfdnotes_roe_averaged_density.html for
    !        the Roe-averaged density.
    

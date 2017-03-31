@@ -1,5 +1,5 @@
 program AMBS
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! PURPOSE: main program routine 
 !
 ! AUTHOR: Roman Keller(RK)
@@ -10,7 +10,7 @@ program AMBS
 !
 ! CHANGELOG:
 ! 04.03.2016,RK: Start of Coding
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    use boundary_mod, only: init_boundary, set_boundary
    use const_mod
    use control_mod
@@ -18,7 +18,8 @@ program AMBS
    use face_values_mod, only: face_values
    use screen_io_mod
    use time_disc_mod, only: update_residual & 
-                          , update_sol
+                          , update_sol      &
+                          , calc_timestep
    use file_io_mod
    use inv_fluxes_mod, only: calc_fluxes
    use viscous_fluxes_mod, only: calc_face_gradients,calc_viscous_fluxes
@@ -40,6 +41,7 @@ do b = 1, nBlock
    write(*,*) b, blocks(b) % vars(0,1,1,2)
 end do
 
+open(newunit = fio, file="residual.dat")
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!                     START OF CALCULATION                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -86,13 +88,36 @@ main_loop: do while (.not. end_main_loop)
    if (residual_on_screen) call screen_residual()
 
    block_loop_update: do b = 1, nBlock
+      call calc_timestep(blocks(b))
       call update_sol(blocks(b))
       call update_thermprop(blocks(b) ) 
    end do block_loop_update
    if (solution_to_file) call datout_sol()
-!  b = 1
+!   write(*,*) " vfi  ", blocks(1) % CellFaceAreasI(150,1,1)*blocks(1) % visFluxesI(150,1,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasI(150,1,1)*blocks(1) % visFluxesI(150,1,1,5)
+!   write(*,*) " vfi+1", blocks(1) % CellFaceAreasI(151,1,1)*blocks(1) % visFluxesI(151,1,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasI(151,1,1)*blocks(1) % visFluxesI(151,1,1,5)
+!   write(*,*) " vfj  ", blocks(1) % CellFaceAreasJ(150,1,1)*blocks(1) % visFluxesJ(150,1,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasJ(150,1,1)*blocks(1) % visFluxesJ(150,1,1,5)
+!   write(*,*) " vfj+1", blocks(1) % CellFaceAreasJ(150,2,1)*blocks(1) % visFluxesJ(150,2,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasJ(150,2,1)*blocks(1) % visFluxesJ(150,2,1,5)
+!   write(*,*) "  fi  ", blocks(1) % CellFaceAreasI(150,1,1)*blocks(1) %    FluxesI(150,1,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasI(150,1,1)*blocks(1) %    FluxesI(150,1,1,5)
+!   write(*,*) "  fi+1", blocks(1) % CellFaceAreasI(151,1,1)*blocks(1) %    FluxesI(151,1,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasI(151,1,1)*blocks(1) %    FluxesI(151,1,1,5)
+!   write(*,*) "  fj  ", blocks(1) % CellFaceAreasJ(150,1,1)*blocks(1) %    Fluxesj(150,1,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasJ(150,1,1)*blocks(1) %    Fluxesj(150,1,1,5)
+!   write(*,*) "  fj+1", blocks(1) % CellFaceAreasJ(150,2,1)*blocks(1) %    Fluxesj(150,2,1,2:3) &
+!                       ,blocks(1) % CellFaceAreasJ(150,2,1)*blocks(1) %    Fluxesj(150,2,1,5)
+!   write(*,*) "  U   ",blocks(1) % vars (150,1:9,1,VEC_SPU)
+!   write(*,*) "  dudy",blocks(1) % dudnJ(150,1:9,1,GRAD_SPU,GRAD_DY)
+!   write(*,*) "  res ",blocks(1) % Residuals(150,1:9,1,2) * blocks(1) % volumes(150,1:9,1) * timestep
+!   write(*,*) "  dt  ",blocks(1) % timesteps(150,1:9,1) 
+!   write(*,*) "  vol ",(blocks(1) % volumes(150,1,1)/blocks(1) % volumes(150,1:9,1))**(1.0D0/4.0D0)
+!  b = 0
 !  write(*,*) blocks(b) % vars(0,1,1,2), blocks(b) % vars(0,1,1,5), blocks(b) % pressures(0,1,1), blocks(b) % temperatures(0,1,1)
 !  write(*,*) blocks(b) % vars(1,1,1,2), blocks(b) % vars(1,1,1,5), blocks(b) % pressures(1,1,1), blocks(b) % temperatures(1,1,1)
+   !write(*,*) minval(blocks(1) % timesteps),maxval(blocks(1) % timesteps)
 end do main_loop
 !b = 1
 !write(*,*) b, blocks(b) % vars(blocks(b) % nCells(1)+1,1,1,:)
@@ -100,5 +125,6 @@ end do main_loop
 !b = 2
 !write(*,*) b, blocks(b) % vars(                      0,1,1,:)
 !write(*,*) b, blocks(b) % vars(                      1,1,1,:)
+close(fio)
 call screen_wr_end()
 end program AMBS

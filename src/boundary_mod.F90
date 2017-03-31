@@ -3,13 +3,15 @@ module boundary_mod
    use data_mod, only: block_type
 
 implicit none
+   real(kind = REAL_KIND) :: inflow_vel
 contains
    subroutine init_boundary(block,nBoundaryCells)
+      use screen_io_mod ,only : error_wr
    implicit none
       type(block_type), intent(inout) :: block
       integer, intent(in) :: nBoundaryCells
       
-      integer :: i
+      integer :: i,j,k,bc_dir
    
       do i = 0, - nBoundaryCells + 1, -1
          block % vars         (i,:,:,:)                  = block % vars         (1,:,:,:)
@@ -43,6 +45,31 @@ contains
          block % heatKoeffs   (:,:,i)                    = block % heatKoeffs   (:,:,1)
          block % heatKoeffs   (:,:,block % nPkts(3)-i)   = block % heatKoeffs   (:,:,block % nCells(3))
       end do
+
+      do bc_dir = 1, 6
+         if (block % boundary(bc_dir) % bc_type == BC_INFLOW) then
+            if (bc_dir == DIR_WEST) then
+               inflow_vel = block % vars (1,1,1,VEC_SPU)
+               do k = 1, block % nCells(3) 
+                  do j = 1, block % nCells(2)
+                     if ( abs (block % vars (1,j,k,VEC_SPU) - inflow_vel) > 1E-10) then
+                        call error_wr("Inflow Profile is not constant",__FILE__,__LINE__)
+                     end if
+                  end do
+               end do
+               if (abs(block % vars(1,1,1,VEC_SPV)) > 1.0D-10) then
+                  call error_wr("SPU V not Zero at Inflow",__FILE__,__LINE__)
+               end if
+               if (abs(block % vars(1,1,1,VEC_SPW)) > 1.0D-10) then
+                  call error_wr("SPU W not Zero at Inflow",__FILE__,__LINE__)
+               end if
+               write(*,*) "Inflow-Velocity at WEST",inflow_vel
+            else
+               call error_wr("Inflow Boundary only possible at EAST Border",__FILE__,__LINE__)
+            end if
+         end if
+      end do
+         
 !      block % boundary(DIR_EAST ) % bc_type = BC_OUTFLOW
 !      block % boundary(DIR_WEST ) % bc_type = BC_INFLOW
 !      block % boundary(DIR_SOUTH) % bc_type = BC_WALL
@@ -52,6 +79,7 @@ contains
    end subroutine init_boundary
 
    subroutine set_boundary(blocks,b,nBoundaryCells)
+      use control_mod ,only: pressure_out
    implicit none
       type(block_type), intent(inout) :: blocks(:)
       integer, intent(in) :: b
@@ -62,6 +90,9 @@ contains
       integer :: kb,k1,kg
       integer :: ob !other block
       real(REAL_KIND) :: un
+      real(REAL_KIND) :: deltap
+      real(REAL_KIND) :: sof ! Speed of Sound
+      real(REAL_KIND) :: rhosof ! 1 / (RHO *  Speed of Sound)
       !< U_Normal Mormalengeschwindigkeit
 
       associate (block => blocks(b))
@@ -76,18 +107,86 @@ contains
                block % vars(i,:,:,:) = block % vars(block % nCells(1)+i,:,:,:)   
             end do
          case(BC_INFLOW) 
-            do i = 0, - nBoundaryCells + 1, -1
-               block % pressures   (i,:,:)   = block % pressures   (block % nCells(1) + i,:,:)
-               block % vars(i,:,:,VEC_ENE) = block % pressures(i,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
-                                           + 0.5E0_REAL_KIND                     &
-                                           * block % vars(i,:,:,VEC_RHO)         &
-                                           * ( blocks(b) % vars (i,:,:,VEC_SPU)  &
-                                             * blocks(b) % vars (i,:,:,VEC_SPU)  & 
-                                             + blocks(b) % vars (i,:,:,VEC_SPV)  &
-                                             * blocks(b) % vars (i,:,:,VEC_SPV)  &
-                                             + blocks(b) % vars (i,:,:,VEC_SPW)  &
-                                             * blocks(b) % vars (i,:,:,VEC_SPW)  &
-                                             )
+            ig = 1 !!! GEMETRIE INDEX
+            i1 = 1
+            do k = 1, block % nCells(3)
+               do j = 1, block % nCells(2)
+                  do i  = 1, nBoundaryCells
+                     ib = 1-i
+                     sof = sqrt(GAMMA * RGas * block % temperatures(i1,j,k) )
+
+                     rhosof = block % vars(i1,j,k,VEC_RHO) * sof
+
+                     block % pressures(ib,j,k)    = 0.5E0_REAL_KIND * ( pressure_out + block % pressures(i1,j,k)  &
+                           - rhosof * block % abscellFaceVecsI(1,ig,j,k) * ( inflow_vel - block % vars(i1,j,k,VEC_SPU) )) 
+
+                     deltap = block % pressures(i1,j,k) - pressure_out
+
+                     sof = 1.0E0_REAL_KIND  / sof
+
+                     rhosof = 1.0E0_REAL_KIND / rhosof
+
+                     block % vars(ib,j,k,VEC_RHO) = block % vars (i1,j,k,VEC_RHO) - deltap * sof * sof
+
+                     block % vars(ib,j,k,VEC_SPU) = block % vars (i1,j,k,VEC_SPU) + deltap * rhosof &
+                                                  * block % abscellFaceVecsI(1,ig,j,k)
+
+                     block % vars(ib,j,k,VEC_SPV) = block % vars (i1,j,k,VEC_SPV) + deltap * rhosof &
+                                                  * block % abscellFaceVecsI(2,ig,j,k)
+
+                     block % vars(ib,j,k,VEC_SPW) = block % vars (i1,j,k,VEC_SPW) + deltap * rhosof &
+                                                  * block % abscellFaceVecsI(3,ig,j,k)
+
+                     block % pressures(ib,j,k)    = pressure_out
+
+                     block % vars(ib,j,k,VEC_ENE) = block % pressures(ib,j,k) / GM1 &
+                                                  + 0.5E0_REAL_KIND                     &
+                                                  * block % vars(ib,j,k,VEC_RHO)         &
+                                                  * ( block % vars (ib,j,k,VEC_SPU)  &
+                                                    * block % vars (ib,j,k,VEC_SPU)  & 
+                                                    + block % vars (ib,j,k,VEC_SPV)  &
+                                                    * block % vars (ib,j,k,VEC_SPV)  &
+                                                    + block % vars (ib,j,k,VEC_SPW)  &
+                                                    * block % vars (ib,j,k,VEC_SPW)  &
+                                                    )
+                  end do
+               end do
+            end do
+!            do i = 0, - nBoundaryCells + 1, -1
+!               block % pressures   (i,:,:) = block % pressures(block % nCells(1) + i,:,:)
+!               block % vars(i,:,:,VEC_ENE) = block % pressures(i,:,:) / (GM1)    &
+!                                           + 0.5E0_REAL_KIND                     &
+!                                           * block % vars(i,:,:,VEC_RHO)         &
+!                                           * ( block % vars (i,:,:,VEC_SPU)  &
+!                                             * block % vars (i,:,:,VEC_SPU)  & 
+!                                             + block % vars (i,:,:,VEC_SPV)  &
+!                                             * block % vars (i,:,:,VEC_SPV)  &
+!                                             + block % vars (i,:,:,VEC_SPW)  &
+!                                             * block % vars (i,:,:,VEC_SPW)  &
+!                                             )
+!            end do
+         case(BC_SYMMETRY)
+            ig = 1          !!!! GEOMETRIE ZELLE (aendert sich nicht für due unterschiedlichen BOUNDARY ZELLEN 
+            do k = 1, block % nCells(3)
+               do j = 0, block % nCells(2)
+                  do i = 1,  nBoundaryCells
+                     i1 = i     !!! FELDZELLE INDEX
+                     ib = 1 - i !!! BOUNDARYZELLE INDEX
+                     un = block % vars (i1, j, k ,2)         &
+                        * block % cellFaceVecsI(1, ig, j, k) &
+                        + block % vars (i1, j, k, 3)         &
+                        * block % cellFaceVecsI(2, ig, j, k) &
+                        + block % vars (i1, j, k, 4)         &
+                        * block % cellFaceVecsI(3, ig, j, k) 
+                     block % vars(ib,j,k,:) = block % vars(i1,j,k,:)   
+                     block % vars(ib,j,k,2) = block % vars(i1,j,k,2)             &
+                                            - un * block % cellFaceVecsI(1,ig,j,k)
+                     block % vars(ib,j,k,3) = block % vars(i1,j,k,3)             &
+                                            - un * block % cellFaceVecsI(2,ig,j,k)
+                     block % vars(ib,j,k,4) = block % vars(i1,j,k,4)             &
+                                            - un * block % cellFaceVecsI(3,ig,j,k)
+                  end do
+               end do
             end do
          case(1:)
             associate (ob => blocks(block % boundary(DIR_WEST) % bc_type))
@@ -109,47 +208,65 @@ contains
 ! ****************************************************************************************************
       select case (block % boundary(DIR_EAST) % bc_type)
          case(BC_OUTFLOW)
-            do i = 0, - nBoundaryCells + 1, -1
-               i1 = block % nPkts(1)-i
-               ib = block % nCells(1)
-               block % vars(i1,:,:,:)       = block % vars      (ib,:,:,:)   
-               block % pressures(i1,:,:)    = 1E5
-               !block % pressures(i1,:,:)    = block % pressures(ib,:,:)   
-               block % vars(i1,:,:,VEC_ENE) = block % pressures(i1,:,:) / (GAMMA - 1.0E0_REAL_KIND)             &
-                                            + 0.5E0_REAL_KIND                     &
-                                            * block % vars(i1,:,:,VEC_RHO)         &
-                                            * ( blocks(b) % vars (i1,:,:,VEC_SPU)  &
-                                              * blocks(b) % vars (i1,:,:,VEC_SPU)  & 
-                                              + blocks(b) % vars (i1,:,:,VEC_SPV)  &
-                                              * blocks(b) % vars (i1,:,:,VEC_SPV)  &
-                                              + blocks(b) % vars (i1,:,:,VEC_SPW)  &
-                                              * blocks(b) % vars (i1,:,:,VEC_SPW)  &
-                                              )
+            ig = block % nPkts(1) !!! GEMETRIE INDEX
+            i1 = block % nCells(1)
+            do k = 1, block % nCells(3)
+               do j = 1, block % nCells(2)
+                  do i = 1, nBoundaryCells
+                     ib = block % nCells(1)+i
+                     deltap = block % pressures(i1,j,k) - pressure_out
+
+                     sof = 1.0E0_REAL_KIND  / sqrt(GAMMA * RGas * block % temperatures(i1,j,k) )
+
+                     rhosof = 1.0E0_REAL_KIND /  block % vars(i1,j,k,VEC_RHO) * sof
+
+                     block % vars(ib,j,k,VEC_RHO) = block % vars (i1,j,k,VEC_RHO) - deltap * sof * sof
+
+                     block % vars(ib,j,k,VEC_SPU) = block % vars (i1,j,k,VEC_SPU) + deltap * rhosof &
+                                                  * block % abscellFaceVecsI(1,ig,j,k)
+
+                     block % vars(ib,j,k,VEC_SPV) = block % vars (i1,j,k,VEC_SPV) + deltap * rhosof &
+                                                  * block % abscellFaceVecsI(2,ig,j,k)
+
+                     block % vars(ib,j,k,VEC_SPW) = block % vars (i1,j,k,VEC_SPW) + deltap * rhosof &
+                                                  * block % abscellFaceVecsI(3,ig,j,k)
+
+                     block % pressures(ib,j,k)    = pressure_out
+
+                     block % vars(ib,j,k,VEC_ENE) = block % pressures(ib,j,k) / GM1 &
+                                                  + 0.5E0_REAL_KIND                     &
+                                                  * block % vars(ib,j,k,VEC_RHO)         &
+                                                  * ( block % vars (ib,j,k,VEC_SPU)  &
+                                                    * block % vars (ib,j,k,VEC_SPU)  & 
+                                                    + block % vars (ib,j,k,VEC_SPV)  &
+                                                    * block % vars (ib,j,k,VEC_SPV)  &
+                                                    + block % vars (ib,j,k,VEC_SPW)  &
+                                                    * block % vars (ib,j,k,VEC_SPW)  &
+                                                    )
+                  end do
+               end do
             end do
          case(BC_INFLOW) 
          case(BC_WALL)
          case(BC_SYMMETRY)
+            ig = block % nPkts(1) !!! GEOMETRIE ZELLE (aendert sich nicht für due unterschiedlichen BOUNDARY ZELLEN 
             do k = 1, block % nCells(3)
-               do j = 1, block % nCells(2)
-                  ig = block % nPkts(1) !!! GEMETRIE INDEX
-                  do i = 0, - nBoundaryCells + 1, -1
-                     i1 = block % nCells(1) + i !!! FELDZELLE INDEX
-                     ib = block % nPkts(1)  - i !!! BOUNDARYZELLE INDEX
-
-                     un =                                    &
-                        ( block % vars (i1, j ,k ,2)         &
+               do j = 0, block % nCells(2)
+                  do i = 1,  nBoundaryCells
+                     i1 = block % nPkts(1) - i !!! FELDZELLE INDEX
+                     ib = block % nCells(1) + i !!! BOUNDARYZELLE INDEX
+                     un = block % vars (i1, j, k ,2)         &
                         * block % cellFaceVecsI(1, ig, j, k) &
                         + block % vars (i1, j, k, 3)         &
                         * block % cellFaceVecsI(2, ig, j, k) &
                         + block % vars (i1, j, k, 4)         &
-                        * block % cellFaceVecsI(3, ig, j, k) )
-
+                        * block % cellFaceVecsI(3, ig, j, k) 
                      block % vars(ib,j,k,:) = block % vars(i1,j,k,:)   
-                     block % vars(ib,j,k,2) = block % vars(i1,j,k,2) &
+                     block % vars(ib,j,k,2) = block % vars(i1,j,k,2)             &
                                             - un * block % cellFaceVecsI(1,ig,j,k)
-                     block % vars(ib,j,k,3) = block % vars(i1,j,k,3) &
+                     block % vars(ib,j,k,3) = block % vars(i1,j,k,3)             &
                                             - un * block % cellFaceVecsI(2,ig,j,k)
-                     block % vars(ib,j,k,4) = block % vars(i1,j,k,4) &
+                     block % vars(ib,j,k,4) = block % vars(i1,j,k,4)             &
                                             - un * block % cellFaceVecsI(3,ig,j,k)
                   end do
                end do
@@ -187,18 +304,18 @@ contains
                do j = 0, - nBoundaryCells + 1, -1
                   j1 = 1 - j !!! FELDZELLE INDEX
                   jb = 0 + j !!! BOUNDARYZELLE INDEX
-!                  do i = 1, 20
-!                     block % vars(i,jb,k,VEC_RHO) =   block % vars(i,j1,k,VEC_RHO)
-!                     block % vars(i,jb,k,VEC_SPU) =   block % vars(i,j1,k,VEC_SPU)
-!                     block % vars(i,jb,k,VEC_SPV) = - block % vars(i,j1,k,VEC_SPV)
-!                     block % vars(i,jb,k,VEC_SPW) =   block % vars(i,j1,k,VEC_SPW)
-!                     block % vars(i,jb,k,VEC_ENE) =   block % vars(i,j1,k,VEC_ENE)
-!                     block % temperatures(i,jb,k) =   block % temperatures(i,j1,k)
-!                     block % viscosities (i,jb,k) =   block % viscosities (i,j1,k)
-!                     block % heatKoeffs  (i,jb,k) =   block % heatKoeffs  (i,j1,k)
-!                  end do
-!                  do i = 20, block % nCells(1)
-                  do i = 1, block % nCells(1)
+                  do i = 1, 32
+                     block % vars(i,jb,k,VEC_RHO) =   block % vars(i,j1,k,VEC_RHO)
+                     block % vars(i,jb,k,VEC_SPU) =   block % vars(i,j1,k,VEC_SPU)
+                     block % vars(i,jb,k,VEC_SPV) = - block % vars(i,j1,k,VEC_SPV)
+                     block % vars(i,jb,k,VEC_SPW) =   block % vars(i,j1,k,VEC_SPW)
+                     block % vars(i,jb,k,VEC_ENE) =   block % vars(i,j1,k,VEC_ENE)
+                     block % temperatures(i,jb,k) =   block % temperatures(i,j1,k)
+                     block % viscosities (i,jb,k) =   block % viscosities (i,j1,k)
+                     block % heatKoeffs  (i,jb,k) =   block % heatKoeffs  (i,j1,k)
+                  end do
+                  do i = 33, block % nCells(1)
+                  !do i = 1, block % nCells(1)
                      block % vars(i,jb,k,VEC_RHO) =   block % vars(i,j1,k,VEC_RHO)
                      block % vars(i,jb,k,VEC_SPU) = - block % vars(i,j1,k,VEC_SPU)
                      block % vars(i,jb,k,VEC_SPV) = - block % vars(i,j1,k,VEC_SPV)
@@ -250,8 +367,43 @@ contains
 ! ****************************************************************************************************
       select case (block % boundary(DIR_NORTH) % bc_type)
          case(BC_OUTFLOW)
-            do i = 0, - nBoundaryCells + 1, -1
-               block % vars(:,block % nPkts(2)-i,:,:) = block % vars(:,block % nCells(2),:,:)
+            jg = block % nPkts(2) !!! GEMETRIE INDEX
+            j1 = block % nCells(2)
+            do k = 1, block % nCells(3)
+               do j = 1, nBoundaryCells
+                  jb = block % nCells(2)+j
+                  do i = 1, block % nCells(1)
+                     deltap = block % pressures(i,j1,k) - pressure_out
+
+                     sof = 1.0E0_REAL_KIND  / sqrt(GAMMA * RGas * block % temperatures(i,j1,k) )
+
+                     rhosof = 1.0E0_REAL_KIND /  block % vars(i,j1,k,VEC_RHO) * sof
+
+                     block % vars(i,jb,k,VEC_RHO) = block % vars (i,j1,k,VEC_RHO) - deltap * sof * sof
+                                      
+                     block % vars(i,jb,k,VEC_SPU) = block % vars (i,j1,k,VEC_SPU) + deltap * rhosof &
+                                                  * block % abscellFaceVecsJ(1,i,jg,k)
+                                      
+                     block % vars(i,jb,k,VEC_SPV) = block % vars (i,j1,k,VEC_SPV) + deltap * rhosof &
+                                                  * block % abscellFaceVecsJ(2,i,jg,k)
+                                      
+                     block % vars(i,jb,k,VEC_SPW) = block % vars (i,j1,k,VEC_SPW) + deltap * rhosof &
+                                                  * block % abscellFaceVecsJ(3,i,jg,k)
+
+                     block % pressures(i,jb,k)    = pressure_out
+
+                     block % vars(i,jb,k,VEC_ENE) = block % pressures(i,jb,k) / GM1 &
+                                                  + 0.5E0_REAL_KIND                     &
+                                                  * block % vars(i,jb,k,VEC_RHO)         &
+                                                  * ( block % vars (i,jb,k,VEC_SPU)  &
+                                                    * block % vars (i,jb,k,VEC_SPU)  & 
+                                                    + block % vars (i,jb,k,VEC_SPV)  &
+                                                    * block % vars (i,jb,k,VEC_SPV)  &
+                                                    + block % vars (i,jb,k,VEC_SPW)  &
+                                                    * block % vars (i,jb,k,VEC_SPW)  &
+                                                    )
+                  end do
+               end do
             end do
          case(BC_INFLOW) 
          case(BC_WALL)

@@ -5,9 +5,9 @@ program gridgen
 
 implicit none
 
-integer :: imax = 201
+integer :: imax = 2
 integer :: jmax = 2
-integer :: kmax = 2
+integer :: kmax = 201
 integer, parameter :: Dimen = 3
 integer, parameter :: nVar   = 5
 
@@ -24,12 +24,12 @@ real(kind=8) :: temp(dimen)
 integer :: i,j,k
 
 debug = .true.
-write(*,'(A)') "GRID GEN for i-direcctional Sod Shock Tube"
+write(*,'(A)') "GRID GEN for j-direcctional Sod Shock Tube"
 i = 1
 DO
    CALL get_command_argument(i, arg)
    IF (LEN_TRIM(arg) == 0) EXIT
-   if( i == 1) read(arg,*) imax
+   if( i == 1) read(arg,*) jmax
    if( i == 2) read(arg,*) winkel
    i = i+1
 END DO
@@ -47,10 +47,10 @@ mat(2,2) = + cos(winkel)
 do k = 1,kmax
    do j = 1,jmax
       do i = 1,imax
-         blocks(1) % xyzs(i,j,k,1) = length/dble(imax-1) * dble(i-1)
+         blocks(1) % xyzs(i,j,k,1) = length/dble(kmax-1) * dble(i-1)
    
-         blocks(1) % xyzs(i,j,k,2) = length/dble(imax-1) * dble(j-1)
-         blocks(1) % xyzs(i,j,k,3) = length/dble(imax-1) * dble(k-1)
+         blocks(1) % xyzs(i,j,k,2) = length/dble(kmax-1) * dble(j-1)
+         blocks(1) % xyzs(i,j,k,3) = length/dble(kmax-1) * dble(k-1)
          temp = blocks(1) % xyzs(i,j,k,:)
          blocks(1) % xyzs(i,j,k,1) = mat(1,1) * temp(1) + mat(2,1) * temp(2)
          blocks(1) % xyzs(i,j,k,2) = mat(1,2) * temp(1) + mat(2,2) * temp(2)
@@ -58,16 +58,17 @@ do k = 1,kmax
       end do
    end do
 end do
-do i = 1,imax-1
+do k = 1,kmax-1
    do j = 1,jmax-1
-     
-      blocks(1) % vars(i,j,:,1  ) = 1.0D0
-      blocks(1) % vars(i,j,:,2:4) = 0.0D0
-      blocks(1) % vars(i,j,:,5  ) = 1.0D0 / 0.4D0
-      if (i > imax / 2) then
-         blocks(1) % vars(i,j,:,1) = 0.125D0
-         blocks(1) % vars(i,j,:,5) = 0.1D0 / 0.4D0
-      end if
+      do i = 1,imax-1
+         blocks(1) % vars(i,j,k,1  ) = 1.0D0
+         blocks(1) % vars(i,j,k,2:4) = 0.0D0
+         blocks(1) % vars(i,j,k,5  ) = 1.0D0 / 0.4D0
+         if (k > kmax / 2) then
+            blocks(1) % vars(i,j,k,1) = 0.125D0
+            blocks(1) % vars(i,j,k,5) = 0.1D0 / 0.4D0
+         end if
+      end do
    end do
 end do
 blocks(1) % boundary_condition(DIR_WEST) = BC_SYMMETRY

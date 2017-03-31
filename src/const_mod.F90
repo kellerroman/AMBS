@@ -17,7 +17,7 @@ public
 
       enumerator :: TAU_TXX = 1, TAU_TYY, TAU_TZZ, TAU_TXY, TAU_TXZ, TAU_TYZ
 
-      enumerator :: BC_OUTFLOW = -4, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC
+      enumerator :: BC_OUTFLOW = -5, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC, BC_FARFIELD
 
       enumerator :: EQU_TYPE_EULER = 1, EQU_TYP_NS
 
@@ -33,6 +33,7 @@ public
    real(REAL_KIND),parameter :: TWOTHIRD= 2.00E+00_REAL_KIND / 3.00E+00_REAL_KIND
 
    real(REAL_KIND),parameter :: GAMMA   = 1.40E+00_REAL_KIND   ! Ratio of specific heats
+   real(REAL_KIND),parameter :: GM1     = 0.40E+00_REAL_KIND   ! Ratio of specific heats
    real(REAL_KIND),parameter :: RGAS    = 287.102E0_REAL_KIND
 
    character(len = 5), parameter  :: DIR_NAMES(6) = ["WEST " &
@@ -53,7 +54,6 @@ public
             string = "BloCo "//trim(tmp)
          case(BC_OUTFLOW)
             string = "OUTFLOW"
-
          case(BC_INFLOW)
             string = "INFLOW"
          case(BC_WALL)
@@ -62,6 +62,8 @@ public
             string = "SYMMETRY"
          case(BC_PERIODIC)
             string = "PERIODIC"
+         case(BC_FARFIELD)
+            string = "FARFIELD"
          end select
    end function
 !   character(len = 8), parameter  :: BC_NAMES(-4:0) =  ["OUTFLOW " &

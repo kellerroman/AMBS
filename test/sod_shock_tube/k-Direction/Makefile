@@ -36,7 +36,7 @@ run: data_in.h5 str.dx config.bin
 	@echo ' Running SOD Shock Tube'
 	@$(PROGRAM) #-debug
 	@$(CREATE_XDMF)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 show:
 	@gnuplot -p plot.gnuplot
 

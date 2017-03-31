@@ -9,6 +9,7 @@ contains
    type(block_type), intent(inout) :: block
 
    integer :: i,j,k,v,dir 
+
    do dir = 1, Dimen  !!! schleife über die Richtungen dx/dy/dz
       do v  = 1, Dimen  !!! schleife über die Geschwindigkeiten U = (u,v,w)
          do k = 1, block % nCells(3)
@@ -53,6 +54,8 @@ contains
          end do
       end do
    end do
+   !if (block % nCells(1) > 100) &
+   !write(*,*) block % dUdnJ (128,1,1,1,2)
    do dir = 1, Dimen  !!! schleife über die Richtungen dx/dy/dz
       do v = 1, Dimen  !!! schleife über die Geschwindigkeiten U = (u,v,w)
          do k = 1, block % nPkts(3)
@@ -186,6 +189,15 @@ contains
                                             * block % tauJ(i,j,k,TAU_TXY)    &
                                             + block % absCellFaceVecsJ(3,i,j,k) &
                                             * block % tauJ(i,j,k,TAU_TXZ)    )
+!            if (i == 120 .and. block % nCells(1) >= 100 .and. j == 1) then
+!               write(*,*) block % visFluxesJ      (i,j,k,2), block % tauJ(i,j,k,TAU_TXY) &
+!                        , block % CellFaceAreasJ(i,j,k), block % dUDnJ(i,j,k,GRAD_SPU,GRAD_DY)
+!
+!               write(*,*) mu_local ,block % dUdnJ ( i,j,k,GRAD_SPU,GRAD_DY) ,block % dUdnJ ( i,j,k,GRAD_SPV,GRAD_DX)
+!
+!
+!               stop 1
+!            end if
 !            if (i == 10 .and. j <= 2) then
 !               write(*,*) block%tauJ(i,j,k,TAU_TXY), block % absCellFaceVecsJ(2,i,j,k),block % visFluxesJ(i,j,k,2), mu_local &
 !                                                  ,block % dUdnJ ( i,j,k,GRAD_SPU,GRAD_DY) &

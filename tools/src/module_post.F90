@@ -25,6 +25,7 @@ character(len=SOL_NAME_LENGTH), allocatable :: solnames(:)
 
 type :: tsol
    real(REAL_KIND), allocatable :: vars(:,:,:,:)
+   integer(INT_KIND) :: iteration
 end type
 
 type :: tblock
@@ -42,7 +43,7 @@ interface read_solution
 end interface read_solution
 
 public:: blocks, debug, nblock, nVar, nSol, read_solution, varnames, solnames
-
+public :: REAL_KIND, INT_KIND
 contains
    subroutine read_solution_sf()
       implicit none

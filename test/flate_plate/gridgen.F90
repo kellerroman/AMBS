@@ -12,7 +12,7 @@ integer, parameter :: kmax = 2
 
 integer, parameter :: nVar   = 5
 
-real(kind=8) :: p,rho,u,v,gm1,t,dy,ma
+real(kind=8) :: p,rho,u,v,t,dy,ma
 
 integer :: i,j
 
@@ -34,7 +34,6 @@ do i = 1,imax
         blocks(1) % xyzs(i,j,2,3) = blocks(1) % xyzs(i,j,1,3) + 2.0D-3
     end do
 end do
-gm1 = gamma - 1.0D0
 t = 388.889D0
 ma = 0.1D0
 p = 41368.5D0

@@ -14,10 +14,15 @@ integer(INT_KIND) :: equation
 integer(INT_KIND) :: turbulence
 integer(INT_KIND) :: space_order
 integer(INT_KIND) :: riemann_solver
-integer(INT_KIND) :: timestep_method
+integer(INT_KIND) :: timestep_method            ! Wie wird der Timestep berechnet / gewaehlt
+                                                ! 1: constant aus config
+                                                ! 2: global constant min berechnet
+                                                ! 3: local  unterschiedlich berechnet
 integer(INT_KIND) :: time_order
+
 integer(INT_KIND) :: res_out1 = 1      ! Residuum 1 welches gemittelt und ausgegben wird
 integer(INT_KIND) :: res_out2 = 2      ! Residuum 2 welches gemittelt und ausgegben wird
+
 integer(INT_KIND),private :: start_time(8)
 
 real(REAL_KIND) :: res_max(2)
@@ -26,9 +31,12 @@ real(REAL_KIND) :: solution_time = 0.0E+0_REAL_KIND
 real(REAL_KIND) :: cfl
 real(REAL_KIND) :: timestep
 
+real(REAL_KIND) :: pressure_out = 1.0E+5_REAL_KIND
+
 real(REAL_KIND) :: c_les_sgs
 !< SUBGRID CONSTANT FOR LES LENGTHSCALE
 
+integer :: fio
 contains
 
    subroutine main_loop_control
@@ -55,6 +63,9 @@ contains
       if ( current_iteration <= 50 .or. &
          & mod(current_iteration,residual_out) == 0) then
          residual_on_screen = .true.
+      end if
+      if (timestep_method == 2) then
+         timestep = 1.0E20_REAL_KIND
       end if
 
 !         residual_on_screen = .true.

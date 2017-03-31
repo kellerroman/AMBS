@@ -131,14 +131,23 @@ subroutine screen_wr(text,level)
    end subroutine error_wr
 
    subroutine screen_residual()
-      use control_mod ,only: current_iteration,res_avg,res_max,solution_time, get_runtime
+      use control_mod ,only: current_iteration,res_avg,res_max,solution_time, get_runtime, fio
    implicit none
+      real(kind = REAL_KIND) :: runtime
+      runtime = get_runtime()
       write(stdout,'(I10,6(1X,ES10.4))') current_iteration & 
                                            , res_max(1) &
                                            , res_avg(1) &
                                            , res_max(2) &
                                            , res_avg(2) &
                                            , solution_time &
-                                           , get_runtime()
+                                           , runtime
+      write(fio,'(I10,6(1X,ES10.4))') current_iteration & 
+                                           , res_max(1) &
+                                           , res_avg(1) &
+                                           , res_max(2) &
+                                           , res_avg(2) &
+                                           , solution_time &
+                                           , runtime
    end  subroutine screen_residual
 end module screen_io_mod

@@ -242,7 +242,7 @@ contains
          do var = 1, nVar_in
             call h5gget_obj_info_idx_f(group_id1, block_group, var-1,varName_in, var_type, error)
          if (ib == 1) &
-            write(*,'(1X,A)',ADVANCE="NO") varName_in
+            write(*,'(1X,A)',ADVANCE="NO") trim(varName_in)
             call h5dopen_f(group_id2, varName_in, dset_id, error)
             call h5dget_space_f(dset_id,dspace_id,error)
             
@@ -275,8 +275,7 @@ contains
                   write(*,*) varname_in," nicht erkannt"
              end select
          end do
-         if (ib == 1) &
-         write(*,*)
+         if (ib == 1) write(*,*)
          deallocate(data_in)
          call h5gclose_f(group_id2, error)
       end do
@@ -401,7 +400,7 @@ contains
 
       allocate (data_out(blocks(b) % nCells(1),blocks(b) % nCells(2),blocks(b) % nCells(3))) 
 
-      do var = 1, 8!sol_out_nVar
+      do var = 1, 12!sol_out_nVar
          select case(var)!VarName(var))
          case(1)!VarName_Rho)
             varname_out = VarName_Rho
@@ -450,10 +449,34 @@ contains
                      + blocks(b) % vars(1:blocks(b) % nCells(1)  &
                                        ,1:blocks(b) % nCells(2)  &
                                        ,1:blocks(b) % nCells(3),VEC_SPW) ** 2)&
-                     / sqrt( gamma * RGas                      & 
-                           * blocks(b) % temperatures(1:blocks(b) % nCells(1)  &
-                                         ,1:blocks(b) % nCells(2)  &
-                                         ,1:blocks(b) % nCells(3)))
+                     / blocks(b) % schallges(1:blocks(b) % nCells(1)  &
+                                       ,1:blocks(b) % nCells(2)  &
+                                       ,1:blocks(b) % nCells(3))
+         case(9)!VarName_Temp)
+            varname_out = "timestep"
+            data_out = blocks(b) % timesteps(1:blocks(b) % nCells(1)  &
+                                            ,1:blocks(b) % nCells(2)  &
+                                            ,1:blocks(b) % nCells(3))
+!         case(9)!VarName_Temp)
+!            varname_out = "dUdyJ"
+!            data_out = blocks(b) % dudnJ(1:blocks(b) % nCells(1)  &
+!                                        ,1:blocks(b) % nCells(2)  &
+!                                        ,1:blocks(b) % nCells(3),1,2)
+         case(10)!VarName_Temp)
+            varname_out = "visFluxesJ"
+            data_out = blocks(b) % visFluxesJ(1:blocks(b) % nCells(1)  &
+                                        ,1:blocks(b) % nCells(2)  &
+                                        ,1:blocks(b) % nCells(3),VEC_SPU)
+         case(11)!VarName_Temp)
+            varname_out = "FluxesJ"
+            data_out = blocks(b) % FluxesJ(1:blocks(b) % nCells(1)  &
+                                        ,1:blocks(b) % nCells(2)  &
+                                        ,1:blocks(b) % nCells(3),VEC_SPU)
+         case(12)!VarName_Temp)
+            varname_out = "Residual"
+            data_out = blocks(b) % residuals(1:blocks(b) % nCells(1)  &
+                                            ,1:blocks(b) % nCells(2)  &
+                                            ,1:blocks(b) % nCells(3),VEC_SPU)
          end select
          
          call h5dcreate_f(group_id2, varname_out, h5t_native_double, dspace_id, &

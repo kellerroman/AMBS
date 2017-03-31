@@ -1,64 +1,58 @@
 FC=gfortran
 
 HOMEDIR=../../../
+CODE_OBJ=$(HOMEDIR)obj/
+TOOLS_OBJ=$(HOMEDIR)tools/obj/
 
-CGNSlibs = -lcgns -lhdf5
-LIBS = $(CGNSlibs) -lm
+LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm -lfftw3
 
-INCLUDE = -I/usr/include/
-CFLAGS = -std=f2008
-CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
+INCLUDE = -I/usr/include/ -I$(TOOLS_OBJ) -I$(CODE_OBJ)
+#CFLAGS = -std=f2008
+CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries #-Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed
 CFLAGS += -O3
 
 PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-EXTRACT_1D=$(HOMEDIR)tools/bin/extract_1D
-SOL2VTK=/usr/bin/cgnstools/cgns_to_vtk data_out.cgns
+CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
 PROGRAM=$(HOMEDIR)bin/AMBS
 
-.PHONY: all cmp run clean cp grid_inf show
+.PHONY: all compile run clean cp show
 
 	
-all: cmp export_velocities run post exp_vel show
+all: compile run post show
+#all: cmp export_velocities run post exp_vel show
 
 exp_vel: export_velocities
 	@./$<
 	@DIT_gridgen/FFT/fft
-cmp:
+
+compile: compile_source export_velocities
+
+compile_source:
 	@$(MAKE) -C $(HOMEDIR) --no-print-directory
 
 
-run: data_in.cgns config.bin
+run: compile data_in.h5 config.bin
 	@$(PROGRAM)
 post: 
-	@$(SOL2VTK)
+	@$(CREATE_XDMF)
 show:
 	@gnuplot -p plot.gnuplot
 
-data_in.cgns: gridgen
+data_in.h5: gridgen
 	@./$<
 
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
 	
-gridgen: gridgen.F90 
+gridgen: gridgen.F90 $(TOOLS_OBJ)module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
-export_velocities: export_velocities.F90 file_io_mod.o const_mod.o data_mod.o screen_io_mod.o control_mod.o
+export_velocities: export_velocities.F90 $(TOOLS_OBJ)module_post.a 
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
-const_mod.o:../../../src/const_mod.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-data_mod.o:../../../src/data_mod.F90
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-file_io_mod.o:../../../src/file_io_mod.F90 screen_io_mod.o data_mod.o
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-screen_io_mod.o:../../../src/screen_io_mod.F90 control_mod.o
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-control_mod.o:../../../src/control_mod.F90 const_mod.o
-	$(FC) $(CFLAGS) $< -c $(INCLUDE)
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen export_velocities *.silo *.dx stubex *.cgns *.csv
+	@rm -vf bin *.o *.mod *.h5 *.dat *.plt *.png *.xdmf *.txt *.bin gridgen export_velocities *.silo *.dx stubex *.cgns *.csv
 	@rm -vrf *~
 
 ##### CLEAN PROJECT

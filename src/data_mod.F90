@@ -25,9 +25,13 @@ type :: block_type
    !< viskositaet im Zellmittelpunkt
    real(REAL_KIND), allocatable  :: heatKoeffs     (:,:,:)
    !< Waermeleitungskoeffizient
+   real(REAL_KIND), allocatable  :: schallges      (:,:,:)
+   !< Schallgeschwindigkeit
    real(REAL_KIND), allocatable  :: residuals      (:,:,:,:)
    !< Residuum
 
+   real(REAL_KIND), allocatable  :: timesteps      (:,:,:)
+   !< Timestep
    real(REAL_KIND), allocatable  :: volumes        (:,:,:)
    !< Inerses Zellvolumen der jeweiligen Zelle
    real(REAL_KIND), allocatable  :: faceVarsLeftI  (:,:,:,:)
@@ -95,7 +99,7 @@ type :: block_type
 
    real(REAL_KIND), allocatable  :: cellFaceVecsK (:,:,:,:)
    !< normierter Normalenvektor der Zellflächen(3D) & Zellkanten (2D) in K Richtung (FROMT & BACK)
-   !< Dimen, NPkt(1), NCell(2), NPkt(3)
+   !< Dimen, NCell(1), NCell(2), NPkt(3)
 
    real(REAL_KIND), allocatable  :: abscellFaceVecsI (:,:,:,:)
    !< normierter Normalenvektor der Zellflächen(3D) & Zellkanten (2D) in I Richtung (EAST & WEST)
@@ -107,7 +111,7 @@ type :: block_type
 
    real(REAL_KIND), allocatable  :: abscellFaceVecsK (:,:,:,:)
    !< normierter Normalenvektor der Zellflächen(3D) & Zellkanten (2D) in K Richtung (FROMT & BACK)
-   !< Dimen, NPkt(1), NCell(2), NPkt(3)
+   !< Dimen, NCell(1), NCell(2), NPkt(3)
 
    real(REAL_KIND), allocatable  :: swpDistVecsI (:,:,:,:)
    !< Vektor mit Schwerpunkt-Abständen für die Berechnung der Ableitungen in I Richtung (EAST & WEST)
@@ -183,8 +187,11 @@ contains
          allocate(b % pressures         (       cis:cie,cjs:cje,cks:cke       ) )
          allocate(b % viscosities       (       cis:cie,cjs:cje,cks:cke       ) )
          allocate(b % heatKoeffs        (       cis:cie,cjs:cje,cks:cke       ) )
+         allocate(b % schallges         (       cis:cie,cjs:cje,cks:cke       ) )
          allocate(b % cons_vars         (       ci     ,cj     ,ck     ,nvar  ) )
          allocate(b % residuals         (       ci     ,cj     ,ck     ,nvar  ) )
+
+         allocate(b % timesteps         (       ci     ,cj     ,ck            ) )
 
          allocate(b % faceVarsLeftI     (       pi     ,cj     ,ck     ,nvar  ) )
          allocate(b % faceVarsRightI    (       pi     ,cj     ,ck     ,nvar  ) )
