@@ -24,7 +24,6 @@ all: compile run post show
 
 exp_vel: export_velocities
 	@./$<
-	@DIT_gridgen/FFT/fft
 
 compile: compile_source export_velocities
 
@@ -38,7 +37,7 @@ post: export_velocities
 	@$(CREATE_XDMF)
 	@./$<
 show:
-	@gnuplot -p plot.gnuplot
+	#@gnuplot -p plot.gnuplot
 
 data_in.h5: gridgen
 	@./$<

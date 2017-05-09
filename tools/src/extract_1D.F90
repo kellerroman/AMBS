@@ -1,8 +1,4 @@
 program extract_1D
-!use const_mod
-!use data_mod
-!use hdf5
-!use file_io_mod
 use mod_post
 implicit none
 integer :: fo
@@ -18,31 +14,9 @@ character(len = 100) :: arg
 character(len=100) :: filename_sol
 character(len=*), parameter :: file_out = "data_1d.csv"
 
-!real(REAL_KIND), allocatable :: temp_coord(:,:,:)
-!   
-!   integer     ::   error ! Error flag
-!   integer(hid_t) :: file_id       ! file identifier
-!   integer(hid_t) :: dset_id       ! dataset identifier
-!   integer(hid_t) :: group_id      ! dataset identifier
-!   integer(hid_t) :: group_id1     ! dataset identifier
-!   integer(hid_t) :: group_id2     ! dataset identifier
-!   integer(hid_t) :: dspace_id     ! dataspace identifier
-!   integer        :: solution_type ! dataspace identifier
-!   integer        :: var_type ! dataspace identifier
-!   integer(HSIZE_T),allocatable :: dims(:,:)
-!   integer(HSIZE_T),allocatable :: dims_data(:,:)
-!   integer(HSIZE_T) :: maxdims(3)
-!   integer     :: var
-!   integer     ::   hdf5_nSol, nVar_in
-!   character(len=len(GROUP_BLOCK)+2) :: block_group
-!   character(len=20),allocatable :: solution_name(:)
-!   character(len=30),allocatable :: varName_in(:)
-!   integer :: fu
-
-   !integer :: nd,sol
-!   integer:: rank
 integer :: s,var
 integer :: var_dir = 1
+
 !< Welche Richtung soll variert werden
 filename_sol = "data_out.h5"
 write(*,*) "========== EXTRACT 1D SOLUTION =============="
