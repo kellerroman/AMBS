@@ -88,7 +88,7 @@ contains
       integer :: ib,i1,ig
       integer :: jb,j1,jg
       integer :: kb,k1,kg
-      integer :: ob !other block
+      !integer :: ob !other block
       real(REAL_KIND) :: un
       real(REAL_KIND) :: deltap
       real(REAL_KIND) :: sof ! Speed of Sound

@@ -367,7 +367,7 @@ integer :: iterations, sol_out_screen_int, res_out_screen_int, res_nr_out
 integer :: equation, turbulence, space_order
 integer :: riemann_solver, timestep_method,time_order
 real(kind = 8) :: c_les_sgs, cfl, timestep
-real(kind = 8) :: DT
+!real(kind = 8) :: DT
 character(len=VARNAME_LENGTH),allocatable :: unset_paras(:)
 integer :: i
 

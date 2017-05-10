@@ -1,13 +1,10 @@
-FC=gfortran
-
 HOMEDIR=../../
 CODE_OBJ=$(HOMEDIR)obj/
 
-LIBS = -lhdf5 -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lm
-INCLUDE = -I/usr/include/ -I$(CODE_OBJ)
+include $(HOMEDIR)/Makefile.in
+INCLUDE += -I$(CODE_OBJ)
 
-CFLAGS = -std=f2008
-CFLAGS +=-g -fbacktrace
+CFLAGS =-g -fbacktrace -std=f2008
 
 EXECUTABLE_DIR = ../bin
 SOURCE_DIR = ../src
