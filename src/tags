@@ -445,7 +445,7 @@ thermprop_mod	thermprop_mod.F90	/^module thermprop_mod$/;"	m
 time_disc_mod	time_disc_mod.F90	/^module time_disc_mod /;"	m
 time_order	control_mod.F90	/^integer(INT_KIND) :: time_order$/;"	v	module:control_mod
 timestep	control_mod.F90	/^real(REAL_KIND) :: timestep$/;"	v	module:control_mod
-timestep_method	control_mod.F90	/^integer(INT_KIND) :: timestep_method$/;"	v	module:control_mod
+timestep_method	control_mod.F90	/^integer(INT_KIND) :: timestep_method /;"	v	module:control_mod
 timesteps	data_mod.F90	/^   real(REAL_KIND), allocatable  :: timesteps /;"	k	type:block_type
 turb_mod	turb_mod.F90	/^module turb_mod$/;"	m
 turbulence	control_mod.F90	/^integer(INT_KIND) :: turbulence$/;"	v	module:control_mod

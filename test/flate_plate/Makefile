@@ -6,7 +6,7 @@ TOOLS_OBJ=$(HOMEDIR)tools/obj/
 
 LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
 
-INCLUDE = -I/usr/include/ -I$(TOOLS_OBJ) -I$(CODE_OBJ)
+INCLUDE = -I/media/LDS/module/software/libs/hdf5/1.8.17_gnu/include/shared/ -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 CFLAGS = -std=f2008
 CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
 #CFLAGS += -DDEBUG #Unnecessary comments are oppressed
