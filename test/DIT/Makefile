@@ -5,9 +5,11 @@ subdirs: $(SUBDIRS)
 
 clean: $(SUBCLEAN)
 
-test:
-	@echo $(SUBCLEAN)
+list_targets:
+	@echo $(SUBDIRS)
+
 $(SUBDIRS):
 	@$(MAKE) -C $@ #--no-print-directory
+
 $(SUBCLEAN): %.clean:
 	@$(MAKE) -C $* clean --no-print-directory

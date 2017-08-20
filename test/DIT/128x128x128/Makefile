@@ -1,82 +1,37 @@
 FC=gfortran
 
 HOMEDIR=../../../
+include $(HOMEDIR)Makefile.global
 
-CGNSlibs = /usr/lib/libcgns.so -lhdf5
-LIBS = $(CGNSlibs) -lm
+INCLUDE += -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 
-INCLUDE = -I/usr/include/
-CFLAGS = -std=f2008
-CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
-#CFLAGS += -DDEBUG #Unnecessary comments are oppressed
-CFLAGS += -O3
-
-PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-EXTRACT_1D=$(HOMEDIR)tools/bin/extract_1D
-PROGRAM=$(HOMEDIR)bin/AMBS
-
-.PHONY: all cmp run clean cp grid_inf show
-
+.PHONY: all compile run clean cp show
+.DEFAULT_GOAL := all
 	
-all: cmp run #show
+all: compile_global run post show
 
-cmp:
-	@$(MAKE) -C $(HOMEDIR) --no-print-directory
+exp_vel: export_velocities
+	@./$<
+	@DIT_gridgen/FFT/fft
 
 
-run: data_in.cgns config.bin
+run: compile_global data_in.h5 config.bin
 	@$(PROGRAM)
 show:
 	@gnuplot -p plot.gnuplot
 
-data_in.cgns: gridgen
+data_in.h5: gridgen
 	@./$<
 
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
 	
-gridgen: gridgen.F90 cgnslib.o
+gridgen: gridgen.F90 $(TOOLS_OBJ)module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
-cgnslib.o: $(HOMEDIR)src/cgns.F90
-	$(FC) -c $(CFLAGS) $< -o $@ 
+export_velocities: export_velocities.F90 $(TOOLS_OBJ)module_post.a 
+	#$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
-
-sens: cmp gridgen str.dx
-	./gridgen 128
-	@$(PRE_CONFIG) disc/space_order=1
-	@$(PROGRAM)
-	@$(EXTRACT_1D)
-	@mv data_1d.csv data_ni_100_sp_1.csv
-	@$(PRE_CONFIG) disc/space_order=2
-	@$(PROGRAM)
-	@$(EXTRACT_1D)
-	@mv data_1d.csv data_ni_100_sp_2.csv
-	./gridgen 201
-	@$(PRE_CONFIG) disc/space_order=1
-	@$(PROGRAM)
-	@$(EXTRACT_1D)
-	@mv data_1d.csv data_ni_200_sp_1.csv
-	@$(PRE_CONFIG) disc/space_order=2
-	@$(PROGRAM)
-	@$(EXTRACT_1D)
-	@mv data_1d.csv data_ni_200_sp_2.csv
-	./gridgen 501
-	@$(PRE_CONFIG) disc/space_order=1
-	@$(PROGRAM)
-	@$(EXTRACT_1D)
-	@mv data_1d.csv data_ni_500_sp_1.csv
-	@$(PRE_CONFIG) disc/space_order=2
-	@$(PROGRAM)
-	@$(EXTRACT_1D)
-	@mv data_1d.csv data_ni_500_sp_2.csv
-	@gnuplot -p plot_sens.gnuplot
-        
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
+	@rm -vf bin *.o *.mod *.h5 *.dat *.plt *.png *.xdmf *.txt *.bin gridgen export_velocities *.silo *.dx stubex *.cgns *.csv
 	@rm -vrf *~
-
-##### CLEAN PROJECT
-cp: 
-	@echo "CLEANING SOLVER DIR"
-	@make -C $(HOMEDIR) clean --no-print-directory

@@ -41,8 +41,3 @@ gridgen: gridgen.F90
 clean:
 	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.cgns *.csv
 	@rm -vrf *~
-
-##### CLEAN PROJECT
-cp: 
-	@echo "CLEANING SOLVER DIR"
-	@make -C $(HOMEDIR) clean --no-print-directory
