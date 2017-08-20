@@ -1,44 +1,37 @@
 HOMEDIR=../../
-CODE_OBJ=$(HOMEDIR)obj/
-
-include $(HOMEDIR)/Makefile.in
+include $(HOMEDIR)Makefile.global
 INCLUDE += -I$(CODE_OBJ)
-
-CFLAGS =-g -fbacktrace -std=f2008
-
-EXECUTABLE_DIR = ../bin
-SOURCE_DIR = ../src
 
 _SCRIPT=pre_config make_dependencies
 
 _EXE= extract_1D create_xdmf pre_config sol2vtk
 
-EXE = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_EXE))
-SCRIPT = $(patsubst %,$(EXECUTABLE_DIR)/%,$(_SCRIPT))
+EXE = $(patsubst %,$(TOOLS_BIN)%,$(_EXE))
+SCRIPT = $(patsubst %,$(TOOLS_BIN)%,$(_SCRIPT))
 
+.DEFAULT_GOAL := all
+.PHONY: all
 all: $(SCRIPT) $(EXE) module_gridgen.o module_post.a
+	@true
 
-$(EXECUTABLE_DIR)/make_dependencies:
-	@ln -s $(SOURCE_DIR)/make_dependencies.py $@
-
-
-#$(EXECUTABLE_DIR)/pre_config:
-	#@ln -s $(SOURCE_DIR)/pre_config.py $@
+$(TOOLS_BIN)make_dependencies:
+	@ln -s $(TOOLS_SRC)make_dependencies.py $@
 
 module_post.a:module_post.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)control_mod.o
 	@ar r $@ $^
 
 
-$(EXECUTABLE_DIR)/sol2vtk:$(SOURCE_DIR)/sol2vtk.F90 module_post.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)control_mod.o
+$(TOOLS_BIN)sol2vtk:$(TOOLS_SRC)sol2vtk.F90 module_post.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)control_mod.o
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
-$(EXECUTABLE_DIR)/extract_1D:$(SOURCE_DIR)/extract_1D.F90 module_post.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)control_mod.o
+$(TOOLS_BIN)extract_1D:$(TOOLS_SRC)extract_1D.F90 module_post.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)control_mod.o
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
 
-$(EXECUTABLE_DIR)/%:$(SOURCE_DIR)/%.F90
+$(TOOLS_BIN)%:$(TOOLS_SRC)%.F90
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
-%.o: ../src/%.F90
+%.o: $(TOOLS_SRC)%.F90
 	$(FC) $(CFLAGS) $< -c $(INCLUDE)
-include ../../src/inc_Makefile_dep
+
+include $(CODE_SRC)inc_Makefile_dep

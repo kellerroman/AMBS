@@ -17,9 +17,8 @@ integer       , parameter   :: KMAX   = 65
 real(kind = 8), parameter   :: LENGTH = 1.D-02
 real(kind = 8), parameter   :: DOMAIN_LENGTH = 2.D-00 * PI * LENGTH
 
-integer                     :: fu
 integer                     :: i,j,k,b
-real(kind = 8)              :: rho, T, p, E
+real(kind = 8)              :: T, p, E
 real(kind = 8)              :: x,y,z
 real(kind = 8)              :: rho0, p0, V0
 
@@ -73,7 +72,7 @@ do k = 1, kmax-1
          p = p0 + rho0*V0*V0 / 16.0D0 * (cos(2.0D0 * x / LENGTH) + cos(2.0D0 * y / LENGTH) ) & 
                                       * (cos(2.0D0 * z / LENGTH) + 2.0D0)
          blocks(1) % vars(i,j,k,1) =  p / ( T * RGAS )
-         E = p / GM1 + 0.5D0 * rho * &
+         E = p / GM1 + 0.5D0 * rho0 * &
                      ( blocks(1) % vars(i,j,k,2) * blocks(1) % vars(i,j,k,2) &
                      + blocks(1) % vars(i,j,k,3) * blocks(1) % vars(i,j,k,3) &
                      + blocks(1) % vars(i,j,k,4) * blocks(1) % vars(i,j,k,4) )

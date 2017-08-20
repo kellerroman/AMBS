@@ -4,11 +4,9 @@ implicit none
 integer :: fo
 integer :: b, i ,j ,k ,d, n
 
-character(len = 100) :: arg
 character(len=100) :: filename_sol
 
-integer :: s,var
-integer :: var_dir = 1
+integer :: s
 CHARACTER(LEN=5) :: BlockNr
 
 !< Welche Richtung soll variert werden

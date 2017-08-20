@@ -217,7 +217,7 @@ implicit none
 
       end function get_unset_para
 
-      function get_unset_paras() result (para_name)
+      subroutine get_unset_paras(para_name)
       implicit none
       character(len=VARNAME_LENGTH),allocatable :: para_name(:)
       type(t_datin_para), pointer :: tmp
@@ -244,7 +244,7 @@ implicit none
          end if
          tmp =>tmp % next
       end do
-      end function get_unset_paras
+      end subroutine get_unset_paras
       subroutine free_all()
       implicit none
       type(t_datin_para), pointer :: tmp
@@ -363,7 +363,7 @@ character(len=100) :: line
 character(len=VARNAME_LENGTH) :: varname
 character(len=90) :: varvalue
 
-integer :: iterations, sol_out_screen_int, res_out_screen_int, res_nr_out
+integer :: iterations, sol_out_screen_int, res_out_screen_int!, res_nr_out
 integer :: equation, turbulence, space_order
 integer :: riemann_solver, timestep_method,time_order
 real(kind = 8) :: c_les_sgs, cfl, timestep
@@ -435,7 +435,7 @@ varname = ""
 !      stop 1
 !   end if
 !end do
-unset_paras =  get_unset_paras()
+call get_unset_paras(unset_paras)
 if (ubound(unset_paras,1) > 0 ) then
    write(*,*) "There are unset Parameters which require Values"
    do i = 1,ubound(unset_paras,1)

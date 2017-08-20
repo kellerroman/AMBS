@@ -2,13 +2,11 @@ program extract_1D
 use mod_post
 implicit none
 integer :: fo
-integer :: b, i ,j ,k ,d
+integer :: b, i ,j ,k
 
 integer :: i_start,i_end
 integer :: j_start,j_end
 integer :: k_start,k_end
-
-logical :: fexists
 
 character(len = 100) :: arg
 character(len=100) :: filename_sol
@@ -64,7 +62,7 @@ else if (var_dir == 3) then
    j_end   = max(1,blocks(b) % nCells(2) / 2) 
    k_start = 1
    k_end   = blocks(b) % nCells(3)
-else if (var_dir == 4) then
+else !if (var_dir == 4) then
    i_start = 1
    i_end   = blocks(b) % nCells(1)
    j_start = max(1,blocks(b) % nCells(2) / 2)

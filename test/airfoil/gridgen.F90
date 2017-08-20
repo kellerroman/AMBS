@@ -11,7 +11,7 @@ integer, parameter :: kmax = 3
 
 integer, parameter :: nVar   = 5
 
-real(kind=8) :: p,rho,u,v,gm1,T
+real(kind=8) :: p,rho,u,v,T
 
 integer :: i,j
 
@@ -42,7 +42,6 @@ do i = 1,imax
     read(2,2000)
 end do
 close(2)
-gm1 = gamma - 1.0D0
 rho = 0.01d0
 u = 694.44d0
 v = 0.0D0

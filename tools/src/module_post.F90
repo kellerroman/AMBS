@@ -58,7 +58,6 @@ contains
    character(len=*), intent(in) :: filename
 
    integer(HSIZE_T), dimension(RANK) :: dims
-   integer(HSIZE_T), dimension(RANK) :: dims2
    integer(HSIZE_T), dimension(RANK) :: maxdims
    integer     ::   error ! error flag
 

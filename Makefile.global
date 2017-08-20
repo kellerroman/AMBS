@@ -1,0 +1,43 @@
+FC=gfortran
+INCLUDE = -I/media/LDS/module/software/libs/hdf5/1.8.17_gnu/include/static/
+INCLUDE = -I/usr/include/
+
+LIBS = -lhdf5 -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lm
+
+CFLAGS = -std=f2008
+CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
+
+#CFLAGS += -DDEBUG #Unnecessary comments are oppressed
+
+#CFLAGS += -g -fbacktrace -ffpe-trap=invalid,zero,overflow -fcheck=all -fbounds-check
+
+CFLAGS += -O3
+
+
+SRC_DIR_NAME = src/
+OBJ_DIR_NAME = obj/
+BIN_DIR_NAME = bin/
+TOOLS_DIR_NAME = tools/
+
+CODE_SRC    = $(HOMEDIR)$(SRC_DIR_NAME)
+CODE_OBJ    = $(HOMEDIR)$(OBJ_DIR_NAME)
+CODE_BIN    = $(HOMEDIR)$(BIN_DIR_NAME)
+TOOLS_SRC   = $(HOMEDIR)$(TOOLS_DIR_NAME)$(SRC_DIR_NAME)
+TOOLS_OBJ   = $(HOMEDIR)$(TOOLS_DIR_NAME)$(OBJ_DIR_NAME)
+TOOLS_BIN   = $(HOMEDIR)$(TOOLS_DIR_NAME)$(BIN_DIR_NAME)
+
+PROGRAM     = $(CODE_BIN)AMBS
+
+PRE_CONFIG  = $(TOOLS_BIN)pre_config
+EXTRACT_1D  = $(TOOLS_BIN)extract_1D
+CREATE_XDMF = $(TOOLS_BIN)create_xdmf
+
+.PHONY: compile clean_global
+
+compile_global:
+	@$(MAKE) -C $(HOMEDIR) --no-print-directory
+
+##### CLEAN PROJECT
+clean_global: 
+	@echo "CLEANING AMBS ROOT DIRECTORY"
+	@$(MAKE) -C $(HOMEDIR) clean --no-print-directory

@@ -1,31 +1,22 @@
-
 HOMEDIR=../../../
-CODE_OBJ=$(HOMEDIR)obj/
-TOOLS_OBJ=$(HOMEDIR)tools/obj/
 
-include $(HOMEDIR)/Makefile.in
+include $(HOMEDIR)/Makefile.global
+INCLUDE += -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 
-PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
-PROGRAM=$(HOMEDIR)bin/AMBS
-
-.PHONY: all compile run clean cp show
+.PHONY: all run clean show
+.DEFAULT_GOAL := all
 
 	
 all: compile run post show
-#all: cmp export_velocities run post exp_vel show
 
 exp_vel: export_velocities
 	@./$<
 
-compile: compile_source export_velocities
-
-compile_source:
-	@$(MAKE) -C $(HOMEDIR) --no-print-directory
-
+compile: compile_global export_velocities
 
 run: compile data_in.h5 config.bin
 	@$(PROGRAM)
+
 post: export_velocities 
 	@$(CREATE_XDMF)
 	@./$<
@@ -42,13 +33,8 @@ gridgen: gridgen.F90 $(TOOLS_OBJ)module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
 export_velocities: export_velocities.F90 $(TOOLS_OBJ)module_post.a 
-	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
+	#$(FC) $(CFLAGS) -Wno-unused-parameter  $^ -o $@ $(LIBS) $(INCLUDE)
 
 clean:
 	@rm -vf bin *.o *.mod *.h5 *.dat *.plt *.png *.xdmf *.txt *.bin gridgen export_velocities *.silo *.dx stubex *.cgns *.csv
 	@rm -vrf *~
-
-##### CLEAN PROJECT
-cp: 
-	@echo "CLEANING SOLVER DIR"
-	@make -C $(HOMEDIR) clean --no-print-directory

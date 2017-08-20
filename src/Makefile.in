@@ -1,28 +1,32 @@
-include ../Makefile.in
-EXECUTABLE = ../bin/AMBS
-SOURCE_DIR = ../src
+HOMEDIR = ../
+include $(HOMEDIR)Makefile.global
 
-include $(SOURCE_DIR)/inc_Makefile_src
+include $(CODE_SRC)inc_Makefile_src
           
 OBJECTS=$(_SOURCES:.F90=.o)
 
-VPATH := $(SOURCE_DIR)
+VPATH := $(CODE_SRC)
 
-compile: $(EXECUTABLE)
+.DEFAULT_GOAL := compile
+
+compile: $(PROGRAM)
 	@true
 
-$(EXECUTABLE): $(OBJECTS)
-	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
+$(PROGRAM): $(OBJECTS)
+	@echo "========================================"
+	@echo "==           LINKING AMBS             =="
+	@echo "========================================"
+	@$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
 %.o: %.F90
 	$(FC) -c $(CFLAGS) $(INCLUDE) $< -o $@ 
 	
-include $(SOURCE_DIR)/inc_Makefile_dep
+include $(CODE_SRC)inc_Makefile_dep
 	
 .PHONY: clean compile
 
 clean:
-	@rm -vf $(EXECUTABLE) *.o *.mod $(SOURCE_DIR)/*~ $(SOURCE_DIR)/*.mod
+	@rm -vf $(PROGRAM) *.o *.mod $(CODE_SRC)/*~ $(CODE_SRC)/*.mod
 	@rm -vrf ../*~
 
 debug: CFLAGS += -DDEBUG 
