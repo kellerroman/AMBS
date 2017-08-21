@@ -1,29 +1,16 @@
-FC=gfortran
-
 HOMEDIR=../../
-CODE_OBJ=$(HOMEDIR)obj/
-TOOLS_OBJ=$(HOMEDIR)tools/obj/
 
-LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
+include $(HOMEDIR)Makefile.global
 
-INCLUDE = -I/usr/include/ -I$(TOOLS_OBJ) -I$(CODE_OBJ)
-CFLAGS = -std=f2008
-CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
-#CFLAGS += -DDEBUG #Unnecessary comments are oppressed
-CFLAGS += -O3
-
-PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
-PROGRAM=$(HOMEDIR)bin/AMBS
+INCLUDE += -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 
 .PHONY: all cmp run clean cp grid_inf show
+.DEFAULT_GOAL := all
 
 	
 all: compile run post #show
 
-compile: compile_source flate_plate_extract
-compile_source:
-	@$(MAKE) -C $(HOMEDIR) --no-print-directory
+compile: compile_global flate_plate_extract
 
 run: data_in.h5 config.bin
 	@$(PROGRAM) #-debug
@@ -48,8 +35,3 @@ flate_plate_extract: flate_plate_extract.F90 $(TOOLS_OBJ)module_post.o $(CODE_OB
 clean:
 	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.dx *.h5 *.csv flate_plate_extract *.xdmf fort.*
 	@rm -vrf *~
-
-##### CLEAN PROJECT
-cp: 
-	@echo "CLEANING SOLVER DIR"
-	@make -C $(HOMEDIR) clean --no-print-directory

@@ -1,28 +1,16 @@
-FC=gfortran
-
 HOMEDIR=../../../
 
-LIBS = -lhdf5hl_fortran -lhdf5_hl -lhdf5 -lhdf5_fortran -lm
+include $(HOMEDIR)Makefile.global
 
-INCLUDE = -I/usr/include/ -I$(HOMEDIR)tools/obj/ -I$(HOMEDIR)obj/
-CFLAGS = -std=f2008
-CFLAGS += -Wconversion -Wall -Wextra -Warray-temporaries -Werror
-#CFLAGS += -DDEBUG #Unnecessary comments are oppressed
-CFLAGS += -O3
+INCLUDE += -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 
-PRE_CONFIG=$(HOMEDIR)tools/bin/pre_config
-CREATE_XDMF=$(HOMEDIR)tools/bin/create_xdmf
-EXTRACT_1D=$(HOMEDIR)tools/bin/extract_1D
 CALC_ERROR=../calc_error &>> errors.txt
-PROGRAM=$(HOMEDIR)bin/AMBS
 
-.PHONY: all cmp run clean cp grid_inf show
+.PHONY: all run clean grid_inf show
+.DEFAULT_GOAL := all
 
 	
-all: cmp run #show
-
-cmp:
-	@$(MAKE) -C $(HOMEDIR) --no-print-directory
+all: compile_global run #show
 
 str.dx: ../stubex
 	@./$<
@@ -92,8 +80,3 @@ grid_rot: cmp gridgen
 clean:
 	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.h5 *.csv *.xdmf
 	@rm -vrf *~
-
-##### CLEAN PROJECT
-cp: 
-	@echo "CLEANING SOLVER DIR"
-	@make -C $(HOMEDIR) clean --no-print-directory
