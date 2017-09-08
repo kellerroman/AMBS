@@ -10,7 +10,10 @@ CALC_ERROR=../calc_error &>> errors.txt
 .DEFAULT_GOAL := all
 
 	
-all: compile_global run #show
+all: compile run #show
+
+compile:compile_global
+	@$(MAKE) -C ../ calc_error
 
 str.dx: ../stubex
 	@./$<
@@ -35,44 +38,44 @@ config.bin: config.cfg
 gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
-sens: cmp gridgen str.dx
+sens: compile gridgen str.dx
 	@rm -f errors.txt
 	./gridgen 101
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) y
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_1.csv
 	@mv error.csv error_ni_100_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) y
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_2.csv
 	@mv error.csv error_ni_100_sp_2.csv
 	./gridgen 201
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) y
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_1.csv
 	@mv error.csv error_ni_200_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) y
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_2.csv
 	@mv error.csv error_ni_200_sp_2.csv
 	./gridgen 501
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) y
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_500_sp_1.csv
 	@mv error.csv error_ni_500_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) y
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_500_sp_2.csv
 	@mv error.csv error_ni_500_sp_2.csv

@@ -38,6 +38,7 @@ DO
    i = i+1
 END DO
 write(*,'(A,1X,I0,1X,F5.2)') "AXIAL GRID RESOLUTION:",imax,winkel
+jmax = imax
 call add_block(imax-1,jmax-1,kmax-1)
 call allocate_blocks(nVar)
 winkel = winkel / a2d

@@ -10,7 +10,10 @@ CALC_ERROR=../calc_error &>> errors.txt
 .DEFAULT_GOAL := all
 
 	
-all: compile_global run #show
+all: compile run #show
+
+compile:compile_global
+	@$(MAKE) -C ../ calc_error
 
 str.dx: ../stubex
 	@./$<
@@ -36,7 +39,7 @@ config.bin: config.cfg
 gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
-sens: cmp gridgen str.dx
+sens: compile gridgen str.dx
 	@rm -f errors.txt
 	./gridgen 101
 	@$(PRE_CONFIG) disc/space_order=1

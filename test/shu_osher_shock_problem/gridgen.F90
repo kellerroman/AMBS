@@ -21,7 +21,7 @@ character(len = 100) :: arg
 real(kind=8) :: mat(2,2)
 real(kind=8) :: temp(dimen)
 
-real(kind=8) :: p,rho,u,gm1
+real(kind=8) :: p,rho,u
 
 integer :: i,j,k
 
@@ -46,8 +46,6 @@ mat(1,1) = + cos(winkel)
 mat(2,1) = - sin(winkel)
 mat(1,2) = + sin(winkel)
 mat(2,2) = + cos(winkel)
-
-gm1 = gamma - 1.0D0
 
 do k = 1,kmax
    do j = 1,jmax

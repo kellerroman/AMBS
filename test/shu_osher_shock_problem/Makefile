@@ -81,4 +81,4 @@ grid_rot: cmp gridgen
 
 clean:
 	@rm -vf *.o *.mod *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.dx stubex *.csv *.h5 *.xdmf
-	@rm -vrf *~
+	@rm -vrf *~ fort.*

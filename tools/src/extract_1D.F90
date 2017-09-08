@@ -65,8 +65,8 @@ else if (var_dir == 3) then
 else !if (var_dir == 4) then
    i_start = 1
    i_end   = blocks(b) % nCells(1)
-   j_start = max(1,blocks(b) % nCells(2) / 2)
-   j_end   = max(1,blocks(b) % nCells(2) / 2)
+   j_start = 1
+   j_end   = blocks(b) % nCells(2)
    k_start = max(1,blocks(b) % nCells(3) / 2)
    k_end   = max(1,blocks(b) % nCells(3) / 2)
 end if
@@ -76,7 +76,7 @@ do var = 1,nVar
 end do
 write(fo,*)
 do i = i_start, i_end
-   if (var_dir == 3) then
+   if (var_dir == 4) then
       j_start = i
       j_end   = i
    end if

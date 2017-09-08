@@ -39,39 +39,39 @@ sens: cmp gridgen str.dx
 	./gridgen 101
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_1.csv
 	@mv error.csv error_ni_100_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_2.csv
 	@mv error.csv error_ni_100_sp_2.csv
 	./gridgen 201
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_1.csv
 	@mv error.csv error_ni_200_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_2.csv
 	@mv error.csv error_ni_200_sp_2.csv
 	./gridgen 501
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_500_sp_1.csv
 	@mv error.csv error_ni_500_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) z
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_500_sp_2.csv
 	@mv error.csv error_ni_500_sp_2.csv

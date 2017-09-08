@@ -29,11 +29,11 @@ i = 1
 DO
    CALL get_command_argument(i, arg)
    IF (LEN_TRIM(arg) == 0) EXIT
-   if( i == 1) read(arg,*) jmax
+   if( i == 1) read(arg,*) kmax
    if( i == 2) read(arg,*) winkel
    i = i+1
 END DO
-write(*,'(A,1X,I0,1X,F5.2)') "AXIAL GRID RESOLUTION:",imax,winkel
+write(*,'(A,1X,I0,1X,F5.2)') "AXIAL GRID RESOLUTION:",kmax,winkel
 call add_block(imax-1,jmax-1,kmax-1)
 call allocate_blocks(nVar)
 winkel = winkel / a2d

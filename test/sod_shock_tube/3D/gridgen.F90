@@ -34,6 +34,8 @@ DO
    if( i == 2) read(arg,*) winkel
    i = i+1
 END DO
+jmax = imax
+kmax = imax
 write(*,'(A,1X,I0,1X,F5.2)') "AXIAL GRID RESOLUTION:",imax,winkel
 call add_block(imax-1,jmax-1,kmax-1)
 call allocate_blocks(nVar)
@@ -50,8 +52,8 @@ do k = 1,kmax
       do i = 1,imax
          blocks(1) % xyzs(i,j,k,1) = length/dble(imax-1) * dble(i-1)
    
-         blocks(1) % xyzs(i,j,k,2) = length/dble(imax-1) * dble(j-1)
-         blocks(1) % xyzs(i,j,k,3) = length/dble(imax-1) * dble(k-1)
+         blocks(1) % xyzs(i,j,k,2) = length/dble(jmax-1) * dble(j-1)
+         blocks(1) % xyzs(i,j,k,3) = length/dble(kmax-1) * dble(k-1)
          temp = blocks(1) % xyzs(i,j,k,:)
          blocks(1) % xyzs(i,j,k,1) = mat(1,1) * temp(1) + mat(2,1) * temp(2)
          blocks(1) % xyzs(i,j,k,2) = mat(1,2) * temp(1) + mat(2,2) * temp(2)
@@ -73,8 +75,8 @@ do k = 1, kmax-1
    end do
 end do
 
-blocks(1) % boundary_condition(DIR_WEST) = BC_INFLOW
-blocks(1) % boundary_condition(DIR_EAST) = BC_OUTFLOW
+blocks(1) % boundary_condition(DIR_WEST) = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_EAST) = BC_SYMMETRY
 blocks(1) % boundary_condition(DIR_SOUTH) = BC_SYMMETRY
 blocks(1) % boundary_condition(DIR_NORTH) = BC_SYMMETRY
 blocks(1) % boundary_condition(DIR_FRONT) = BC_SYMMETRY

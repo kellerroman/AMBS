@@ -21,7 +21,7 @@ run: compile data_in.h5 config.bin
 
 post: export_velocities 
 	@$(CREATE_XDMF)
-	@./$<
+	#@./$<
 show:
 	@gnuplot -p plot.gnuplot
 

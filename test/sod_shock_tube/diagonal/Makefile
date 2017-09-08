@@ -21,7 +21,7 @@ str.dx: ../stubex
 run: data_in.h5 str.dx config.bin
 	@echo 'Running Grid-Adaper on simple Chamber'
 	@$(PROGRAM) #-debug
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@$(CREATE_XDMF)
 
 show:
@@ -40,29 +40,29 @@ sens: compile_global gridgen str.dx
 	./gridgen 101
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@mv data_1d.csv data_ni_100_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@mv data_1d.csv data_ni_100_sp_2.csv
 	./gridgen 201
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@mv data_1d.csv data_ni_200_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@mv data_1d.csv data_ni_200_sp_2.csv
 	./gridgen 501
 	@$(PRE_CONFIG) disc/space_order=1
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@mv data_1d.csv data_ni_500_sp_1.csv
 	@$(PRE_CONFIG) disc/space_order=2
 	@$(PROGRAM)
-	@$(EXTRACT_1D)
+	@$(EXTRACT_1D) xy
 	@mv data_1d.csv data_ni_500_sp_2.csv
 	@gnuplot -p plot_sens.gnuplot
 
@@ -80,4 +80,4 @@ grid_rot: compile_global gridgen
 
 clean:
 	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.h5 *.csv *.xdmf
-	@rm -vrf *~
+	@rm -vrf *~ fort.*
