@@ -240,29 +240,38 @@ contains
       do j = 1, block % nCells(2)
          do i = 1, block % nCells(1)
             mu_local = (block % viscosities(i,j,k) + block % viscosities (i,j,k-1) ) * HALF
+
             la_local = (block % heatKoeffs  (i,j,k) + block % heatKoeffs  (i,j,k-1) ) * HALF
+
             sp_local = (block % vars  (i,j,k,2:4) + block % vars  (i,j,k-1,2:4) ) * HALF
+
             block % tauK (i,j,k,TAU_TXX) = TWOTHIRD * mu_local &
                                          * ( TWO * block % dUdnK ( i,j,k,GRAD_SPU,GRAD_DX) &
                                            -       block % dUdnK ( i,j,k,GRAD_SPV,GRAD_DY) &
                                            -       block % dUdnK ( i,j,k,GRAD_SPW,GRAD_DZ) )
+
             block % tauK (i,j,k,TAU_TYY) = TWOTHIRD * mu_local &
                                          * ( TWO * block % dUdnK ( i,j,k,GRAD_SPV,GRAD_DY) &
                                            -       block % dUdnK ( i,j,k,GRAD_SPU,GRAD_DX) &
                                            -       block % dUdnK ( i,j,k,GRAD_SPW,GRAD_DZ) )
+
             block % tauK (i,j,k,TAU_TZZ) = TWOTHIRD * mu_local &
                                          * ( TWO * block % dUdnK ( i,j,k,GRAD_SPW,GRAD_DZ) &
                                            -       block % dUdnK ( i,j,k,GRAD_SPU,GRAD_DX) &
                                            -       block % dUdnK ( i,j,k,GRAD_SPV,GRAD_DY) )
+
             block % tauK (i,j,k,TAU_TXY) = mu_local &
                                          * (       block % dUdnK ( i,j,k,GRAD_SPU,GRAD_DY) &
                                            +       block % dUdnK ( i,j,k,GRAD_SPV,GRAD_DX) )
+
             block % tauK (i,j,k,TAU_TXZ) = mu_local &
                                          * (       block % dUdnK ( i,j,k,GRAD_SPU,GRAD_DZ) &
                                            +       block % dUdnK ( i,j,k,GRAD_SPW,GRAD_DX) )
+
             block % tauK (i,j,k,TAU_TYZ) = mu_local &
                                          * (       block % dUdnK ( i,j,k,GRAD_SPV,GRAD_DZ) &
                                            +       block % dUdnK ( i,j,k,GRAD_SPW,GRAD_DY) )
+
             block % heatfluxK (i,j,k,1:dimen) = - la_local * block % dudnK(i,j,k,GRAD_TEMP,1:dimen)
 
             block % visFluxesK(i,j,k,2) = - ( block % abscellFaceVecsK(1,i,j,k) &
@@ -271,18 +280,21 @@ contains
                                             * block % tauK(i,j,k,TAU_TXY)    &
                                             + block % abscellFaceVecsK(3,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TXZ)    )
+
             block % visFluxesK(i,j,k,3) = - ( block % abscellFaceVecsK(1,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TXY)    &
                                             + block % abscellFaceVecsK(2,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TYY)    &
                                             + block % abscellFaceVecsK(3,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TYZ)    )
+
             block % visFluxesK(i,j,k,4) = - ( block % abscellFaceVecsK(1,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TXZ)    &
                                             + block % abscellFaceVecsK(2,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TYZ)    &
                                             + block % abscellFaceVecsK(3,i,j,k) &
                                             * block % tauK(i,j,k,TAU_TZZ)    )
+
             block % visFluxesK(i,j,k,5) = - ( block % abscellFaceVecsK(1,i,j,k) &
                                             * ( block % tauK(i,j,k,TAU_TXX) * sp_local(1) &
                                               + block % tauK(i,j,k,TAU_TXY) * sp_local(2) &
