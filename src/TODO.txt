@@ -1,6 +1,6 @@
 TODO:
-   central config_Makefile in base folder
-   SGS Model (Smagorinsky)
++  central config_Makefile in base folder
++  SGS Model (Smagorinsky)
    higher temporal order
 
 testcases:
@@ -11,7 +11,7 @@ testcases:
 Capabilities:
 +  boundary conditions (from CGNS)
 +  viscous fluxes
-   multi-block
++  multi-block
    shared memory parallelism
    MPI
 

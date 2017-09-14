@@ -1,4 +1,4 @@
-HOMEDIR=../../
+HOMEDIR=../../../
 
 include $(HOMEDIR)Makefile.global
 

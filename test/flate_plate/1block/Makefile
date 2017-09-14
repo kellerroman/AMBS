@@ -1,12 +1,11 @@
-HOMEDIR=../../
+HOMEDIR=../../../
 
 include $(HOMEDIR)Makefile.global
 
 INCLUDE += -I$(TOOLS_OBJ) -I$(CODE_OBJ)
 
-.PHONY: all cmp run clean cp grid_inf show
+.PHONY: all run clean grid_inf show
 .DEFAULT_GOAL := all
-
 	
 all: compile run post #show
 
@@ -33,5 +32,5 @@ flate_plate_extract: flate_plate_extract.F90 $(TOOLS_OBJ)module_post.o $(CODE_OB
 	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
 
 clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.dx *.h5 *.csv flate_plate_extract *.xdmf fort.*
+	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.h5 *.csv flate_plate_extract *.xdmf
 	@rm -vrf *~

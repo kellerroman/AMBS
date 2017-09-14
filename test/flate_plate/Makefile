@@ -1,36 +1,15 @@
-HOMEDIR=../../
+SUBDIRS := ${shell find ./* -maxdepth 0 -type d -print }
+SUBCLEAN = $(addsuffix .clean,$(SUBDIRS))
+.PHONY: subdirs $(SUBDIRS) clean $(SUBCLEAN)
+subdirs: $(SUBDIRS)
 
-include $(HOMEDIR)Makefile.global
+clean: $(SUBCLEAN)
 
-INCLUDE += -I$(TOOLS_OBJ) -I$(CODE_OBJ)
+list_targets:
+	@echo $(SUBDIRS)
 
-.PHONY: all run clean grid_inf show
-.DEFAULT_GOAL := all
-	
-all: compile run post #show
+$(SUBDIRS):
+	@$(MAKE) -C $@ #--no-print-directory
 
-compile: compile_global flate_plate_extract
-
-run: data_in.h5 config.bin
-	@$(PROGRAM) #-debug
-	@$(CREATE_XDMF)
-post: compile
-	@./flate_plate_extract
-show:
-	@gnuplot -p plot.gnuplot
-
-data_in.h5: gridgen
-	@./$<
-
-config.bin: config.cfg	
-	@$(PRE_CONFIG)
-
-gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
-	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
-
-flate_plate_extract: flate_plate_extract.F90 $(TOOLS_OBJ)module_post.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)control_mod.o
-	$(FC) $(CFLAGS) $^ $(LIBS) -o $@ $(INCLUDE)
-
-clean:
-	@rm -vf git_out.bin *.o *.mod *.ufo *.dat *.plt *.png *.vtk *.txt *.bin gridgen *.silo *.dx stubex *.h5 *.csv flate_plate_extract *.xdmf
-	@rm -vrf *~
+$(SUBCLEAN): %.clean:
+	@$(MAKE) -C $* clean --no-print-directory
