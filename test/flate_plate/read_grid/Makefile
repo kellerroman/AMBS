@@ -26,7 +26,7 @@ data_in.h5: gridgen
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
 
-gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
+gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o $(CODE_OBJ)const_mod.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
 flate_plate_extract: flate_plate_extract.F90 $(TOOLS_OBJ)module_post.o $(CODE_OBJ)const_mod.o $(CODE_OBJ)file_io_mod.o $(CODE_OBJ)screen_io_mod.o $(CODE_OBJ)data_mod.o $(CODE_OBJ)control_mod.o

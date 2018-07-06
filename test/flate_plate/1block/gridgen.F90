@@ -48,13 +48,16 @@ blocks(1) % vars(:,:,:,3) = v
 blocks(1) % vars(:,:,:,4) = v
 blocks(1) % vars(:,:,:,5) = p / gm1 + 0.5D0*rho*(u*u+v*v)
 
-blocks(1) % boundary_condition(DIR_WEST) = BC_INFLOW
-blocks(1) % boundary_condition(DIR_EAST) = BC_OUTFLOW
-blocks(1) % boundary_condition(DIR_SOUTH) = BC_WALL
-!blocks(1) % boundary_condition(DIR_NORTH) = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_NORTH) = BC_OUTFLOW
-blocks(1) % boundary_condition(DIR_FRONT) = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_BACK) = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_WEST)  % bc_type = BC_INFLOW_SUB
+blocks(1) % boundary_condition(DIR_WEST)  % velocity = u
+blocks(1) % boundary_condition(DIR_EAST)  % bc_type = BC_OUTFLOW
+blocks(1) % boundary_condition(DIR_EAST)  % pressure = p
+blocks(1) % boundary_condition(DIR_SOUTH) % bc_type = BC_WALL
+!blocks(1) % boundary_condition(DIR_NORTH) % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_NORTH) % bc_type = BC_OUTFLOW
+blocks(1) % boundary_condition(DIR_NORTH) % pressure = p
+blocks(1) % boundary_condition(DIR_FRONT) % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_BACK)  % bc_type = BC_SYMMETRY
 
 call write_grid()
 call write_xdmf()

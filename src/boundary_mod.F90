@@ -79,7 +79,6 @@ contains
    end subroutine init_boundary
 
    subroutine set_boundary(blocks,b,nBoundaryCells)
-      use control_mod ,only: pressure_out
    implicit none
       type(block_type), intent(inout) :: blocks(:)
       integer, intent(in) :: b
@@ -93,6 +92,7 @@ contains
       real(REAL_KIND) :: deltap
       real(REAL_KIND) :: sof ! Speed of Sound
       real(REAL_KIND) :: rhosof ! 1 / (RHO *  Speed of Sound)
+      real(REAL_KIND) :: pressure_out = 1.0E+5_REAL_KIND
       !< U_Normal Mormalengeschwindigkeit
 
       associate (block => blocks(b))
@@ -138,6 +138,38 @@ contains
                                                   * block % abscellFaceVecsI(3,ig,j,k)
 
                      block % pressures(ib,j,k)    = pressure_out
+
+                     block % vars(ib,j,k,VEC_ENE) = block % pressures(ib,j,k) / GM1 &
+                                                  + 0.5E0_REAL_KIND                     &
+                                                  * block % vars(ib,j,k,VEC_RHO)         &
+                                                  * ( block % vars (ib,j,k,VEC_SPU)  &
+                                                    * block % vars (ib,j,k,VEC_SPU)  & 
+                                                    + block % vars (ib,j,k,VEC_SPV)  &
+                                                    * block % vars (ib,j,k,VEC_SPV)  &
+                                                    + block % vars (ib,j,k,VEC_SPW)  &
+                                                    * block % vars (ib,j,k,VEC_SPW)  &
+                                                    )
+                  end do
+               end do
+            end do
+         case(BC_INFLOW_SUB) 
+            ig = 1 !!! GEMETRIE INDEX
+            i1 = 1
+            do k = 1, block % nCells(3)
+               do j = 1, block % nCells(2)
+                  do i  = 1, nBoundaryCells
+                     ib = 1-i
+                     deltap = block % pressures(i1,j,k) - block % pressures(ib,j,k)
+
+                     block % pressures(ib,j,k)    = block % pressures(i1,j,k)
+
+                     block % vars(ib,j,k,VEC_RHO) = block % pressures(ib,j,k) / (RGas * block % temperatures(ib,j,k))
+
+                     block % vars(ib,j,k,VEC_SPU) = block % boundary(DIR_WEST) % pressure
+
+                     block % vars(ib,j,k,VEC_SPV) = 0.0D0
+
+                     block % vars(ib,j,k,VEC_SPW) = 0.0D0
 
                      block % vars(ib,j,k,VEC_ENE) = block % pressures(ib,j,k) / GM1 &
                                                   + 0.5E0_REAL_KIND                     &
@@ -208,6 +240,7 @@ contains
 ! ****************************************************************************************************
       select case (block % boundary(DIR_EAST) % bc_type)
          case(BC_OUTFLOW)
+            pressure_out = block % boundary(DIR_EAST) % pressure
             ig = block % nPkts(1) !!! GEMETRIE INDEX
             i1 = block % nCells(1)
             do k = 1, block % nCells(3)
@@ -367,6 +400,7 @@ contains
 ! ****************************************************************************************************
       select case (block % boundary(DIR_NORTH) % bc_type)
          case(BC_OUTFLOW)
+            pressure_out = block % boundary(DIR_NORTH) % pressure
             jg = block % nPkts(2) !!! GEMETRIE INDEX
             j1 = block % nCells(2)
             do k = 1, block % nCells(3)

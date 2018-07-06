@@ -130,10 +130,12 @@ subroutine screen_wr(text,level)
       stop 1
    end subroutine error_wr
 
-   subroutine screen_residual()
+   subroutine screen_residual(output)
       use control_mod ,only: current_iteration,res_avg,res_max,solution_time, get_runtime, fio
    implicit none
       real(kind = REAL_KIND) :: runtime
+      logical, intent(in) :: output
+      if (.NOT. output) return
       runtime = get_runtime()
       write(stdout,'(I10,6(1X,ES10.4))') current_iteration & 
                                            , res_max(1) &

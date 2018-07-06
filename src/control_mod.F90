@@ -31,8 +31,6 @@ real(REAL_KIND) :: solution_time = 0.0E+0_REAL_KIND
 real(REAL_KIND) :: cfl
 real(REAL_KIND) :: timestep
 
-real(REAL_KIND) :: pressure_out = 1.0E+5_REAL_KIND
-
 real(REAL_KIND) :: c_les_sgs
 !< SUBGRID CONSTANT FOR LES LENGTHSCALE
 

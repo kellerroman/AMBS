@@ -6,7 +6,7 @@ viscous_fluxes_mod.o: const_mod.o data_mod.o
 thermprop_mod.o: const_mod.o data_mod.o 
 time_disc_mod.o: const_mod.o data_mod.o control_mod.o 
 data_mod.o: const_mod.o control_mod.o 
-boundary_mod.o: const_mod.o data_mod.o 
+boundary_mod.o: const_mod.o data_mod.o screen_io_mod.o 
 face_values_mod.o: const_mod.o control_mod.o 
 inv_fluxes_mod.o: const_mod.o control_mod.o data_mod.o 
 file_io_mod.o: const_mod.o screen_io_mod.o control_mod.o data_mod.o 

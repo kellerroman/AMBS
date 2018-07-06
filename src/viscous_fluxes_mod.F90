@@ -77,6 +77,7 @@ contains
       end do
    end do
    end subroutine calc_face_gradients
+
    subroutine calc_viscous_fluxes(block)
       use const_mod
       use data_mod, only: block_type,dimen

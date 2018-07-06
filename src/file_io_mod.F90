@@ -288,6 +288,7 @@ contains
    ! close fortran interface.
    call h5close_f(error)
    end subroutine datin_sol
+
    subroutine datin_bc()
       use data_mod, only: nBlock, blocks
    implicit none
@@ -309,6 +310,11 @@ contains
          !write(*,'("========== BLOCK",I2.2,"==========")') ib
          do bc = 1,6
             read(file_unit) blocks(ib) % boundary(bc) % bc_type
+            if (blocks(ib) % boundary(bc) % bc_type == BC_OUTFLOW) then
+               read(file_unit) blocks(ib) % boundary(bc) % pressure
+            else if (blocks(ib) % boundary(bc) % bc_type == BC_INFLOW_SUB) then
+               read(file_unit) blocks(ib) % boundary(bc) % pressure
+            end if
             write(*,'(1X,A10)',ADVANCE="NO") bc_names(blocks(ib) % boundary(bc) % bc_type)
          end do
          write(*,*)

@@ -50,12 +50,12 @@ do k = 1, kmax-1
 end do
 close(fu)
 
-blocks(1) % boundary_condition(DIR_WEST)  = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_EAST)  = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_SOUTH) = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_NORTH) = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_FRONT) = BC_SYMMETRY
-blocks(1) % boundary_condition(DIR_BACK)  = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_WEST)  % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_EAST)  % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_SOUTH) % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_NORTH) % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_FRONT) % bc_type = BC_SYMMETRY
+blocks(1) % boundary_condition(DIR_BACK)  % bc_type = BC_SYMMETRY
 
 call write_grid()
 call write_xdmf()

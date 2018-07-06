@@ -2,7 +2,7 @@ program flate_plate_extract
 use mod_post
 use const_mod, only: REAL_KIND
 implicit none
-integer, parameter :: Y_SPU = 4
+integer :: Y_SPU = -1
 integer :: fo
 integer :: b, i, j, k, s, var
 
@@ -21,8 +21,11 @@ call read_solution()
 write(*,*) "Solution with ",nBlock," Blocks, ",nVar, " Variables  and ",nSol," Solutions read"
 do i = 1, nVar
    write(*,*) i, varnames(i)
+   if (varnames(i) == "Geschw_U") then
+      Y_SPU = i
+   end if
 end do
-b = 2
+b = 1
 i = 1
 k = 1
 avg_vel = 0.0E0_REAL_KIND
@@ -94,7 +97,9 @@ j = 1
 i = 1
 k = 1
 do j = blocks(b) % nCells(2),1,-1 
-write(fo,*) (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0& 
+write(fo,*) (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0  & 
+           ,blocks(b) % solutions(nSol) % vars(                    1,j,k,Y_SPU)  &
+           ,blocks(b) % solutions(nSol) % vars(blocks(b) % nCells(1)/2,j,k,Y_SPU)  &
            ,blocks(b) % solutions(nSol) % vars(blocks(b) % nCells(1),j,k,Y_SPU) 
 end do
 close(fo)

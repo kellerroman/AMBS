@@ -85,7 +85,7 @@ main_loop: do while (.not. end_main_loop)
       call update_residual(blocks(b) % residuals,blocks(b),res_max,res_avg)
    end do block_loop
 
-   if (residual_on_screen) call screen_residual()
+   call screen_residual(residual_on_screen)
 
    block_loop_update: do b = 1, nBlock
       call calc_timestep(blocks(b))

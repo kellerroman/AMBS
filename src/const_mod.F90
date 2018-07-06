@@ -17,7 +17,7 @@ public
 
       enumerator :: TAU_TXX = 1, TAU_TYY, TAU_TZZ, TAU_TXY, TAU_TXZ, TAU_TYZ
 
-      enumerator :: BC_OUTFLOW = -5, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC, BC_FARFIELD
+      enumerator :: BC_OUTFLOW = -6, BC_INFLOW_SUB, BC_INFLOW, BC_WALL, BC_SYMMETRY, BC_PERIODIC, BC_FARFIELD
 
       enumerator :: EQU_TYPE_EULER = 1, EQU_TYP_NS
 
@@ -54,6 +54,8 @@ public
             string = "BloCo "//trim(tmp)
          case(BC_OUTFLOW)
             string = "OUTFLOW"
+         case(BC_INFLOW_SUB)
+            string = "INFLOW_SUB"
          case(BC_INFLOW)
             string = "INFLOW"
          case(BC_WALL)

@@ -1,5 +1,6 @@
 module mod_gridgen
 use hdf5
+use const_mod
 implicit none
 private
 integer         , parameter :: VARNAME_LENGTH        = 20
@@ -23,13 +24,21 @@ integer :: nVar = 4
 integer :: ncells_temp(10,3)
 logical :: blocks_allocated = .false.
 logical :: debug = .false.
+
+type :: tboundary_condition
+   integer           :: bc_type
+   real(kind = 8)    :: pressure
+   real(kind = 8)    :: velocity
+end type tboundary_condition
+
 type :: tblock
-   integer :: ncells(3)
-   integer :: npkts(3)
+   integer                     :: ncells(3)
+   integer                     :: npkts(3)
    real(kind = 8), allocatable :: xyzs(:,:,:,:)
    real(kind = 8), allocatable :: vars(:,:,:,:)
-   integer :: boundary_condition(6)
+   type(tboundary_condition)   :: boundary_condition(6)
 end type
+
 type(tblock), allocatable :: blocks(:)
 interface add_block
    module procedure add_block_scalar
@@ -91,6 +100,8 @@ contains
             end if
             allocate(blocks(i) % xyzs(blocks(i) %  npkts(1),blocks(i) %  npkts(2),blocks(i) %  npkts(3),3))
             allocate(blocks(i) % vars(blocks(i) % ncells(1),blocks(i) % ncells(2),blocks(i) % ncells(3),nvar)) 
+            blocks(i) % boundary_condition(:) % pressure = -1.0d0
+            blocks(i) % boundary_condition(:) % velocity = -1.0d0
          end do
       else
          write(*,*) "allocate_blocks: Cannot allocate Blocks"
@@ -203,7 +214,24 @@ contains
    open(newunit = file_unit, file=trim(FILENAME_BC),form="unformatted",access="stream")
    do nb = 1, nBlock
       do nd = 1,6
-         write(file_unit) blocks(nb) % boundary_condition(nd) 
+         write(file_unit) blocks(nb) % boundary_condition(nd) % bc_type
+
+         if  (blocks(nb) % boundary_condition(nd) % bc_type == BC_OUTFLOW) then
+            if (blocks(nb) % boundary_condition(nd) % pressure < 0.0D0) then
+               write(*,*) "Pressure for Outplow Boundary Condition not set"
+               write(*,*) "BLOCK",nb,"DIRECTION: ",DIR_NAMES(nd)
+               stop 1
+            end if
+            write(file_unit) blocks(nb) % boundary_condition(nd) % pressure
+
+         else if  (blocks(nb) % boundary_condition(nd) % bc_type == BC_INFLOW_SUB) then
+            if (blocks(nb) % boundary_condition(nd) % velocity < 0.0D0) then
+               write(*,*) "Velocity for Inflow SUBSONIC Boundary Condition not set"
+               write(*,*) "BLOCK",nb,"DIRECTION: ",DIR_NAMES(nd)
+               stop 1
+            end if
+            write(file_unit) blocks(nb) % boundary_condition(nd) % velocity
+         end if
       end do
    end do
    close(file_unit)

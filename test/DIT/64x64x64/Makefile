@@ -31,7 +31,7 @@ data_in.h5: gridgen
 config.bin: config.cfg	
 	@$(PRE_CONFIG)
 	
-gridgen: gridgen.F90 $(TOOLS_OBJ)module_gridgen.o
+gridgen: gridgen.F90 $(TOOLS_OBJ)module_gridgen.o $(CODE_OBJ)const_mod.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
 export_velocities: export_velocities.F90 $(TOOLS_OBJ)module_post.a 

@@ -20,7 +20,7 @@ plot 'profile.csv' using 2:1 notitle with lines\
     , ""  u 12:1 notitle with lines\
     , ""  u 13:1 notitle with lines\
     , ""  u 14:1 notitle with lines\
-    , ""  u 20:1 \
+    , ""  u 20:1 notitle with lines\
     , ""  u 30:1 notitle with lines\
     , ""  u 40:1 notitle with lines\
     , ""  u 50:1 notitle with lines\
