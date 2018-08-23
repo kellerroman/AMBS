@@ -413,7 +413,7 @@ do
    varvalue = trim(adjustl(line(pos+1:)))
    select case(set_para(varname,varvalue))
    case(RETURN_CODE_NOT_IN_LIST)
-      !write(*,*) "'"//trim(varname)//"' is not in list"
+      write(*,*) "'"//trim(varname)//"' is not in list"
       !stop 1
    case(RETURN_CODE_NOT_A_INT)
       write(*,*) "value for '"//trim(varname)//"' is not an INTEGER ",varvalue
@@ -443,6 +443,35 @@ if (ubound(unset_paras,1) > 0 ) then
    end do
    stop 1
 end if
+
+
+i = 1
+do
+   call get_command_argument(i, line)
+   if (len_trim(line) == 0) exit
+   pos = index(line,"=")
+
+   if (pos < 1) then
+      write(*,'("konnte line nicht verarbeiten, kein = gefunden:",a)') trim(line)
+      stop 1
+   end if
+
+   varname = trim(line(1:pos-1))
+   varvalue = trim(adjustl(line(pos+1:)))
+
+   select case(set_para(varname,varvalue))
+   case(RETURN_CODE_NOT_IN_LIST)
+      write(*,*) "'"//trim(varname)//"' is not in list"
+      stop 1
+   case(RETURN_CODE_NOT_A_INT)
+      write(*,*) "value for '"//trim(varname)//"' is not an INTEGER ",varvalue
+      stop 1
+   case(RETURN_CODE_NOT_A_REAL)
+      write(*,*) "value for '"//trim(varname)//"' is not an REAL ",varvalue
+      stop 1
+   end select
+   i = i+1
+end do
 call list_parameter()
 call write_binary_config_file()
 call free_all()

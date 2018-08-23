@@ -7,7 +7,7 @@ real(kind=8) :: sol(n_sol),pos(n_sol)
 real(kind=8) :: xpos, xval
 real(kind=8) :: error
 real(kind=8), allocatable :: sol_sim(:),pos_sim(:)
-write(*,*) "calculating residual error for sod shock tube solution"
+!write(*,*) "calculating residual error for sod shock tube solution"
 open(newunit=fu,file="str.dx")
 do i = 1, n_sol
    read(fu,*) pos(i), sol(i)

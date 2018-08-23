@@ -21,7 +21,7 @@ run: compile data_in.h5 config.bin
 
 post: export_velocities 
 	@$(CREATE_XDMF)
-	#@./$<
+	@./$<
 show:
 	@gnuplot -p plot.gnuplot
 
@@ -35,7 +35,7 @@ gridgen: gridgen.F90 $(TOOLS_OBJ)module_gridgen.o $(CODE_OBJ)const_mod.o
 	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 	
 export_velocities: export_velocities.F90 $(TOOLS_OBJ)module_post.a 
-	#$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
+	$(FC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDE)
 
 clean:
 	@rm -vf bin *.o *.mod *.h5 *.dat *.plt *.png *.xdmf *.txt *.bin gridgen export_velocities *.silo *.dx stubex *.cgns *.csv
