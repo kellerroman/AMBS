@@ -42,45 +42,59 @@ gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
 sens: compile gridgen str.dx
 	@rm -f errors.txt
 	./gridgen 101
-	@$(PRE_CONFIG) disc/space_order=1
+	@$(PRE_CONFIG) space_order=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_1.csv
 	@mv error.csv error_ni_100_sp_1.csv
-	@$(PRE_CONFIG) disc/space_order=2
+	@$(PRE_CONFIG) space_order=2
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_100_sp_2.csv
 	@mv error.csv error_ni_100_sp_2.csv
 	./gridgen 201
-	@$(PRE_CONFIG) disc/space_order=1
+	@$(PRE_CONFIG) space_order=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_1.csv
 	@mv error.csv error_ni_200_sp_1.csv
-	@$(PRE_CONFIG) disc/space_order=2
+	@$(PRE_CONFIG) space_order=2
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_ni_200_sp_2.csv
 	@mv error.csv error_ni_200_sp_2.csv
-	./gridgen 501
-	@$(PRE_CONFIG) disc/space_order=1
+	./gridgen 401
+	@$(PRE_CONFIG) space_order=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
 	@$(CALC_ERROR)
-	@mv data_1d.csv data_ni_500_sp_1.csv
-	@mv error.csv error_ni_500_sp_1.csv
-	@$(PRE_CONFIG) disc/space_order=2
+	@mv data_1d.csv data_ni_400_sp_1.csv
+	@mv error.csv error_ni_400_sp_1.csv
+	@$(PRE_CONFIG) space_order=2
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
 	@$(CALC_ERROR)
-	@mv data_1d.csv data_ni_500_sp_2.csv
-	@mv error.csv error_ni_500_sp_2.csv
+	@mv data_1d.csv data_ni_400_sp_2.csv
+	@mv error.csv error_ni_400_sp_2.csv
+	./gridgen 801
+	@$(PRE_CONFIG) space_order=1
+	@$(PROGRAM)
+	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
+	@mv data_1d.csv data_ni_800_sp_1.csv
+	@mv error.csv error_ni_800_sp_1.csv
+	@$(PRE_CONFIG) space_order=2
+	@$(PROGRAM)
+	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
+	@mv data_1d.csv data_ni_800_sp_2.csv
+	@mv error.csv error_ni_800_sp_2.csv
 	@gnuplot -p plot_sens.gnuplot
+	@gnuplot -p plot_error.gnuplot
 
 grid_rot: cmp gridgen
 	./gridgen 101 0.0
