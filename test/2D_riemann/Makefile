@@ -13,6 +13,7 @@ all: compile_global run #show
 run: data_in.h5 config.bin
 	@echo 'Running Grid-Adaper on simple Chamber'
 	@$(PROGRAM) #-debug
+	@$(CREATE_XDMF)
 	@$(EXTRACT_1D)
 show:
 	@gnuplot -p plot.gnuplot
