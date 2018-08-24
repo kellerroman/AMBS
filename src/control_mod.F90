@@ -13,6 +13,7 @@ integer(INT_KIND) :: residual_out
 integer(INT_KIND) :: equation
 integer(INT_KIND) :: turbulence
 integer(INT_KIND) :: space_order
+integer(INT_KIND) :: limiter
 integer(INT_KIND) :: riemann_solver
 integer(INT_KIND) :: timestep_method            ! Wie wird der Timestep berechnet / gewaehlt
                                                 ! 1: constant aus config

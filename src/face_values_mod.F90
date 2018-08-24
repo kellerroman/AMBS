@@ -1,6 +1,6 @@
 module face_values_mod
    use const_mod
-   use control_mod, only: space_order
+   use control_mod, only: space_order, limiter
 
 implicit none
 contains
@@ -62,8 +62,8 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells
          do j = 1, ubound(cellvars,2) - nBoundaryCells
             do i = 1, ubound(cellvars,1) - nBoundaryCells + 1
-              call minmod(faceVarsLeftI (i,j,k,:))
-              call minmod(faceVarsRightI(i,j,k,:))
+              call use_limiter(faceVarsLeftI (i,j,k,:))
+              call use_limiter(faceVarsRightI(i,j,k,:))
             end do
          end do
       end do
@@ -90,8 +90,8 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells
          do j = 1, ubound(cellvars,2) - nBoundaryCells + 1
             do i = 1, ubound(cellvars,1) - nBoundaryCells
-              call minmod(faceVarsLeftJ (i,j,k,:))
-              call minmod(faceVarsRightJ(i,j,k,:))
+              call use_limiter(faceVarsLeftJ (i,j,k,:))
+              call use_limiter(faceVarsRightJ(i,j,k,:))
             end do
          end do
       end do
@@ -118,8 +118,8 @@ contains
       do k = 1, ubound(cellvars,3) - nBoundaryCells + 1
          do j = 1, ubound(cellvars,2) - nBoundaryCells
             do i = 1, ubound(cellvars,1) - nBoundaryCells
-              call minmod(faceVarsLeftK (i,j,k,:))
-              call minmod(faceVarsRightK(i,j,k,:))
+              call use_limiter(faceVarsLeftK (i,j,k,:))
+              call use_limiter(faceVarsRightK(i,j,k,:))
             end do
          end do
       end do
@@ -160,6 +160,28 @@ contains
       end do
    end if
    end subroutine face_values
+   subroutine use_limiter( a)
+      implicit none
+      real(REAL_KIND), intent(inout) ::a(:)
+
+      if (limiter == 1) then
+         call minmod(a)
+      else
+         call vanLeer(a)
+      end if
+
+   end subroutine use_limiter
+
+   subroutine vanLeer ( a )
+      implicit none
+      real(REAL_KIND), intent(inout) ::a(:)
+      integer :: n
+      real(REAL_KIND) :: aa
+      do n = 1, ubound(a,1)
+            aa = abs(a(n))
+            a(n) = (a(n) + aa) / (1 + aa)
+      end do
+   end subroutine vanLeer
    subroutine minmod ( a )
       implicit none
       real(REAL_KIND), intent(inout) ::a(:)
