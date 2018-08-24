@@ -10,7 +10,7 @@
 module datin_para
 implicit none
    private
-   integer, parameter         :: CONFIG_FILE_VERSION     =  2 
+   integer, parameter         :: CONFIG_FILE_VERSION     =  3
    integer, parameter, public :: VARNAME_LENGTH          = 20
    integer, parameter, public :: RETURN_CODE_GOOD        =  0
    integer, parameter, public :: RETURN_CODE_NOT_IN_LIST = -1
@@ -364,7 +364,7 @@ character(len=VARNAME_LENGTH) :: varname
 character(len=90) :: varvalue
 
 integer :: iterations, sol_out_screen_int, res_out_screen_int!, res_nr_out
-integer :: equation, turbulence, space_order
+integer :: equation, turbulence, space_order, limiter
 integer :: riemann_solver, timestep_method,time_order
 real(kind = 8) :: c_les_sgs, cfl, timestep
 !real(kind = 8) :: DT
@@ -380,6 +380,7 @@ call add_parameter("CFL",cfl)
 call add_parameter("TIME_ORDER",time_order)
 call add_parameter("TIMESTEP_METHOD",timestep_method)
 call add_parameter("RIEMANN_SOLVER",riemann_solver)
+call add_parameter("LIMITER",limiter)
 call add_parameter("SPACE_ORDER",space_order)
 call add_parameter("TURBULENCE",turbulence)
 call add_parameter("EQUATION",equation)

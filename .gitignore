@@ -18,6 +18,7 @@
 
 # vim files
 *.swp
+*.swo
 
 # Compiled Static libraries
 *.lai
@@ -28,11 +29,21 @@
 # solutions
 *.h5
 *.xdmf
+*.bin
+*.csv
+fort.*
+*.dat
+*.dx
+errors.txt
+
 
 # Executables
 *.exe
 *.out
 *.app
+calc_error
+gridgen
+stubex
 
 # Folders
 /GT_version/

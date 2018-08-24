@@ -83,16 +83,25 @@ do i = i_start, i_end
    do j = j_start, j_end
    do k = k_start, k_end
       if (var_dir == 1) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) * 0.5d0
-      else if (var_dir == 2) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0
-      else if (var_dir == 3) then
-         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,3)+blocks(b) % coords(i,j,k+1,3)) * 0.5d0
+         write(fo ,'(F20.13)',advance = "no") sqrt((blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) &
+                                                  *(blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i+1,j,k,1)) * 0.25d0 &
+                                                  +(blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i+1,j,k,2)) &
+                                                  *(blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i+1,j,k,2)) * 0.25d0 )
+
+!      else if (var_dir == 2) then
+!         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.5d0
+!      else if (var_dir == 3) then
+!         write(fo ,'(F20.13)',advance = "no") (blocks(b) % coords(i,j,k,3)+blocks(b) % coords(i,j,k+1,3)) * 0.5d0
       else if (var_dir == 4) then
-         write(fo ,'(F20.13)',advance = "no") sqrt((blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i,j+1,k,1)) * &
-                                                   (blocks(b) % coords(i,j,k,1)+blocks(b) % coords(i,j+1,k,1)) * 0.125D0&
-                                                 + (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * &
-                                                   (blocks(b) % coords(i,j,k,2)+blocks(b) % coords(i,j+1,k,2)) * 0.125D0)
+         write(fo ,'(F20.13)',advance = "no") sqrt(( blocks(b) % coords(i  ,j,k,1)+blocks(b) % coords(i  ,j+1,k,1)  &
+                                                   + blocks(b) % coords(i+1,j,k,1)+blocks(b) % coords(i+1,j+1,k,1) )  &
+                                                  *( blocks(b) % coords(i  ,j,k,1)+blocks(b) % coords(i  ,j+1,k,1)  &
+                                                   + blocks(b) % coords(i+1,j,k,1)+blocks(b) % coords(i+1,j+1,k,1) ) * 0.125d0  &
+                                                  +( blocks(b) % coords(i  ,j,k,2)+blocks(b) % coords(i  ,j+1,k,2)  &
+                                                   + blocks(b) % coords(i+1,j,k,2)+blocks(b) % coords(i+1,j+1,k,2) )  &
+                                                  *( blocks(b) % coords(i  ,j,k,2)+blocks(b) % coords(i  ,j+1,k,2)  &
+                                                   + blocks(b) % coords(i+1,j,k,2)+blocks(b) % coords(i+1,j+1,k,2) ) * 0.125d0  )
+
       end if
 
       !do s = 1, nSol

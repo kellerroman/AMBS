@@ -41,7 +41,7 @@ implicit none
    character(len=*), parameter :: GROUP_DATA            = "data"
    character(len=*), parameter :: GROUP_BLOCK           = "block"
 
-   integer                           , parameter :: CONFIG_FILE_VERSION = 2 
+   integer                           , parameter :: CONFIG_FILE_VERSION = 3 
 
    integer         , parameter :: SOL_NAME_LENGTH = 11
    logical :: override_sol = .false.
@@ -67,6 +67,7 @@ contains
                         , equation        &
                         , turbulence      &
                         , space_order     &
+                        , limiter         &
                         , riemann_solver  &
                         , timestep_method &
                         , time_order      &
@@ -95,6 +96,7 @@ contains
       read(file_unit) equation        
       read(file_unit) turbulence      
       read(file_unit) space_order     
+      read(file_unit) limiter     
       read(file_unit) riemann_solver  
       read(file_unit) timestep_method 
       read(file_unit) time_order      
@@ -107,6 +109,7 @@ contains
       write(*,'(A30,2X,I0)')     "Solution Output every",solution_out
       write(*,'(A30,2X,I0)')     "Residual Output every",residual_out
       write(*,'(A30,2X,I0)')     "Spatial Order",space_order
+      write(*,'(A30,2X,I0)')     "Limiter",limiter
       write(*,'(A30,2X,A)')      "Equation",STR_EQUATION(equation)
       write(*,'(A30,2X,ES10.4)') "Timestep",Timestep    
       write(*,'(A30,2X,A)')      "Riemann Solver",trim(SOLVERS(riemann_solver))
