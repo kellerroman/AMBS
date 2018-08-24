@@ -166,12 +166,22 @@ contains
 
       if (limiter == 1) then
          call minmod(a)
-      else
+      else if (limiter == 2) then
          call vanLeer(a)
+      else if (limiter == 3) then
+         call superbee(a)
       end if
 
    end subroutine use_limiter
 
+   subroutine minmod ( a )
+      implicit none
+      real(REAL_KIND), intent(inout) ::a(:)
+      integer :: n
+      do n = 1, ubound(a,1)
+            a(n) = max(0.0E0_REAL_KIND,min(1.0E0_REAL_KIND,a(n)))
+      end do
+   end subroutine minmod
    subroutine vanLeer ( a )
       implicit none
       real(REAL_KIND), intent(inout) ::a(:)
@@ -182,12 +192,14 @@ contains
             a(n) = (a(n) + aa) / (1 + aa)
       end do
    end subroutine vanLeer
-   subroutine minmod ( a )
+   subroutine superbee ( a )
       implicit none
       real(REAL_KIND), intent(inout) ::a(:)
       integer :: n
       do n = 1, ubound(a,1)
-            a(n) = max(0.0E0_REAL_KIND,min(1.0E0_REAL_KIND,a(n)))
+            a(n) = max( 0.0E0_REAL_KIND &
+                      , min(1.0E0_REAL_KIND,2.0E0_REAL_KIND * a(n)) &
+                      , min(2.0E0_REAL_KIND, a(n)))
       end do
-   end subroutine minmod
+   end subroutine superbee
 end module face_values_mod

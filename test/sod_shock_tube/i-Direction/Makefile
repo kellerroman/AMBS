@@ -41,7 +41,7 @@ gridgen: gridgen.F90 $(TOOLS_OBJ)/module_gridgen.o
 
 lim: compile gridgen str.dx
 	@rm -f errors.txt
-	@./gridgen 201
+	@./gridgen 501
 	@$(PRE_CONFIG) space_order=2 limiter=1
 	@$(PROGRAM)
 	@$(EXTRACT_1D)
@@ -54,6 +54,12 @@ lim: compile gridgen str.dx
 	@$(CALC_ERROR)
 	@mv data_1d.csv data_lim=2.csv
 	@mv error.csv error_lim=2.csv
+	@$(PRE_CONFIG) space_order=2 limiter=3
+	@$(PROGRAM)
+	@$(EXTRACT_1D)
+	@$(CALC_ERROR)
+	@mv data_1d.csv data_lim=3.csv
+	@mv error.csv error_lim=3.csv
 	@gnuplot -p plot_lim.gnuplot
 	@cat errors.txt
 
